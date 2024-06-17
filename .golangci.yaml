@@ -1,0 +1,173 @@
+# Options for analysis running.
+run:
+  concurrency: 8
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 30m
+  # Exit code when at least one issue was found.
+  # Default: 1
+  issues-exit-code: 1
+  # Include test files or not.
+  # Default: true
+  tests: true
+  build-tags:
+    - unit
+  # Allow multiple parallel golangci-lint instances running.
+  # If false (default) - golangci-lint acquires file lock on start.
+  allow-parallel-runners: true
+  # With the read-only mode, linter will fail if the go.mod file is outdated.
+  modules-download-mode: readonly
+  # Empty to use the Go version from the go.mod file.
+  go: ""
+# output configuration options
+output:
+  # Format: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
+  #
+  # Multiple can be specified by separating them by comma, output can be provided
+  # for each of them by separating format name and path by colon symbol.
+  # Output path can be either `stdout`, `stderr` or path to the file to write to.
+  # Example: "checkstyle:report.json,colored-line-number"
+  #
+  # Print lines of code with issue.
+  # Default: true
+  print-issued-lines: false
+  # Print linter name at the end of issue text.
+  # Default: true
+  print-linter-name: true
+  # Make issues output unique by line.
+  # Default: true
+  uniq-by-line: false
+  # Add a prefix to the output file references.
+  # Default is no prefix.
+  path-prefix: ""
+  # Sort results by: filepath, line, and column.
+  sort-results: true
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    - source: "^//\\s*go:generate\\s"
+      linters: [ lll ]
+    - source: "(noinspection|TODO)"
+      linters: [ godot ]
+    - source: "//noinspection"
+      linters: [ gocritic ]
+    - source: "^\\s+if _, ok := err\\.\\([^.]+\\.InternalError\\); ok {"
+      linters: [ errorlint ]
+    - path: "_test\\.go"
+      linters:
+        - bodyclose
+        - dupl
+        - funlen
+        - goconst
+        - gosec
+        - noctx
+        - wrapcheck
+        - lll
+  max-issues-per-linter: 0
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
+  max-same-issues: 0
+  # Fix found issues (if it's supported by the linter).
+  fix: true
+  new: false
+# All available settings of specific linters.
+linters:
+  # Disable all linters.
+  # Default: false
+  disable-all: true
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+  enable:
+    - asasalint # check for pass []any as any in variadic func(...any).
+    - asciicheck # checks that your code does not contain non-ASCII identifiers.
+    - bidichk # checks for dangerous unicode character sequences.
+    - bodyclose # checks whether HTTP response body is closed successfully.
+    - contextcheck # checks the function whether you use a non-inherited context.
+    - durationcheck # checks for two durations multiplied together.
+    - errcheck # checking for unchecked error, these unchecked error can be critical bugs in some cases.
+    - errname # checks that sentinel error are prefixed with the Err and error types are suffixed with the Error.
+    - exportloopref # checks for pointers to enclosing loop variables.
+    - gochecknoinits # checks that no init functions are present in Go code
+    - gocritic # provides diagnostics that check for bugs, performance and style issues.
+    - godot # checks if comments end in a period.
+    - gofmt
+    - gofumpt
+    - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod.
+    - gosimple # specializes in simplifying a code.
+    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string.
+    - ineffassign # detects when assignments to existing variables are not used.
+    - misspell # fix all the misspellings.
+    - nakedret # finds naked returns in functions greater than a specified function length.
+    - nilerr # finds the code that returns nil even if it checks that the error is not nil.
+    - nilnil # checks that there is no simultaneous return of nil error and an invalid value.
+    - noctx # finds sending http request without context.Context.
+    - prealloc # finds slices that could potentially be pre-allocated.
+    - predeclared # finds code that shadows one of Go's predeclared identifiers.
+    - promlinter # checks Prometheus metrics naming via promlint.
+    - reassign # checks that package variables are not reassigned.
+    - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint.
+    - rowserrcheck # somewhat similar to `bodyclose` but for `database/sql` package.
+    - sqlclosecheck # somewhat similar to `bodyclose` but for `database/sql` package.
+    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks.
+    - stylecheck # is a replacement for golint.
+    - tagliatelle # check struct tags.
+    - tenv # test-related checks. All of them are good.
+    - testableexamples # test-related checks. All of them are good.
+    - thelper # test-related checks. All of them are good.
+    - tparallel # test-related checks. All of them are good.
+    - unconvert # removes unnecessary type conversions.
+    - unparam # reports unused function parameters.
+    - unused # checks for unused constants, variables, functions, and types.
+    - usestdlibvars # detect the possibility to use variables/constants from stdlib.
+    - wastedassign # finds wasted assignment statements.
+    - whitespace # detects leading and trailing space.
+
+  # Run only fast linters from enabled linters set (first run won't be fast)
+  # Default: false
+  fast: false
+linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      # These 3 will detect many cases, but they do sense
+      # if it's performance oriented code
+      - hugeParam
+      - rangeExprCopy
+      - rangeValCopy
+  errcheck:
+    # Report about not checking of error in type assertions: `a := b.(MyStruct)`.
+    # Such cases aren't reported by default.
+    # Default: false
+    check-type-assertions: false
+    # Report skipped checks:`num, _ := strconv.Atoi(numStr)`.
+    check-blank: true # Default: false
+    # Function to skip.
+    exclude-functions:
+      - io/ioutil.ReadFile
+      - io.Copy(*bytes.Buffer)
+      - io.Copy(os.Stdout)
+  govet:
+    # Disable analyzers by name.
+    # Run `go tool vet help` to see all analyzers.
+    # Default: []
+    disable:
+      - fieldalignment # too strict
+  nakedret:
+    # Make an issue if func has more lines of code than this setting, and it has naked returns.
+    # Default: 30
+    max-func-lines: 1
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+        yaml: snake
+        xml: camel
+        bson: camel
+        avro: snake
+        mapstructure: kebab

@@ -1,0 +1,64 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: no-commit-to-branch
+        args: [ --branch, production, --branch, main, --branch, master ]
+      - id: forbid-submodules
+      - id: forbid-new-submodules
+      - id: check-yaml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-case-conflict
+      - id: check-ast
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: fix-encoding-pragma
+  - repo: https://github.com/Bahjat/pre-commit-golang
+    rev: v1.0.3
+    hooks:
+      - id: go-fmt-import
+      - id: go-vet
+      - id: go-lint
+      - id: golangci-lint
+        args: [--config=./.golangci.yaml]
+      - id: go-unit-tests
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.7
+    hooks:
+      - id: sqlfluff-lint
+        args: [ --dialect, postgres ]
+      - id: sqlfluff-fix
+        args: [ --dialect, postgres ]
+  - repo: https://github.com/daveshanley/vacuum
+    rev: v0.10.0
+    hooks:
+      - id: vacuum
+        args: [ --details ]
+        files: connected_roots_openapi.yaml
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.41.0
+    hooks:
+      - id: markdownlint-fix
+        args: [ --disable, MD013 MD033 ]
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.13.0-beta
+    hooks:
+      - id: hadolint-docker
+        args: [ -V, --ignore, DL3007 ]
+  - repo: https://github.com/IamTheFij/docker-pre-commit
+    rev: v3.0.1
+    hooks:
+      - id: docker-compose-check
+  - repo: https://gitlab.com/adam-moss/pre-commit-trailer
+    rev: v1.1.0
+    hooks:
+      - id: add-pre-commit-config-trailer
+      - id: add-pre-commit-user-skipped-trailer
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.2.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [ commit-msg ]
+        args: [ --force-scope, build, ci, docs, feat, fix, perf, refactor, test, style, chore, revert ]

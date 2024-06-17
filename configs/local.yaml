@@ -1,0 +1,41 @@
+app:
+  env: "local"
+  name: "connected_roots"
+  loglevel: "debug"
+http:
+  protocol: "HTTP/1"
+  host: "0.0.0.0"
+  port: 47400
+  debug: true
+  recover: true
+  body: "1M"
+  timeouts:
+    shutdown: 30
+    read: 5
+    write: 10
+    idle: 15
+  health:
+    frequency: 10 # (Seconds)
+db:
+  postgres:
+    dsn: "postgres://connected_roots_role:Password1@localhost:5432/connected_roots?sslmode=disable&search_path=sc_connected_roots&connect_timeout=4"
+    logger:
+      slowthreshold: 5
+      ignorerecordnotfounderror: true
+      colorful: true
+    connection:
+      maxidleconns: 100
+      maxopenconns: 200
+      connmaxidletime: 60
+      connmaxlifetime: 1440
+    version: 1
+    health:
+      frequency: 10 # (Seconds)
+monitoring:
+  observability:
+    active: true
+    otel:
+      sdkdisabled: false
+      bodydumpenabled: true
+      servicename: "connected_roots"
+      exporterotlpendpoint: "http://localhost:4318"
