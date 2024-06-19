@@ -14,13 +14,14 @@ type App struct {
 }
 
 type HTTP struct {
-	Protocol string `koanf:"protocol"`
-	Host     string `koanf:"host"`
-	Port     int    `koanf:"port"`
-	Debug    bool   `koanf:"debug"`
-	Recover  bool   `koanf:"recover"`
-	Body     string `koanf:"body"`
-	Timeouts struct {
+	Protocol  string `koanf:"protocol"`
+	Host      string `koanf:"host"`
+	Port      int    `koanf:"port"`
+	Templates string `koanf:"templates"`
+	Debug     bool   `koanf:"debug"`
+	Recover   bool   `koanf:"recover"`
+	Body      string `koanf:"body"`
+	Timeouts  struct {
 		Shutdown int `koanf:"shutdown"`
 		Read     int `koanf:"read"`
 		Write    int `koanf:"write"`

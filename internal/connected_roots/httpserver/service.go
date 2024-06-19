@@ -2,13 +2,17 @@ package httpserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"html/template"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/web/templates"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/pkg/httpserver"
@@ -97,6 +101,9 @@ func (s *Service) setSetup() {
 	s.Echo.Server.ReadTimeout = time.Duration(s.conf.HTTP.Timeouts.Read) * time.Second
 	s.Echo.Server.WriteTimeout = time.Duration(s.conf.HTTP.Timeouts.Write) * time.Second
 	s.Echo.Server.IdleTimeout = time.Duration(s.conf.HTTP.Timeouts.Idle) * time.Second
+	s.Echo.Renderer = &templates.TemplateRenderer{
+		Templates: template.Must(templates.ParseTemplates(s.conf.HTTP.Templates)),
+	}
 }
 
 // setMiddlewares add all middlewares to "echo" server.
@@ -133,8 +140,8 @@ func (s *Service) setMiddlewares() {
 
 func (s *Service) errorHandler() func(err error, c echo.Context) {
 	return func(err error, c echo.Context) {
-		eS, ok := err.(commons.ErrorI)
-		if !ok {
+		var eS commons.ErrorI
+		if ok := errors.As(err, &eS); !ok {
 			eS = commons.NewDefaultErrorS(err)
 		}
 
@@ -143,11 +150,15 @@ func (s *Service) errorHandler() func(err error, c echo.Context) {
 				Status:  http.StatusInternalServerError,
 				Message: "something went wrong",
 			}}
-			err = c.JSON(http.StatusInternalServerError, err)
+			if err = c.JSON(http.StatusInternalServerError, err); err != nil {
+				return
+			}
 			return
 		}
 
-		err = c.JSON(eS.ErrorStatus(), err)
+		if err = c.JSON(eS.ErrorStatus(), err); err != nil {
+			return
+		}
 	}
 }
 
