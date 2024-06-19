@@ -18,6 +18,7 @@ type HTTP struct {
 	Host      string `koanf:"host"`
 	Port      int    `koanf:"port"`
 	Templates string `koanf:"templates"`
+	Assets    string `koanf:"assets"`
 	Debug     bool   `koanf:"debug"`
 	Recover   bool   `koanf:"recover"`
 	Body      string `koanf:"body"`

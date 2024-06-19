@@ -101,6 +101,7 @@ func (s *Service) setSetup() {
 	s.Echo.Server.ReadTimeout = time.Duration(s.conf.HTTP.Timeouts.Read) * time.Second
 	s.Echo.Server.WriteTimeout = time.Duration(s.conf.HTTP.Timeouts.Write) * time.Second
 	s.Echo.Server.IdleTimeout = time.Duration(s.conf.HTTP.Timeouts.Idle) * time.Second
+	s.Echo.Static("/assets", s.conf.HTTP.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{
 		Templates: template.Must(templates.ParseTemplates(s.conf.HTTP.Templates)),
 	}
