@@ -3,6 +3,9 @@ package app
 import (
 	"context"
 	"fmt"
+
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/pkg/telemetry"
 	"github.com/thejerf/suture/v4"
@@ -19,6 +22,7 @@ const (
 	LoggerService = "service.logger"
 	DBService     = "service.db"
 	HTTPService   = "service.httpserver"
+	Frontend      = "service.frontend"
 )
 
 // Start This function sets up the Supervisor, adds the various services as supervisor children, prints the banner, sets up the telemetry, and starts the services.
@@ -59,6 +63,9 @@ func Start() {
 
 	// Init HTTP Server.
 	addHTTPService(supervisor, globCtx)
+
+	// Init Frontend Server.
+	addFrontend(supervisor, globCtx)
 }
 
 func addConfigService(supervisor *suture.Supervisor, ctx *connected_roots.Context) {
@@ -95,8 +102,18 @@ func addHTTPService(supervisor *suture.Supervisor, ctx *connected_roots.Context)
 	httpSrv.Status <- service.UseStopChan
 	httpSrv.Status <- service.Run
 	httpSrv.Status <- service.Heartbeat
+}
 
-	<-httpSrv.Stop
+func addFrontend(supervisor *suture.Supervisor, ctx *connected_roots.Context) {
+	// Add HTTP (Echo) Frontend Service.
+	frontendSrv := frontend.NewService(Frontend, ctx)
+	supervisor.Add(frontendSrv)
+	<-frontendSrv.Started
+	frontendSrv.Status <- service.UseStopChan
+	frontendSrv.Status <- service.Run
+	frontendSrv.Status <- service.Heartbeat
+
+	<-frontendSrv.Stop
 }
 
 func printBanner(ctx *connected_roots.Context) {

@@ -32,8 +32,7 @@ func TestUnwrap(t *testing.T) {
 	want = append(want, e3, e2, e1)
 	got := Unwrap(errorS3)
 
-
-	//println(fmt.Sprintf("%v", want))
+	// println(fmt.Sprintf("%v", want))
 
 	if ok := reflect.DeepEqual(got, want); !ok {
 		t.Errorf("Unwrap() = %+v, want %+v", got, want)

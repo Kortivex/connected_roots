@@ -2,12 +2,26 @@ app:
   env: "local"
   name: "connected_roots"
   loglevel: "debug"
-http:
+api:
   protocol: "HTTP/1"
   host: "0.0.0.0"
   port: 47400
-  templates: "internal/connected_roots/httpserver/web/views"
-  assets: "internal/connected_roots/httpserver/web/assets"
+  debug: true
+  recover: true
+  body: "1M"
+  timeouts:
+    shutdown: 30
+    read: 5
+    write: 10
+    idle: 15
+  health:
+    frequency: 10 # (Seconds)
+frontend:
+  protocol: "HTTP/1"
+  host: "0.0.0.0"
+  port: 47500
+  templates: "internal/connected_roots/frontend/web/views"
+  assets: "internal/connected_roots/frontend/web/assets"
   debug: true
   recover: true
   body: "1M"
@@ -41,3 +55,10 @@ monitoring:
       bodydumpenabled: true
       servicename: "connected_roots"
       exporterotlpendpoint: "http://localhost:4318"
+  metrics:
+    active: true
+    prometheus:
+      disabled: false
+      servicebackend: "connected_roots_backend"
+      servicefrontend: "connected_roots_frontend"
+      path: "/metrics"

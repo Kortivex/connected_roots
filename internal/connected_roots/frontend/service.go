@@ -1,15 +1,18 @@
-package httpserver
+package frontend
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"html/template"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/web/templates"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/pkg/httpserver"
@@ -49,7 +52,7 @@ type Service struct {
 // NewService This function creates a new service object holding multiple configurations and databases like Cache, DB and RabbitMQ.
 func NewService(name string, ctx *connected_roots.Context) *Service {
 	loggerEmpty := ctx.Logger.NewEmpty()
-	log := loggerEmpty.WithTag(commons.TagPlatformHttpserver)
+	log := loggerEmpty.WithTag(commons.TagPlatformClient)
 
 	srv := &Service{
 		Service: service.Service{
@@ -94,15 +97,19 @@ func (s *Service) setSetup() {
 	s.Echo.Logger = echoframework.NewLogger(s.logger)
 	s.Echo.HideBanner = true
 	s.Echo.HidePort = true
-	s.Echo.Debug = s.conf.API.Debug
-	s.Echo.Server.ReadTimeout = time.Duration(s.conf.API.Timeouts.Read) * time.Second
-	s.Echo.Server.WriteTimeout = time.Duration(s.conf.API.Timeouts.Write) * time.Second
-	s.Echo.Server.IdleTimeout = time.Duration(s.conf.API.Timeouts.Idle) * time.Second
+	s.Echo.Debug = s.conf.Frontend.Debug
+	s.Echo.Server.ReadTimeout = time.Duration(s.conf.Frontend.Timeouts.Read) * time.Second
+	s.Echo.Server.WriteTimeout = time.Duration(s.conf.Frontend.Timeouts.Write) * time.Second
+	s.Echo.Server.IdleTimeout = time.Duration(s.conf.Frontend.Timeouts.Idle) * time.Second
+	s.Echo.Static("/assets", s.conf.Frontend.Assets)
+	s.Echo.Renderer = &templates.TemplateRenderer{
+		Templates: template.Must(templates.ParseTemplates(s.conf.Frontend.Templates)),
+	}
 }
 
 // setMiddlewares add all middlewares to "echo" server.
 func (s *Service) setMiddlewares() {
-	s.Params = s.conf.GetAPIParams()
+	s.Params = s.conf.GetFrontendParams()
 
 	s.Params.PreMiddlewares = []echo.MiddlewareFunc{
 		echoframework.PreMiddlewareLogger(s.logger, true),
@@ -125,7 +132,7 @@ func (s *Service) setMiddlewares() {
 
 	s.Params.HTTPErrorHandler = s.errorHandler()
 
-	s.Params.RecoverDisabled = !s.conf.API.Recover
+	s.Params.RecoverDisabled = !s.conf.Frontend.Recover
 
 	if s.conf.App.LogLevel == debug {
 		pprof.Register(s.Echo)
@@ -191,10 +198,10 @@ func (s *Service) Serve(ctx context.Context) error {
 				s.provide()
 			case service.Heartbeat:
 				client := resty.New().R().EnableTrace()
-				hostPort := net.JoinHostPort(s.conf.API.Host, strconv.Itoa(s.conf.API.Port))
+				hostPort := net.JoinHostPort(s.conf.Frontend.Host, strconv.Itoa(s.conf.Frontend.Port))
 				url := fmt.Sprintf("%s://%s/health/alive", "http", hostPort)
 				go func() {
-					ticker := time.NewTicker(time.Duration(s.conf.API.Health.Frequency) * time.Second)
+					ticker := time.NewTicker(time.Duration(s.conf.Frontend.Health.Frequency) * time.Second)
 					for range ticker.C {
 						if _, err := client.Get(url); err != nil {
 							s.logger.Debug(service.PingKO)

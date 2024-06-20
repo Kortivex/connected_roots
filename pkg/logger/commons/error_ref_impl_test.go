@@ -46,8 +46,7 @@ func TestCastingErrorS(t *testing.T) {
 		err:     errors.New("new error"),
 	}
 
-
-	//println(fmt.Sprintf("%+v", want))
+	// println(fmt.Sprintf("%+v", want))
 
 	if ok := reflect.DeepEqual(err, want); !ok {
 		t.Errorf("got = %v, want %v", err, want)

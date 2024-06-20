@@ -16,7 +16,8 @@ const (
  \____/\___/|_| |_|_| |_|\___|\___|\__\___|\__,_| \_| \_\___/ \___/ \__|___/
 
 %s:
-	* HTTP server will be running at [%s:%d]
+	* HTTP server will be running at [http://%s:%d]
+	* Frontend server will be running at [http://%s:%d]
 https://github.com/Kortivex/connected_roots
 _____________________________________________________________________________________________
 
@@ -25,5 +26,5 @@ ________________________________________________________________________________
 
 // GenerateBanner generates the final string to display the final banner to print.
 func GenerateBanner(conf *config.Config) string {
-	return fmt.Sprintf(banner, conf.App.Name, conf.HTTP.Host, conf.HTTP.Port)
+	return fmt.Sprintf(banner, conf.App.Name, "localhost", conf.API.Port, "localhost", conf.Frontend.Port)
 }

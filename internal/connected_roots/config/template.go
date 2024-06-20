@@ -13,7 +13,25 @@ type App struct {
 	LogLevel string `koanf:"loglevel"`
 }
 
-type HTTP struct {
+type API struct {
+	Protocol string `koanf:"protocol"`
+	Host     string `koanf:"host"`
+	Port     int    `koanf:"port"`
+	Debug    bool   `koanf:"debug"`
+	Recover  bool   `koanf:"recover"`
+	Body     string `koanf:"body"`
+	Timeouts struct {
+		Shutdown int `koanf:"shutdown"`
+		Read     int `koanf:"read"`
+		Write    int `koanf:"write"`
+		Idle     int `koanf:"idle"`
+	} `koanf:"timeouts"`
+	Health struct {
+		Frequency int `koanf:"frequency"`
+	} `koanf:"health"`
+}
+
+type Frontend struct {
 	Protocol  string `koanf:"protocol"`
 	Host      string `koanf:"host"`
 	Port      int    `koanf:"port"`
@@ -58,9 +76,10 @@ type Monitoring struct {
 	Metrics struct {
 		Active     bool `koanf:"active"`
 		Prometheus struct {
-			Disabled bool   `koanf:"disabled"`
-			Service  string `koanf:"service"`
-			Path     string `koanf:"path"`
+			Disabled        bool   `koanf:"disabled"`
+			ServiceBackend  string `koanf:"servicebackend"`
+			ServiceFrontend string `koanf:"servicefrontend"`
+			Path            string `koanf:"path"`
 		} `koanf:"prometheus"`
 	} `koanf:"metrics"`
 	Observability struct {
@@ -76,24 +95,42 @@ type Monitoring struct {
 
 type Config struct {
 	App        `koanf:"app"`
-	HTTP       `koanf:"http"`
+	API        `koanf:"api"`
+	Frontend   `koanf:"frontend"`
 	DB         `koanf:"db"`
 	Monitoring `koanf:"monitoring"`
 }
 
-func (c *Config) GetHTTPParams() httpserver.Params {
-	readTimeout := time.Duration(c.HTTP.Timeouts.Read) * time.Second
-	writeTimeout := time.Duration(c.HTTP.Timeouts.Write) * time.Second
-	idleTimeout := time.Duration(c.HTTP.Timeouts.Idle) * time.Second
+func (c *Config) GetAPIParams() httpserver.Params {
+	readTimeout := time.Duration(c.API.Timeouts.Read) * time.Second
+	writeTimeout := time.Duration(c.API.Timeouts.Write) * time.Second
+	idleTimeout := time.Duration(c.API.Timeouts.Idle) * time.Second
 
 	return httpserver.Params{
-		Port:                  fmt.Sprintf("%d", c.HTTP.Port),
-		BodyLimit:             c.HTTP.Body,
-		PrometheusServiceName: c.Monitoring.Metrics.Prometheus.Service,
+		Port:                  fmt.Sprintf("%d", c.API.Port),
+		BodyLimit:             c.API.Body,
+		PrometheusServiceName: c.Monitoring.Metrics.Prometheus.ServiceBackend,
 		PrometheusDisabled:    &c.Monitoring.Metrics.Prometheus.Disabled,
 		WriteTimeout:          &writeTimeout,
 		ReadTimeout:           &readTimeout,
 		IdleTimeout:           &idleTimeout,
-		RecoverDisabled:       !c.Recover,
+		RecoverDisabled:       !c.API.Recover,
+	}
+}
+
+func (c *Config) GetFrontendParams() httpserver.Params {
+	readTimeout := time.Duration(c.Frontend.Timeouts.Read) * time.Second
+	writeTimeout := time.Duration(c.Frontend.Timeouts.Write) * time.Second
+	idleTimeout := time.Duration(c.Frontend.Timeouts.Idle) * time.Second
+
+	return httpserver.Params{
+		Port:                  fmt.Sprintf("%d", c.Frontend.Port),
+		BodyLimit:             c.Frontend.Body,
+		PrometheusServiceName: c.Monitoring.Metrics.Prometheus.ServiceFrontend,
+		PrometheusDisabled:    &c.Monitoring.Metrics.Prometheus.Disabled,
+		WriteTimeout:          &writeTimeout,
+		ReadTimeout:           &readTimeout,
+		IdleTimeout:           &idleTimeout,
+		RecoverDisabled:       !c.Frontend.Recover,
 	}
 }
