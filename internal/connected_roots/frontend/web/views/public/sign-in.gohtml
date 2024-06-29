@@ -1,0 +1,56 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+<main class="main" id="top">
+    <div class="container">
+        <div class="row flex-center min-vh-100 py-5">
+            <div class="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><a
+                        class="d-flex flex-center text-decoration-none mb-4" href="/">
+                    <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block"><img
+                                src="assets/img/icons/logo.png" alt="{{.site_title}}" width="256"/>
+                    </div>
+                </a>
+                <div class="text-center mb-7">
+                    <h3 class="text-body-highlight">{{.sign_in_label}}</h3>
+                </div>
+                <form id="login-form" method="POST" action="/login" enctype="application/x-www-form-urlencoded">
+                    <div class="mb-3 text-start">
+                        <label class="form-label" for="email">{{.email_label}}</label>
+                        <div class="form-icon-container">
+                            <input class="form-control form-icon-input" id="email" name="email" type="email"
+                                   placeholder="{{.email_placeholder}}"/><span
+                                    class="fas fa-user text-body fs-9 form-icon"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label class="form-label" for="password">{{.password_label}}</label>
+                        <div class="form-icon-container" data-password="data-password">
+                            <input class="form-control form-icon-input pe-6" id="password" name="password"
+                                   type="password" placeholder="{{.password_placeholder}}"
+                                   data-password-input="data-password-input"/><span
+                                    class="fas fa-key text-body fs-9 form-icon"></span>
+                            <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                                    data-password-toggle="data-password-toggle">
+                                <span class="uil uil-eye show"></span><span class="uil uil-eye-slash hide"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary w-100 mb-3" type="submit" value="{{.sign_in_button}}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

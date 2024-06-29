@@ -1,0 +1,36 @@
+[pages.common]
+site_title = "Connected Roots"
+
+[pages.errors]
+title = "Oops, that shouldn't have happened"
+title_401 = "Access Unauthorized!"
+body_401 = "Halt! Thou art endeavouring to trespass upon a realm not granted unto thee."
+button_401 = "Go Login"
+title_403 = "Access Forbidden!"
+body_403 = "Halt! Thou art endeavouring to trespass upon a realm not granted unto thee."
+button_403 = "Go Login"
+title_404 = "Page Missing!"
+body_404 = "But no worries! You can return to the home page."
+button_404 = "Go Home"
+title_500 = "Unknown error!"
+body_500 = "But relax! We will investigate it further."
+button_500 = "Go Home"
+
+[pages.login]
+title = "Login"
+sign_in_label = "Sign In"
+email_label = "Email address"
+email_placeholder = "your@email.com"
+password_label = "Password"
+password_placeholder = "Password"
+sign_in_button = "Sign In"
+
+[errors.notifications]
+error_title = "Error"
+
+[errors.common]
+parse_form = "Error on parse form"
+
+[errors.login]
+empty_email_or_password = "Empty email or password"
+invalid_credentials = "Invalid credentials"

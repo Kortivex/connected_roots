@@ -116,6 +116,14 @@ func (s *Service) setMiddlewares() {
 		telecho.DumpContentToSpan(),                             // save req/resp bodies in the span
 
 		echoframework.PostMiddlewareLogger(250*time.Millisecond, "warn"),
+
+		middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+			KeyLookup:  "header:" + echo.HeaderAuthorization,
+			AuthScheme: "Bearer",
+			Validator: func(key string, c echo.Context) (bool, error) {
+				return key == s.conf.API.APIKey, nil
+			},
+		}),
 	}
 
 	s.Params.HTTPErrorHandlerMiddlewares = []httpserver.HTTPErrorHandlerMiddleware{
@@ -140,7 +148,7 @@ func (s *Service) errorHandler() func(err error, c echo.Context) {
 		}
 
 		if eS.ErrorStatus() == 0 {
-			err = &errs.ErrorResponse{Err: commons.ErrorS{
+			err = &errs.APIResponseError{Err: commons.ErrorS{
 				Status:  http.StatusInternalServerError,
 				Message: "something went wrong",
 			}}
@@ -191,6 +199,8 @@ func (s *Service) Serve(ctx context.Context) error {
 				s.provide()
 			case service.Heartbeat:
 				client := resty.New().R().EnableTrace()
+				client.SetAuthScheme("Bearer")
+				client.SetAuthToken(s.conf.API.APIKey)
 				hostPort := net.JoinHostPort(s.conf.API.Host, strconv.Itoa(s.conf.API.Port))
 				url := fmt.Sprintf("%s://%s/health/alive", "http", hostPort)
 				go func() {

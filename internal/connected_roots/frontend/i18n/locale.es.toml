@@ -1,0 +1,36 @@
+[pages.common]
+site_title = "Raíces Conectadas"
+
+[pages.errors]
+title = "Ups, eso no debería haber pasado"
+title_401 = "¡Acceso no Autorizado!"
+body_401 = "¡Alto! Estás intentando traspasar a un domino que no se te ha sido concedido."
+button_401 = "Iniciar Sesión"
+title_403 = "¡Acceso Prohibido!"
+body_403 = "¡Alto! Estás intentando traspasar a un domino que no se te ha sido concedido."
+button_403 = "Iniciar Sesión"
+title_404 = "¡Página no Encontrada!"
+body_404 = "¡Pero no te preocupes! Puedes volver a la página de inicio."
+button_404 = "Volver al Inicio"
+title_500 = "¡Error desconocido!"
+body_500 = "¡Pero relájate! Lo investigaremos más a fondo."
+button_500 = "Volver al Inicio"
+
+[pages.login]
+title = "Login"
+sign_in_label = "Iniciar Sesión"
+email_label = "Correo electrónico"
+email_placeholder = "tu@email.com"
+password_label = "Contraseña"
+password_placeholder = "Contraseña"
+sign_in_button = "Iniciar Sesión"
+
+[errors.notifications]
+error_title = "Error"
+
+[errors.common]
+parse_form = "Error parseando el formulario"
+
+[errors.login]
+empty_email_or_password = "Email o contraseña vacios"
+invalid_credentials = "Credenciales inválidas"

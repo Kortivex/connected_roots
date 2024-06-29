@@ -1,73 +1,56 @@
 package errors
 
 import (
-	"errors"
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/Kortivex/connected_roots/pkg/utils"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 )
 
-type ErrorResponse struct {
+type APIResponseError struct {
 	Err commons.ErrorS `json:"error"`
 }
 
-func (e *ErrorResponse) ErrorStatus() int {
+func (e *APIResponseError) ErrorStatus() int {
 	return e.Err.Status
 }
 
-func (e *ErrorResponse) ErrorMessage() string {
+func (e *APIResponseError) ErrorMessage() string {
 	return e.Err.Message
 }
 
-func (e *ErrorResponse) ErrorDetails() map[string]any {
+func (e *APIResponseError) ErrorDetails() map[string]any {
 	return e.Err.Details
 }
 
-func (e *ErrorResponse) Error() string {
-	return fmt.Sprintf("ResponseError %d: %s", e.Err.Status, e.Err.Message)
+func (e *APIResponseError) Error() string {
+	return fmt.Sprintf("APIResponseError %d: %s", e.Err.Status, e.Err.Message)
 }
 
-func (e *ErrorResponse) Unwrap() error {
-	return nil
+func (e *APIResponseError) Unwrap() error {
+	return &e.Err
 }
 
-// NewErrorResponse This function checks if an error exists in the errorsMap, and if so, returns its associated value,
-// otherwise it returns an internal server error.
 func NewErrorResponse(c echo.Context, err error) error {
-	unwrapped := errors.Unwrap(err)
-	if unwrapped != nil {
-		for {
-			auxUnwrap := errors.Unwrap(unwrapped)
-			if auxUnwrap == nil {
-				break
-			}
-			unwrapped = auxUnwrap
-		}
-		err = unwrapped
-	}
-
-	errResponse := &ErrorResponse{Err: matchError(err)}
-	if err = c.JSON(errResponse.Err.Status, errResponse); err != nil {
+	errRes := &APIResponseError{Err: *matchError(fmt.Errorf("%w", err))}
+	if err := c.JSON(errRes.Err.Status, errRes); err != nil {
 		return err
 	}
 
-	return errResponse
+	return errRes
 }
 
-func matchError(err error) commons.ErrorS {
-	switch e := err.(type) {
-	case *commons.ErrorS:
-		return *e
-	}
+func matchError(err error) *commons.ErrorS {
+	switch e := utils.UnwrapErr(err).(type) {
+	default:
+		if value, ok := errorAPIMap[e.Error()]; ok {
+			return commons.NewErrorS(value.Status, value.Message, value.Details, err).(*commons.ErrorS)
+		}
 
-	if value, ok := errorAPIMap[err.Error()]; ok {
-		return value
-	}
-
-	return commons.ErrorS{
-		Status:  http.StatusInternalServerError,
-		Message: ErrSomethingWentWrong.Error(),
+		return commons.NewErrorS(http.StatusInternalServerError, ErrSomethingWentWrong.Error(), nil, err).(*commons.ErrorS)
 	}
 }

@@ -4,7 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/BurntSushi/toml"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend"
+	"github.com/Kortivex/connected_roots/pkg/sdk"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/pkg/telemetry"
@@ -36,36 +41,42 @@ func Start() {
 	supervisor.ServeBackground(ctx)
 
 	// Init Base Services.
-	globCtx := &connected_roots.Context{}
+	appCtx := &connected_roots.Context{}
 	// - Init Config.
-	addConfigService(supervisor, globCtx)
+	addConfigService(supervisor, appCtx)
 	// - Print Banner.
-	printBanner(globCtx)
+	printBanner(appCtx)
 	// - Init Logger.
-	addLoggerService(supervisor, globCtx)
+	addLoggerService(supervisor, appCtx)
 
 	// Set Telemetry Env.
-	setTelemetry(globCtx)
+	setTelemetry(appCtx)
 
 	// Init Global Tracer.
 	closer, err := telemetry.InitGlobalTracerProvider(ctx)
 	if err != nil {
-		globCtx.Logger.Fatal(fmt.Errorf("error on initTracer: %w", err).Error())
+		appCtx.Logger.Fatal(fmt.Errorf("error on initTracer: %w", err).Error())
 	}
 	defer func() {
 		if err = closer(ctx); err != nil {
-			globCtx.Logger.Error(fmt.Errorf("error on shutdown tracer: %w", err).Error())
+			appCtx.Logger.Error(fmt.Errorf("error on shutdown tracer: %w", err).Error())
 		}
 	}()
 
+	// Ini SDK.
+	setAPIConfig(appCtx)
+
+	// Init i18n config.
+	setI18NConfig(appCtx)
+
 	// Init Core Services.
-	addDBService(supervisor, globCtx)
+	addDBService(supervisor, appCtx)
 
 	// Init HTTP Server.
-	addHTTPService(supervisor, globCtx)
+	addHTTPService(supervisor, appCtx)
 
 	// Init Frontend Server.
-	addFrontend(supervisor, globCtx)
+	addFrontend(supervisor, appCtx)
 }
 
 func addConfigService(supervisor *suture.Supervisor, ctx *connected_roots.Context) {
@@ -114,6 +125,25 @@ func addFrontend(supervisor *suture.Supervisor, ctx *connected_roots.Context) {
 	frontendSrv.Status <- service.Heartbeat
 
 	<-frontendSrv.Stop
+}
+
+func setAPIConfig(appCtx *connected_roots.Context) {
+	appCtx.SDK = sdk.New(
+		&sdk.APIConfig{
+			APIKey: appCtx.Conf.Thirds.SDK.ConnectedRootsService.APIKey,
+			APIHosts: &sdk.APIHosts{
+				ConnectedRootsService: appCtx.Conf.Thirds.SDK.ConnectedRootsService.Host,
+			},
+			Verbose: appCtx.Conf.Thirds.SDK.Verbose,
+		},
+	)
+}
+
+func setI18NConfig(appCtx *connected_roots.Context) {
+	appCtx.I18n = i18n.NewBundle(language.English)
+	appCtx.I18n.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	appCtx.I18n.MustLoadMessageFile(appCtx.Conf.I18n.Path + "/" + appCtx.Conf.I18n.En)
+	appCtx.I18n.MustLoadMessageFile(appCtx.Conf.I18n.Path + "/" + appCtx.Conf.I18n.Es)
 }
 
 func printBanner(ctx *connected_roots.Context) {

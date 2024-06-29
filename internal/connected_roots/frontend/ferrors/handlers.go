@@ -1,74 +1,41 @@
 package ferrors
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
 
-	"github.com/Kortivex/connected_roots/pkg/logger/commons"
+	"github.com/labstack/echo/v4"
 )
 
-type ErrorResponse struct {
-	Err commons.ErrorS `json:"error"`
+func Error401(c echo.Context) error {
+	return c.Render(http.StatusOK, "401.gohtml", translator.AddDataKeys(CommonErrorsPageI18N(c), map[string]interface{}{
+		"title_401":  translator.T(c, translator.PagesErrorsTitle401),
+		"body_401":   translator.T(c, translator.PagesErrorsBody401),
+		"button_401": translator.T(c, translator.PagesErrorsButton401),
+	}))
 }
 
-func (e *ErrorResponse) ErrorStatus() int {
-	return e.Err.Status
+func Error403(c echo.Context) error {
+	return c.Render(http.StatusOK, "403.gohtml", map[string]interface{}{
+		"title_403":  translator.T(c, translator.PagesErrorsTitle403),
+		"body_403":   translator.T(c, translator.PagesErrorsBody403),
+		"button_403": translator.T(c, translator.PagesErrorsButton403),
+	})
 }
 
-func (e *ErrorResponse) ErrorMessage() string {
-	return e.Err.Message
+func Error404(c echo.Context) error {
+	return c.Render(http.StatusOK, "404.gohtml", map[string]interface{}{
+		"title_404":  translator.T(c, translator.PagesErrorsTitle404),
+		"body_404":   translator.T(c, translator.PagesErrorsBody404),
+		"button_404": translator.T(c, translator.PagesErrorsButton404),
+	})
 }
 
-func (e *ErrorResponse) ErrorDetails() map[string]any {
-	return e.Err.Details
-}
-
-func (e *ErrorResponse) Error() string {
-	return fmt.Sprintf("ResponseError %d: %s", e.Err.Status, e.Err.Message)
-}
-
-func (e *ErrorResponse) Unwrap() error {
-	return nil
-}
-
-// NewErrorResponse This function checks if an error exists in the errorsMap, and if so, returns its associated value,
-// otherwise it returns an internal server error.
-func NewErrorResponse(c echo.Context, err error) error {
-	unwrapped := errors.Unwrap(err)
-	if unwrapped != nil {
-		for {
-			auxUnwrap := errors.Unwrap(unwrapped)
-			if auxUnwrap == nil {
-				break
-			}
-			unwrapped = auxUnwrap
-		}
-		err = unwrapped
-	}
-
-	errResponse := &ErrorResponse{Err: matchError(err)}
-	if err := c.JSON(errResponse.Err.Status, errResponse); err != nil {
-		return err
-	}
-
-	return errResponse
-}
-
-func matchError(err error) commons.ErrorS {
-	switch e := err.(type) {
-	case *commons.ErrorS:
-		return *e
-	}
-
-	if value, ok := errorAPIMap[err.Error()]; ok {
-		return value
-	}
-
-	return commons.ErrorS{
-		Status:  http.StatusInternalServerError,
-		Message: ErrSomethingWentWrong.Error(),
-	}
+func Error500(c echo.Context) error {
+	return c.Render(http.StatusOK, "500.gohtml", map[string]interface{}{
+		"title_500":  translator.T(c, translator.PagesErrorsTitle500),
+		"body_500":   translator.T(c, translator.PagesErrorsBody500),
+		"button_500": translator.T(c, translator.PagesErrorsButton500),
+	})
 }

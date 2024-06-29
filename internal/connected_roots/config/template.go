@@ -20,6 +20,7 @@ type API struct {
 	Debug    bool   `koanf:"debug"`
 	Recover  bool   `koanf:"recover"`
 	Body     string `koanf:"body"`
+	APIKey   string `koanf:"api"`
 	Timeouts struct {
 		Shutdown int `koanf:"shutdown"`
 		Read     int `koanf:"read"`
@@ -37,10 +38,21 @@ type Frontend struct {
 	Port      int    `koanf:"port"`
 	Templates string `koanf:"templates"`
 	Assets    string `koanf:"assets"`
-	Debug     bool   `koanf:"debug"`
-	Recover   bool   `koanf:"recover"`
-	Body      string `koanf:"body"`
-	Timeouts  struct {
+	Cookie    struct {
+		Name   string `koanf:"name"`
+		MaxAge int    `koanf:"maxage"`
+		Key    string `koanf:"key"`
+		Table  string `koanf:"table"`
+	} `koanf:"cookie"`
+	I18n struct {
+		Path string `koanf:"path"`
+		En   string `koanf:"en"`
+		Es   string `koanf:"es"`
+	}
+	Debug    bool   `koanf:"debug"`
+	Recover  bool   `koanf:"recover"`
+	Body     string `koanf:"body"`
+	Timeouts struct {
 		Shutdown int `koanf:"shutdown"`
 		Read     int `koanf:"read"`
 		Write    int `koanf:"write"`
@@ -72,6 +84,16 @@ type DB struct {
 	} `koanf:"postgres"`
 }
 
+type Thirds struct {
+	SDK struct {
+		Verbose               bool `koanf:"verbose"`
+		ConnectedRootsService struct {
+			Host   string `koanf:"host"`
+			APIKey string `koanf:"api"`
+		} `koanf:"connectedrootsservice"`
+	} `koanf:"sdk"`
+}
+
 type Monitoring struct {
 	Metrics struct {
 		Active     bool `koanf:"active"`
@@ -98,6 +120,7 @@ type Config struct {
 	API        `koanf:"api"`
 	Frontend   `koanf:"frontend"`
 	DB         `koanf:"db"`
+	Thirds     `koanf:"thirds"`
 	Monitoring `koanf:"monitoring"`
 }
 

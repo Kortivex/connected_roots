@@ -12,6 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
+
+	"github.com/labstack/echo-contrib/session"
+	"github.com/wader/gormstore/v2"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/web/templates"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
@@ -19,8 +26,6 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/labstack/echo/v4"
 	"github.com/thejerf/suture/v4"
-
-	errs "github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/errors"
 
 	"github.com/Kortivex/connected_roots/pkg/telemetry/telecho"
 	"github.com/labstack/echo/v4/middleware"
@@ -46,6 +51,7 @@ type Service struct {
 	gorm   *gorm.DB
 	logger *logger.Logger
 	conf   *config.Config
+	i18n   *i18n.Bundle
 	ctx    *connected_roots.Context
 }
 
@@ -69,6 +75,7 @@ func NewService(name string, ctx *connected_roots.Context) *Service {
 		gorm:   ctx.Gorm,
 		logger: log,
 		conf:   ctx.Conf,
+		i18n:   ctx.I18n,
 		ctx:    ctx,
 	}
 
@@ -122,6 +129,9 @@ func (s *Service) setMiddlewares() {
 		telecho.MiddlewareDataToSpan(telecho.DefaultDataToSpan), // enrich the span with custom data
 		telecho.DumpContentToSpan(),                             // save req/resp bodies in the span
 
+		session.Middleware(s.setSessionCookie()),
+		s.I18n(),
+
 		echoframework.PostMiddlewareLogger(250*time.Millisecond, "warn"),
 	}
 
@@ -139,6 +149,26 @@ func (s *Service) setMiddlewares() {
 	}
 }
 
+func (s *Service) setSessionCookie() *gormstore.Store {
+	store := gormstore.NewOptions(
+		s.gorm,
+		gormstore.Options{
+			TableName:       s.conf.Cookie.Table,
+			SkipCreateTable: false,
+		},
+		[]byte(s.conf.Cookie.Key),
+	)
+
+	store.SessionOpts.Secure = true
+	store.SessionOpts.HttpOnly = true
+	store.SessionOpts.SameSite = http.SameSiteStrictMode
+	store.SessionOpts.MaxAge = s.conf.Cookie.MaxAge
+
+	quit := make(chan struct{})
+	go store.PeriodicCleanup(1*time.Second, quit)
+	return store
+}
+
 func (s *Service) errorHandler() func(err error, c echo.Context) {
 	return func(err error, c echo.Context) {
 		var eS commons.ErrorI
@@ -146,18 +176,26 @@ func (s *Service) errorHandler() func(err error, c echo.Context) {
 			eS = commons.NewDefaultErrorS(err)
 		}
 
-		if eS.ErrorStatus() == 0 {
-			err = &errs.ErrorResponse{Err: commons.ErrorS{
-				Status:  http.StatusInternalServerError,
-				Message: "something went wrong",
-			}}
-			if err = c.JSON(http.StatusInternalServerError, err); err != nil {
+		switch eS.ErrorStatus() {
+		case http.StatusUnauthorized:
+			if err = ferrors.Error401(c); err != nil {
 				return
 			}
 			return
-		}
-
-		if err = c.JSON(eS.ErrorStatus(), err); err != nil {
+		case http.StatusForbidden:
+			if err = ferrors.Error403(c); err != nil {
+				return
+			}
+			return
+		case http.StatusNotFound:
+			if err = ferrors.Error404(c); err != nil {
+				return
+			}
+			return
+		default:
+			if err = ferrors.Error500(c); err != nil {
+				return
+			}
 			return
 		}
 	}

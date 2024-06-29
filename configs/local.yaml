@@ -14,6 +14,7 @@ api:
     read: 5
     write: 10
     idle: 15
+  api: "4cae8c84-dd29-42f3-8d58-ed371f1bc8ef"
   health:
     frequency: 10 # (Seconds)
 frontend:
@@ -22,6 +23,15 @@ frontend:
   port: 47500
   templates: "internal/connected_roots/frontend/web/views"
   assets: "internal/connected_roots/frontend/web/assets"
+  cookie:
+    name: "session"
+    maxage: 86400
+    key: "ZSPeYlcMLYEW1G3fWmRedM6QkSC2N8Vz6rU5GT3uDWQitRfGn9HHXstVsenPwL2Y"
+    table: "sessions"
+  i18n:
+    path: "internal/connected_roots/frontend/i18n"
+    en: "locale.en.toml"
+    es: "locale.es.toml"
   debug: true
   recover: true
   body: "1M"
@@ -47,11 +57,17 @@ db:
     version: 1
     health:
       frequency: 10 # (Seconds)
+thirds:
+    sdk:
+      verbose: true
+      connectedrootsservice:
+        host: "http://localhost:47400"
+        api: "4cae8c84-dd29-42f3-8d58-ed371f1bc8ef"
 monitoring:
   observability:
     active: true
     otel:
-      sdkdisabled: false
+      sdkdisabled: true
       bodydumpenabled: true
       servicename: "connected_roots"
       exporterotlpendpoint: "http://localhost:4318"
