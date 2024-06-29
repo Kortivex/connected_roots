@@ -3,6 +3,7 @@ package translator
 const (
 	PagesCommonSiteTitle = "pages.common.site_title"
 
+	PagesErrorsTitle     = "pages.errors.title"
 	PagesErrorsTitle401  = "pages.errors.title_401"
 	PagesErrorsBody401   = "pages.errors.body_401"
 	PagesErrorsButton401 = "pages.errors.button_401"

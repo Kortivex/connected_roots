@@ -17,25 +17,25 @@ func Error401(c echo.Context) error {
 }
 
 func Error403(c echo.Context) error {
-	return c.Render(http.StatusOK, "403.gohtml", map[string]interface{}{
+	return c.Render(http.StatusOK, "403.gohtml", translator.AddDataKeys(CommonErrorsPageI18N(c), map[string]interface{}{
 		"title_403":  translator.T(c, translator.PagesErrorsTitle403),
 		"body_403":   translator.T(c, translator.PagesErrorsBody403),
 		"button_403": translator.T(c, translator.PagesErrorsButton403),
-	})
+	}))
 }
 
 func Error404(c echo.Context) error {
-	return c.Render(http.StatusOK, "404.gohtml", map[string]interface{}{
+	return c.Render(http.StatusOK, "404.gohtml", translator.AddDataKeys(CommonErrorsPageI18N(c), map[string]interface{}{
 		"title_404":  translator.T(c, translator.PagesErrorsTitle404),
 		"body_404":   translator.T(c, translator.PagesErrorsBody404),
 		"button_404": translator.T(c, translator.PagesErrorsButton404),
-	})
+	}))
 }
 
 func Error500(c echo.Context) error {
-	return c.Render(http.StatusOK, "500.gohtml", map[string]interface{}{
+	return c.Render(http.StatusOK, "500.gohtml", translator.AddDataKeys(CommonErrorsPageI18N(c), map[string]interface{}{
 		"title_500":  translator.T(c, translator.PagesErrorsTitle500),
 		"body_500":   translator.T(c, translator.PagesErrorsBody500),
 		"button_500": translator.T(c, translator.PagesErrorsButton500),
-	})
+	}))
 }
