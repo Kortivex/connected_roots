@@ -110,7 +110,7 @@ type Monitoring struct {
 			Disabled    bool   `koanf:"sdkdisabled"`
 			DumpEnabled bool   `koanf:"bodydumpenabled"`
 			Service     string `koanf:"servicename"`
-			Addr        string `koanf:"exporterotlpendpoint"`
+			Addr        string `koanf:"exporterotlendpoint"`
 		} `koanf:"otel"`
 	} `koanf:"observability"`
 }
