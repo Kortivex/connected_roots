@@ -17,6 +17,7 @@ const (
 	tracingSession        = "service.session"
 	tracingSessionSave    = "service.session.save"
 	tracingSessionObtain  = "service.session.obtain"
+	tracingSessionClose   = "service.session.close"
 	tracingSessionIsValid = "service.session.is-valid"
 )
 
@@ -91,4 +92,15 @@ func (s *Service) IsValid(ctx context.Context, c echo.Context) (*connected_roots
 	}
 
 	return sn, true, nil
+}
+
+func (s *Service) Close(ctx context.Context, c echo.Context) error {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSessionClose)
+	defer span.End()
+
+	if err := s.sessionRep.Delete(ctx, c); err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionClose, err)
+	}
+
+	return nil
 }

@@ -17,6 +17,7 @@ const (
 	tracingSession       = "repository-db.session"
 	tracingSessionCreate = "repository-db.session.create"
 	tracingSessionGet    = "repository-db.session.get"
+	tracingSessionDelete = "repository-db.session.delete"
 )
 
 type Repository struct {
@@ -80,4 +81,43 @@ func (r *Repository) Get(ctx context.Context, c echo.Context) (*connected_roots.
 	log.Debug(fmt.Sprintf("session: %+v", result))
 
 	return toDomain(result), nil
+}
+
+func (r *Repository) Delete(ctx context.Context, c echo.Context) error {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSessionDelete)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSessionDelete)
+
+	result, err := session.Get(r.conf.Cookie.Name, c)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionDelete, err)
+	}
+
+	log.Debug(fmt.Sprintf("session: %+v", result))
+
+	cookie, err := c.Cookie(r.conf.Cookie.Name)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionDelete, err)
+	}
+	cookie.MaxAge = -1
+	cookie.Value = ""
+	c.SetCookie(cookie)
+
+	log.Debug(fmt.Sprintf("cookie: %+v", cookie))
+
+	deleteRes := r.db.WithContext(ctx).Model(&Sessions{}).
+		Unscoped().
+		Delete(&result)
+
+	if deleteRes.Error != nil {
+		return fmt.Errorf("%s: %w", tracingSessionDelete, deleteRes.Error)
+	}
+
+	if deleteRes.Error == nil && deleteRes.RowsAffected == 0 {
+		return fmt.Errorf("%s: %w", tracingSessionDelete, gorm.ErrRecordNotFound)
+	}
+
+	return nil
 }

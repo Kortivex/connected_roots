@@ -25,6 +25,13 @@ password_label = "Contraseña"
 password_placeholder = "Contraseña"
 sign_in_button = "Iniciar Sesión"
 
+[pages.logout]
+title = "Logout"
+logout_label = "¡Vuelve pronto!"
+thanks_label = "Gracias por usar Raíces Conectadas."
+logout_information = "Ahora has cerrado sesión correctamente."
+logout_button = "Iniciar Sesión"
+
 [errors.notifications]
 error_title = "Error"
 

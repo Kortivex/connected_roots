@@ -25,6 +25,12 @@ const (
 	PagesLoginPasswordPlaceholder = "pages.login.password_placeholder"
 	PagesLoginSignInButton        = "pages.login.sign_in_button"
 
+	PagesLogoutTitle             = "pages.logout.title"
+	PagesLogoutLogoutLabel       = "pages.logout.logout_label"
+	PagesLogoutThanksLabel       = "pages.logout.thanks_label"
+	PagesLogoutLogoutInformation = "pages.logout.logout_information"
+	PagesLogoutLogoutButton      = "pages.logout.logout_button"
+
 	ErrorsCommonParseForm           = "errors.common.parse_form"
 	ErrorsLoginEmptyEmailOrPassword = "errors.login.empty_email_or_password"
 	ErrorsLoginInvalidCredentials   = "errors.login.invalid_credentials"

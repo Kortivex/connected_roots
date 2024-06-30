@@ -25,6 +25,13 @@ password_label = "Password"
 password_placeholder = "Password"
 sign_in_button = "Sign In"
 
+[pages.logout]
+title = "Logout"
+logout_label = "Come back soon!"
+thanks_label = "Thanks for using Connected Roots."
+logout_information = "You are now successfully signed out."
+logout_button = "Go Login"
+
 [errors.notifications]
 error_title = "Error"
 

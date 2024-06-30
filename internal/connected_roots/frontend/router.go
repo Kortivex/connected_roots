@@ -3,6 +3,8 @@ package frontend
 import (
 	"net/http"
 
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/logout"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/login"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/home"
@@ -21,6 +23,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	loginHandler := login.NewLoginHandlers(ctx)
 	s.Echo.GET("/login", loginHandler.GetLoginHandler).Name = "get-login"
 	s.Echo.POST("/login", loginHandler.PostLoginHandler).Name = "post-login"
+
+	logoutHandler := logout.NewLogoutHandlers(ctx)
+	s.Echo.GET("/logout", logoutHandler.GetLogoutHandler, s.SessionMiddleware).Name = "get-logout"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

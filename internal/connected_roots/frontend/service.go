@@ -172,7 +172,10 @@ func (s *Service) setSessionCookie() *gormstore.Store {
 func (s *Service) errorHandler() func(err error, c echo.Context) {
 	return func(err error, c echo.Context) {
 		var eS commons.ErrorI
-		if ok := errors.As(err, &eS); !ok {
+		var eC *echo.HTTPError
+		if ok := errors.As(err, &eC); ok {
+			eS = commons.NewErrorS(eC.Code, eC.Message.(string), nil, err)
+		} else if ok = errors.As(err, &eS); !ok {
 			eS = commons.NewDefaultErrorS(err)
 		}
 
