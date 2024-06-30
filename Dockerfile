@@ -12,6 +12,13 @@ RUN go build -a -installsuffix cgo -o /bin/app cmd/connected_roots/main.go
 FROM gcr.io/distroless/base-debian12:latest
 COPY --from=builder /bin/app /bin/app
 
-COPY configs/* /data/config/
+# Copy config.
+COPY configs/local.yaml /data/config/local.yaml
+# Copy assets.
+COPY internal/connected_roots/frontend/web/assets/. /data/web/assets/
+# Copy templates views.
+COPY internal/connected_roots/frontend/web/views/. /data/web/views/
+# Copy i18n files.
+COPY internal/connected_roots/frontend/i18n/*.toml /data/web/i18n/
 
 CMD ["/bin/app"]

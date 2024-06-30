@@ -11,14 +11,24 @@ services:
     networks:
       - dev-network
     ports:
-      - '47400:47400'
+      - '47400:47400' # api
+      - '47500:47500' # frontend
     expose:
-      - '47400'
+      - '47400' # api
+      - '47500' # frontend
     environment:
-      - CONFIG_PATH=./configs/
+      - CONFIG_PATH=/data/configs/
       - APP_LOGLEVEL=debug
+      - FRONTEND_TEMPLATES=/data/web/views
+      - FRONTEND_ASSETS=/data/web/assets
+      - FRONTEND_I18N_PATH=/data/web/i18n
+      - DB_POSTGRES_DSN=postgres://connected_roots_role:Password1@postgres:5432/connected_roots?sslmode=disable&search_path=sc_connected_roots&connect_timeout=4
+      - THIRD_SDK_VERBOSE=true
+      - THIRD_SDK_CONNECTEDROOTSSERVICE_HOST=http://localhost:47400
+      - MONITORING_OBSERVABILITY_OTEL_SDKDISABLED=false
+      - MONITORING_OBSERVABILITY_OTEL_EXPORTEROTLENDPOINT=http://tempo:4318
     volumes:
-      - ./configs/:/configs/
+      - ./configs/:/data/configs/
 
   postgres:
     image: postgres:16.3
