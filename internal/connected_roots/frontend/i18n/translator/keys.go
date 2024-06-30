@@ -1,6 +1,15 @@
 package translator
 
 const (
+	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
+	NavbarLabelsRoleNavLabel           = "navbar.labels.role_nav_label"
+	NavbarLabelsRoleNavManagementLabel = "navbar.labels.role_nav_management_label"
+	NavbarLabelsUserNavLabel           = "navbar.labels.user_nav_label"
+	NavbarLabelsUserNavManagementLabel = "navbar.labels.user_nav_management_label"
+	NavbarLabelsCollapsedViewLabel     = "navbar.labels.collapsed_view_label"
+
+	PagesAdminRolesTitle = "pages.admin.roles.title"
+
 	PagesCommonSiteTitle = "pages.common.site_title"
 
 	PagesErrorsTitle     = "pages.errors.title"

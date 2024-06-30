@@ -1,3 +1,14 @@
+[navbar.labels]
+admin_nav_label = "Admin"
+role_nav_label = "Roles"
+role_nav_management_label = "Management"
+user_nav_label = "Users"
+user_nav_management_label = "Management"
+collapsed_view_label = "Collapsed View"
+
+[pages.admin.roles]
+title = "Roles"
+
 [pages.common]
 site_title = "Connected Roots"
 

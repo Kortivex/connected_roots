@@ -1,3 +1,14 @@
+[navbar.labels]
+admin_nav_label = "Admin"
+role_nav_label = "Roles"
+role_nav_management_label = "Administrar"
+user_nav_label = "Usuarios"
+user_nav_management_label = "Administrar"
+collapsed_view_label = "Contraer Vista"
+
+[pages.admin.roles]
+title = "Roles"
+
 [pages.common]
 site_title = "Raíces Conectadas"
 
