@@ -6,6 +6,10 @@ user_nav_label = "Users"
 user_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
 
+[topbar.labels]
+profile_label = "Profile"
+sign_out_label = "Sign Out"
+
 [pages.admin.roles]
 title = "Roles"
 

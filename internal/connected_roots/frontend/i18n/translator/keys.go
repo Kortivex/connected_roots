@@ -8,6 +8,9 @@ const (
 	NavbarLabelsUserNavManagementLabel = "navbar.labels.user_nav_management_label"
 	NavbarLabelsCollapsedViewLabel     = "navbar.labels.collapsed_view_label"
 
+	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
+	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
+
 	PagesAdminRolesTitle = "pages.admin.roles.title"
 
 	PagesCommonSiteTitle = "pages.common.site_title"
