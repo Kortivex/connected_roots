@@ -8,6 +8,8 @@ type Session struct {
 	ID       string  `json:"id"`
 	Email    string  `json:"email"`
 	UserID   string  `json:"user_id"`
+	Name     string  `json:"name"`
+	Surname  string  `json:"surname"`
 	Language string  `json:"language"`
 	Role     string  `json:"role"`
 	Cookie   *Cookie `json:"cookie,omitempty"`

@@ -50,6 +50,8 @@ func (r *Repository) Create(ctx context.Context, c echo.Context, sess *connected
 	}
 	result.Values["email"] = sess.Email
 	result.Values["user_id"] = sess.UserID
+	result.Values["name"] = sess.Name
+	result.Values["surname"] = sess.Surname
 	result.Values["language"] = sess.Language
 	result.Values["role_id"] = sess.Role
 	if err = result.Save(c.Request(), c.Response()); err != nil {

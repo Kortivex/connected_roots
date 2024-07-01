@@ -16,6 +16,16 @@ func toDomain(session *sessions.Session) *connected_roots.Session {
 		userID = userIDVal.(string)
 	}
 
+	name := ""
+	if nameVal, ok := session.Values["name"]; ok {
+		name = nameVal.(string)
+	}
+
+	surname := ""
+	if surnameVal, ok := session.Values["surname"]; ok {
+		surname = surnameVal.(string)
+	}
+
 	language := ""
 	if languageVal, ok := session.Values["language"]; ok {
 		language = languageVal.(string)
@@ -30,6 +40,8 @@ func toDomain(session *sessions.Session) *connected_roots.Session {
 		ID:       session.ID,
 		Email:    email,
 		UserID:   userID,
+		Name:     name,
+		Surname:  surname,
 		Language: language,
 		Role:     roleID,
 		Cookie: &connected_roots.Cookie{

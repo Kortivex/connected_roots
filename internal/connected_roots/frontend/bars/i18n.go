@@ -1,4 +1,4 @@
-package navbar
+package bars
 
 import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
@@ -13,5 +13,12 @@ func CommonNavBarI18N(c echo.Context) map[string]interface{} {
 		"user_nav_label":            translator.T(c, translator.NavbarLabelsUserNavLabel),
 		"user_nav_management_label": translator.T(c, translator.NavbarLabelsUserNavManagementLabel),
 		"collapsed_view_label":      translator.T(c, translator.NavbarLabelsCollapsedViewLabel),
+	}
+}
+
+func CommonTopBarI18N(c echo.Context, name, surname string) map[string]interface{} {
+	return map[string]interface{}{
+		"user_name":    name,
+		"user_surname": surname,
 	}
 }

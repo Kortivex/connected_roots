@@ -121,7 +121,14 @@ func (h *Handlers) PostLoginHandler(c echo.Context) error {
 		}))
 	}
 
-	sess := &connected_roots.Session{Email: user.Email, UserID: user.ID, Language: user.Language, Role: user.Role.Name}
+	sess := &connected_roots.Session{
+		Email:    user.Email,
+		UserID:   user.ID,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Language: user.Language,
+		Role:     user.Role.Name}
+
 	if _, err = h.sessionSvc.Save(ctx, c, sess); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
