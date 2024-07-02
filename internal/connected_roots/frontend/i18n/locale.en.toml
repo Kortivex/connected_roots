@@ -1,3 +1,8 @@
+[breadcrumb]
+user = "User"
+profile = "Profile"
+edit_profile = "Edit Profile"
+
 [navbar.labels]
 admin_nav_label = "Admin"
 role_nav_label = "Roles"
@@ -5,6 +10,10 @@ role_nav_management_label = "Management"
 user_nav_label = "Users"
 user_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
+
+[notifications.edit.profile]
+success_title = "Edit profile success"
+success_message = "Profile has been edited successfully"
 
 [topbar.labels]
 profile_label = "Profile"
@@ -46,6 +55,24 @@ logout_label = "Come back soon!"
 thanks_label = "Thanks for using Connected Roots."
 logout_information = "You are now successfully signed out."
 logout_button = "Go Login"
+
+[pages.profile]
+title = "Profile"
+button_edit_profile = "Edit profile"
+joined_at_label = "Joined at"
+data_label = "Data"
+email_label = "Email"
+phone_label = "Phone"
+
+[pages.profile.edit]
+title = "Edit Profile"
+name_label = "Name"
+name_placeholder = "Name"
+surname_label = "Surname"
+surname_placeholder = "Surname"
+email_label = "Email address"
+phone_label = "Phone"
+button_submit = "Submit"
 
 [errors.notifications]
 error_title = "Error"

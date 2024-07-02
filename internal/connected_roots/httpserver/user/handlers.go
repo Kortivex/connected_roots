@@ -19,6 +19,7 @@ const (
 	tracingUsersHandlers = "http-handler.user"
 
 	tracingGetUsersHandlers      = "http-handler.user.get-user"
+	tracingPatchUsersHandlers    = "http-handler.user.patch-user"
 	tracingPostUsersAuthHandlers = "http-handler.user.post-user-auth"
 
 	userIDParam = "user_id"
@@ -67,6 +68,44 @@ func (h *UsersHandlers) GetUserHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, userRes)
+}
+
+func (h *UsersHandlers) PatchUserPartiallyHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingPatchUsersHandlers)
+	defer span.End()
+
+	userID := c.Param(userIDParam)
+	var userRes *connected_roots.Users
+	var err error
+
+	userBody := &connected_roots.Users{}
+	if err = c.Bind(userBody); err != nil {
+		err = fmt.Errorf("%s: %w", tracingPatchUsersHandlers, errors.ErrBodyBadRequestWrongBody)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	if utils.IsValidEmail(userID) {
+		userRes, err = h.userSvc.ObtainFromEmail(ctx, userID)
+		if err != nil {
+			return errors.NewErrorResponse(c, err)
+		}
+	} else {
+		userRes, err = h.userSvc.ObtainFromID(ctx, userID)
+		if err != nil {
+			return errors.NewErrorResponse(c, err)
+		}
+	}
+
+	userRes.Name = userBody.Name
+	userRes.Surname = userBody.Surname
+	userRes.Telephone = userBody.Telephone
+
+	userRes, err = h.userSvc.Update(ctx, userRes)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusCreated, userRes)
 }
 
 func (h *UsersHandlers) PostUserAuthHandler(c echo.Context) error {

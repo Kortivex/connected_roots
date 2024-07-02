@@ -2,13 +2,11 @@ package login
 
 import (
 	"fmt"
+	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
 	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
-
-	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
-
-	"github.com/Kortivex/connected_roots/pkg/sdk"
 
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 

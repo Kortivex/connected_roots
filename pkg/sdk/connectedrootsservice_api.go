@@ -3,18 +3,17 @@ package sdk
 import (
 	"context"
 	"fmt"
-
-	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
-
 	"github.com/Kortivex/connected_roots/pkg/logger"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
 	"go.opentelemetry.io/otel"
 
 	"github.com/go-resty/resty/v2"
 )
 
 const (
-	tracingConnectedRootsServiceGetUserAPI = "connected-roots-service.http-client: get /users/:user_id"
-	traciConnectedRootsPostUserAuthAPI     = "connected-roots-service.http-client: post /users/:user_id/auth"
+	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get /users/:user_id"
+	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
+	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -24,6 +23,7 @@ type ConnectedRootsServiceAPI struct {
 
 type IConnectedRootsServiceAPI interface {
 	GETUser(ctx context.Context, userID string) (*resty.Response, error)
+	PATCHUserPartially(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
 }
 
@@ -55,6 +55,29 @@ func (c *ConnectedRootsServiceAPI) GETUser(ctx context.Context, userID string) (
 		SetResult(&sdk_models.UsersResponse{}).
 		SetError(&APIError{}).
 		Get(fmt.Sprintf("/users/%s", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PATCHUserPartially(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServicePatchUserPartiallyAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsServicePatchUserPartiallyAPI)
+
+	log.Debug(fmt.Sprintf("request [POST] /users/%s with body: %v", user.Email, user))
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(user).
+		SetResult(&sdk_models.UsersResponse{}).
+		SetError(&APIError{}).
+		Patch(fmt.Sprintf("/users/%s", user.Email))
 	if err != nil {
 		return nil, err
 	}

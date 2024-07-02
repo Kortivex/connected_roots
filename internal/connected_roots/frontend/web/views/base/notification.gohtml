@@ -1,7 +1,7 @@
 {{define "notification"}}
     {{if .notification_type}}
-        <div class="top-right mb-4" aria-live="polite" aria-atomic="true" style="min-height: 130px;">
-            <div class="toast show bg-gradient {{if eq .notification_type "error"}}bg-danger-light{{else if eq .notification_type "success"}}bg-success-light{{end}}">
+        <div id="notification-toast" class="top-right mb-4 mt-5 pt-5" aria-live="polite" aria-atomic="true" style="min-height: 130px;">
+            <div  class="toast show bg-gradient {{if eq .notification_type "error"}}bg-danger-light{{else if eq .notification_type "success"}}bg-success-light{{end}}">
                 <div class="toast-header">
                     <strong class="me-auto">{{.notification_title}}</strong>
                     <small class="text-body-secondary"></small>

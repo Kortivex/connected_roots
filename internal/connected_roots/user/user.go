@@ -18,6 +18,8 @@ const (
 	tracingUser                = "service.user"
 	tracingUserObtainFromEmail = "service.user.obtain-from-email"
 	tracingUserObtainFromID    = "service.user.obtain-from-id"
+	tracingUserUpdate          = "service.user.update"
+	tracingUserIsValidPassword = "service.user.is-valid-password"
 )
 
 type Service struct {
@@ -72,16 +74,33 @@ func (s *Service) ObtainFromEmail(ctx context.Context, email string) (*connected
 	return usr, nil
 }
 
-func (s *Service) IsValidPassword(ctx context.Context, email, password string) (bool, error) {
-	_, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserObtainFromEmail)
+func (s *Service) Update(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserUpdate)
 	defer span.End()
 
 	loggerNew := s.logger.New()
-	log := loggerNew.WithTag(tracingUserObtainFromEmail)
+	log := loggerNew.WithTag(tracingUserUpdate)
+
+	usr, err := s.userRep.UpdateAll(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserUpdate, err)
+	}
+
+	log.Debug(fmt.Sprintf("user: %+v", usr))
+
+	return usr, nil
+}
+
+func (s *Service) IsValidPassword(ctx context.Context, email, password string) (bool, error) {
+	_, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserIsValidPassword)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingUserIsValidPassword)
 
 	usr, err := s.userRep.GetBy(ctx, "email", email)
 	if err != nil {
-		return false, fmt.Errorf("%s: %w", tracingUserObtainFromEmail, err)
+		return false, fmt.Errorf("%s: %w", tracingUserIsValidPassword, err)
 	}
 
 	log.Debug(fmt.Sprintf("user: %+v", usr))

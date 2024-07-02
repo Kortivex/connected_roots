@@ -16,6 +16,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	usersHandler := user.NewUsersHandlers(ctx)
 	usersGrp := s.Echo.Group("/users")
 	usersGrp.GET("/:user_id", usersHandler.GetUserHandler).Name = "get-user"
+	usersGrp.PATCH("/:user_id", usersHandler.PatchUserPartiallyHandler).Name = "patch-user"
 	usersGrp.POST("/:user_id/auth", usersHandler.PostUserAuthHandler).Name = "post-user-auth"
 
 	// Health endpoints.

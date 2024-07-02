@@ -1,7 +1,10 @@
 package frontend
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/user"
 	"net/http"
+
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/role"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/logout"
 
@@ -20,12 +23,33 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	homeHandler := home.NewHomeHandlers(ctx)
 	s.Echo.GET("/", homeHandler.GetHomeHandler).Name = "get-home"
 
+	// Login endpoints.
 	loginHandler := login.NewLoginHandlers(ctx)
 	s.Echo.GET("/login", loginHandler.GetLoginHandler).Name = "get-login"
 	s.Echo.POST("/login", loginHandler.PostLoginHandler).Name = "post-login"
 
+	// Logout endpoints.
 	logoutHandler := logout.NewLogoutHandlers(ctx)
 	s.Echo.GET("/logout", logoutHandler.GetLogoutHandler, s.SessionMiddleware).Name = "get-logout"
+
+	// Users endpoints.
+	usersHandler := user.NewUsersHandlers(ctx)
+	usersGrp := s.Echo.Group("/users")
+	usersGrp.GET("/profile", usersHandler.GetUserProfileHandler, s.SessionMiddleware).Name = "get-user-profile"
+	usersGrp.GET("/profile/edit", usersHandler.GetEditUserProfileHandler, s.SessionMiddleware).Name = "get-edit-user-profile"
+	usersGrp.POST("/profile/edit", usersHandler.PostEditUserProfileHandler, s.SessionMiddleware).Name = "post-edit-user-profile"
+
+	// Admin endpoints.
+	adminGrp := s.Echo.Group("/admin")
+
+	// Role endpoints.
+	rolesHandler := role.NewRolesHandlers(ctx)
+	rolesGrp := adminGrp.Group("/roles")
+	rolesGrp.GET("", rolesHandler.ListRolesHandler, s.SessionMiddleware).Name = "list-roles"
+	/*	rolesGrp.GET("/new", rolesHandler.NewRoleHandler, s.SessionMiddleware).Name = "new-role"
+		rolesGrp.GET("/edit", rolesHandler.EditRoleHandler, s.SessionMiddleware).Name = "edit-role"
+		rolesGrp.GET("/delete", rolesHandler.DeleteRoleHandler, s.SessionMiddleware).Name = "delete-role"
+	*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

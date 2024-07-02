@@ -1,12 +1,19 @@
 package translator
 
 const (
+	BreadcrumbUser        = "breadcrumb.user"
+	BreadcrumbProfile     = "breadcrumb.profile"
+	BreadcrumbEditProfile = "breadcrumb.edit_profile"
+
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
 	NavbarLabelsRoleNavLabel           = "navbar.labels.role_nav_label"
 	NavbarLabelsRoleNavManagementLabel = "navbar.labels.role_nav_management_label"
 	NavbarLabelsUserNavLabel           = "navbar.labels.user_nav_label"
 	NavbarLabelsUserNavManagementLabel = "navbar.labels.user_nav_management_label"
 	NavbarLabelsCollapsedViewLabel     = "navbar.labels.collapsed_view_label"
+
+	NotificationsEditProfileSuccessTitle   = "notifications.edit.profile.success_title"
+	NotificationsEditProfileSuccessMessage = "notifications.edit.profile.success_message"
 
 	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
 	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
@@ -42,6 +49,22 @@ const (
 	PagesLogoutThanksLabel       = "pages.logout.thanks_label"
 	PagesLogoutLogoutInformation = "pages.logout.logout_information"
 	PagesLogoutLogoutButton      = "pages.logout.logout_button"
+
+	PagesProfileTitle             = "pages.profile.title"
+	PagesProfileButtonEditProfile = "pages.profile.button_edit_profile"
+	PagesProfileJoinedAtLabel     = "pages.profile.joined_at_label"
+	PagesProfileDataLabel         = "pages.profile.data_label"
+	PagesProfileEmailLabel        = "pages.profile.email_label"
+	PagesProfilePhoneLabel        = "pages.profile.phone_label"
+
+	PagesProfileEditTitle              = "pages.profile.edit.title"
+	PagesProfileEditNameLabel          = "pages.profile.edit.name_label"
+	PagesProfileEditNamePlaceholder    = "pages.profile.edit.name_placeholder"
+	PagesProfileEditSurnameLabel       = "pages.profile.edit.surname_label"
+	PagesProfileEditSurnamePlaceholder = "pages.profile.edit.surname_placeholder"
+	PagesProfileEditEmailLabel         = "pages.profile.edit.email_label"
+	PagesProfileEditPhoneLabel         = "pages.profile.edit.phone_label"
+	PagesProfileEditButtonSubmit       = "pages.profile.edit.button_submit"
 
 	ErrorsCommonParseForm           = "errors.common.parse_form"
 	ErrorsLoginEmptyEmailOrPassword = "errors.login.empty_email_or_password"

@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	tracingUser    = "repository-db.user"
-	tracingUserGet = "repository-db.user.get-by"
+	tracingUser          = "repository-db.user"
+	tracingUserGet       = "repository-db.user.get-by"
+	tracingUserUpdateAll = "repository-db.user.update-all"
 )
 
 type Repository struct {
@@ -52,6 +53,32 @@ func (r *Repository) GetBy(ctx context.Context, args ...string) (*connected_root
 
 	if result.Error == nil && result.RowsAffected == 0 {
 		return nil, fmt.Errorf("%s: %w", tracingUserGet, gorm.ErrRecordNotFound)
+	}
+
+	log.Debug(fmt.Sprintf("user: %+v", userDB))
+
+	return toDomain(userDB), nil
+}
+
+func (r *Repository) UpdateAll(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingUserUpdateAll)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingUserUpdateAll)
+
+	userDB := toDB(user)
+	result := r.db.WithContext(ctx).Model(&Users{}).
+		Select("*").
+		Where(fmt.Sprintf("%s = ?", "email"), user.Email).
+		Updates(&userDB)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserUpdateAll, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s: %w", tracingUserUpdateAll, gorm.ErrRecordNotFound)
 	}
 
 	log.Debug(fmt.Sprintf("user: %+v", userDB))

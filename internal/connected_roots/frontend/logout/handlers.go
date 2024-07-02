@@ -1,9 +1,8 @@
 package logout
 
 import (
-	"net/http"
-
 	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"net/http"
 
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 

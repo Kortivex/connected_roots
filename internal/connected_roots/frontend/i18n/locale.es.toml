@@ -1,3 +1,8 @@
+[breadcrumb]
+user = "Usuario"
+profile = "Perfil"
+edit_profile = "Editar Perfil"
+
 [navbar.labels]
 admin_nav_label = "Admin"
 role_nav_label = "Roles"
@@ -5,6 +10,10 @@ role_nav_management_label = "Administrar"
 user_nav_label = "Usuarios"
 user_nav_management_label = "Administrar"
 collapsed_view_label = "Contraer Vista"
+
+[notifications.edit.profile]
+success_title = "Perfil editado con éxito"
+success_message = "El perfil ha sido editado exitosamente"
 
 [topbar.labels]
 profile_label = "Perfil"
@@ -46,6 +55,24 @@ logout_label = "¡Vuelve pronto!"
 thanks_label = "Gracias por usar Raíces Conectadas."
 logout_information = "Ahora has cerrado sesión correctamente."
 logout_button = "Iniciar Sesión"
+
+[pages.profile]
+title = "Perfil"
+button_edit_profile = "Editar perfil"
+joined_at_label = "Se unió el"
+data_label = "Datos"
+email_label = "Email"
+phone_label = "Teléfono"
+
+[pages.profile.edit]
+title = "Editar Perfil"
+name_label = "Nombre"
+name_placeholder = "Nombre"
+surname_label = "Appellidos"
+surname_placeholder = "Apellidos"
+email_label = "Correo electrónico"
+phone_label = "Teléfono"
+button_submit = "Enviar"
 
 [errors.notifications]
 error_title = "Error"

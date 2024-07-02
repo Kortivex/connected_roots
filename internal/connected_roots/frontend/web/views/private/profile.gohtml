@@ -1,0 +1,96 @@
+{{ template "header" . }}
+</head>
+
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <!-- ============================================-->
+    <!-- <section> begin ============================-->
+    <section class="pt-5 pb-9">
+        <div class="container-small">
+            <nav class="mb-3" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a>{{.breadcrumb_user}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_profile}}</li>
+                </ol>
+            </nav>
+            <div class="row align-items-center justify-content-between g-3 mb-4">
+                <div class="col-auto">
+                    <h2 class="mb-0">{{.title}}</h2>
+                </div>
+                <div class="col-auto">
+                    <div class="row g-2 g-sm-3">
+                        <div class="col-auto">
+                            <a class="btn btn-phoenix-secondary" href="/users/profile/edit">
+                                <span class="far fa-edit me-2"></span>{{.button_edit_profile}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 mb-6">
+                <div class="col-12 col-lg-7">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div>
+                                <div class="row align-items-center g-3 g-sm-5 text-center text-sm-start">
+                                    <div class="col-12 col-sm-auto">
+                                        <img id="avatar-detail-profile" class="rounded-circle" src="" alt=""/>
+                                    </div>
+                                    <div class="col-12 col-sm-auto flex-1">
+                                        <h3 class="pb-2">{{.user_name}} {{.user_surname}}</h3>
+                                        <p class="text-body-secondary">{{.joined_at_label}} {{.user_created_at}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="border-bottom border-dashed">
+                                <h4 class="mb-3">{{.data_label}}</h4>
+                            </div>
+                            <div class="border-top border-dashed pt-4">
+                                <div class="row flex-between-center mb-2">
+                                    <div class="col-auto">
+                                        <h5 class="text-body-highlight mb-0">{{.email_label}}</h5>
+                                    </div>
+                                    <div class="col-auto"><a class="lh-1"
+                                                             href="mailto:{{.user_email}}">{{.user_email}}</a>
+                                    </div>
+                                </div>
+                                <div class="row flex-between-center">
+                                    <div class="col-auto">
+                                        <h5 class="text-body-highlight mb-0">{{.phone_label}}</h5>
+                                    </div>
+                                    <div class="col-auto"><a href="tel:{{.user_telephone}}">{{.user_telephone}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of .container-->
+    </section>
+    <!-- <section> close ============================-->
+    <!-- ============================================-->
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

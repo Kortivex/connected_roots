@@ -1,0 +1,71 @@
+{{ template "header" . }}
+</head>
+
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <!-- ============================================-->
+    <!-- <section> begin ============================-->
+    <section class="pt-5 pb-9">
+        <div class="container-small">
+            <nav class="mb-3" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a>{{.breadcrumb_user}}</a></li>
+                    <li class="breadcrumb-item"><a href="/users/profile">{{.breadcrumb_profile}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_edit_profile}}</li>
+                </ol>
+            </nav>
+            <div class="row align-items-center justify-content-between g-3 mb-4">
+                <div class="col-auto">
+                    <h2 class="mb-0">{{.title}}</h2>
+                </div>
+            </div>
+            <div class="row g-3 mb-6">
+                <form id="edit-user-profile-form" method="POST" action="/users/profile/edit"
+                      enctype="application/x-www-form-urlencoded">
+                    <div class="mb-3">
+                        <label class="form-label" for="name">{{.name_label}}</label>
+                        <input class="form-control" id="name" name="name" type="text"
+                               placeholder="{{.name_placeholder}}" min="1"
+                               max="100" value="{{.user_name}}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="surname">{{.surname_label}}</label>
+                        <input class="form-control" id="surname" name="surname" type="text"
+                               placeholder="{{.surname_placeholder}}"
+                               min="1" max="100" value="{{.user_surname}}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">{{.email_label}}</label>
+                        <input class="form-control" id="email" name="email" type="email" disabled
+                               value="{{.user_email}}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="phone">{{.phone_label}}</label>
+                        <input class="form-control" id="phone" name="phone" type="tel" placeholder="912345678" min="9"
+                               max="30" value="{{.user_telephone}}">
+                    </div>
+                    <button class="btn btn-primary" type="submit">{{.button_submit}}</button>
+                </form>
+            </div>
+        </div>
+        <!-- end of .container-->
+    </section>
+    <!-- <section> close ============================-->
+    <!-- ============================================-->
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

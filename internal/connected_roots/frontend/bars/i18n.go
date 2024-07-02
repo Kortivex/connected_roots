@@ -18,9 +18,9 @@ func CommonNavBarI18N(c echo.Context) map[string]interface{} {
 
 func CommonTopBarI18N(c echo.Context, name, surname string) map[string]interface{} {
 	return map[string]interface{}{
-		"user_name":      name,
-		"user_surname":   surname,
-		"profile_label":  translator.T(c, translator.TopBarLabelsProfileLabel),
-		"sign_out_label": translator.T(c, translator.TopBarLabelsSignOutLabel),
+		"user_session_name":    name,
+		"user_session_surname": surname,
+		"profile_label":        translator.T(c, translator.TopBarLabelsProfileLabel),
+		"sign_out_label":       translator.T(c, translator.TopBarLabelsSignOutLabel),
 	}
 }
