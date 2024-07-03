@@ -2,6 +2,8 @@
 user = "User"
 profile = "Profile"
 edit_profile = "Edit Profile"
+roles = "Roles"
+list_roles = "List"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -20,7 +22,16 @@ profile_label = "Profile"
 sign_out_label = "Sign Out"
 
 [pages.admin.roles]
-title = "Roles"
+list_title = "List Roles"
+list_button_create_role = "Create Role"
+list_name_label = "Name"
+list_description_label = "Description"
+list_actions_label = "ACTIONS"
+list_actions_view_label = "View"
+list_actions_edit_label = "Edit"
+list_actions_remove_label = "Remove"
+list_next_label = "Next"
+list_previous_label = "Previous"
 
 [pages.common]
 site_title = "Connected Roots"

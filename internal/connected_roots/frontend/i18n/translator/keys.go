@@ -4,6 +4,8 @@ const (
 	BreadcrumbUser        = "breadcrumb.user"
 	BreadcrumbProfile     = "breadcrumb.profile"
 	BreadcrumbEditProfile = "breadcrumb.edit_profile"
+	BreadcrumbRoles       = "breadcrumb.roles"
+	BreadcrumbListRoles   = "breadcrumb.list_roles"
 
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
 	NavbarLabelsRoleNavLabel           = "navbar.labels.role_nav_label"
@@ -18,7 +20,16 @@ const (
 	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
 	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
 
-	PagesAdminRolesTitle = "pages.admin.roles.title"
+	PagesAdminRolesListTitle              = "pages.admin.roles.list_title"
+	PagesAdminRolesListButtonCreateRole   = "pages.admin.roles.list_button_create_role"
+	PagesAdminRolesListNameLabel          = "pages.admin.roles.list_name_label"
+	PagesAdminRolesListDescriptionLabel   = "pages.admin.roles.list_description_label"
+	PagesAdminRolesListActionsLabel       = "pages.admin.roles.list_actions_label"
+	PagesAdminRolesListActionsViewLabel   = "pages.admin.roles.list_actions_view_label"
+	PagesAdminRolesListActionsEditLabel   = "pages.admin.roles.list_actions_edit_label"
+	PagesAdminRolesListActionsRemoveLabel = "pages.admin.roles.list_actions_remove_label"
+	PagesAdminRolesListNextLabel          = "pages.admin.roles.list_next_label"
+	PagesAdminRolesListPreviousLabel      = "pages.admin.roles.list_previous_label"
 
 	PagesCommonSiteTitle = "pages.common.site_title"
 

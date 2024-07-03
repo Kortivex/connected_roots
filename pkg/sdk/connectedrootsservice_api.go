@@ -4,16 +4,18 @@ import (
 	"context"
 	"fmt"
 	"github.com/Kortivex/connected_roots/pkg/logger"
+	"github.com/Kortivex/connected_roots/pkg/pagination"
 	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
-	"go.opentelemetry.io/otel"
-
 	"github.com/go-resty/resty/v2"
+	"go.opentelemetry.io/otel"
 )
 
 const (
 	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get /users/:user_id"
 	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
 	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
+
+	traciConnectedRootsGetRolesPI = "connected-roots-service.http-client: get /roles"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -22,9 +24,14 @@ type ConnectedRootsServiceAPI struct {
 }
 
 type IConnectedRootsServiceAPI interface {
+	////////////// USERS //////////////
+
 	GETUser(ctx context.Context, userID string) (*resty.Response, error)
 	PATCHUserPartially(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
+	////////////// ROLES //////////////
+
+	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -39,6 +46,8 @@ func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Log
 		SDK: ConnectedRootsServiceSDK{api: ConnectedRootsServiceAPI{Rest: connectedRootsService, logger: connectedRootsService.logger}},
 	}
 }
+
+////////////// USERS //////////////
 
 func (c *ConnectedRootsServiceAPI) GETUser(ctx context.Context, userID string) (*resty.Response, error) {
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceGetUserAPI)
@@ -101,6 +110,46 @@ func (c *ConnectedRootsServiceAPI) POSTUserAuthentication(ctx context.Context, u
 		SetResult(&sdk_models.UsersAuthenticationResponse{}).
 		SetError(&APIError{}).
 		Post(fmt.Sprintf("/users/%s/auth", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// ROLES //////////////
+
+func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRolesPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(traciConnectedRootsGetRolesPI)
+
+	log.Debug("request [GET] /roles")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get("/roles")
 	if err != nil {
 		return nil, err
 	}

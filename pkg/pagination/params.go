@@ -9,7 +9,7 @@ import (
 
 const (
 	defaultLimit    = 50
-	defaultMaxLimit = 1000
+	defaultMaxLimit = 20_000
 	defaultOrder    = paginator.ASC
 )
 

@@ -110,6 +110,7 @@ func (s *Service) setSetup() {
 	s.Echo.Server.IdleTimeout = time.Duration(s.conf.Frontend.Timeouts.Idle) * time.Second
 	s.Echo.Static("/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/roles/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/users/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/users/profile/assets", s.conf.Frontend.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{
