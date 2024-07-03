@@ -1,6 +1,9 @@
 package connected_roots
 
-import "time"
+import (
+	"github.com/Kortivex/connected_roots/pkg/pagination"
+	"time"
+)
 
 type Roles struct {
 	ID          string    `json:"id"`
@@ -8,4 +11,13 @@ type Roles struct {
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type RoleFilters struct {
+	Name []string `query:"name[]"`
+}
+
+type RolePaginationFilters struct {
+	pagination.PaginatorParams
+	RoleFilters
 }
