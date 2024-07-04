@@ -9,11 +9,12 @@ import (
 const TableRolesName = "roles."
 
 var (
-	TableRolesFields  = []string{"id", "name", "description", "created_at", "updated_at", "deleted_at"}
+	TableRolesFields  = []string{"id", "name", "description", "protected", "created_at", "updated_at", "deleted_at"}
 	TableRolesSortMap = map[string]string{
 		"id":          "ID",
 		"name":        "Name",
 		"description": "Description",
+		"protected":   "Protected",
 		"created_at":  "CreatedAt",
 		"updated_at":  "UpdatedAt",
 		"deleted_at":  "DeletedAt",

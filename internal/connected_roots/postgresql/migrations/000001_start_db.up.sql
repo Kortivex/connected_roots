@@ -18,6 +18,7 @@ CREATE TABLE roles
     "id"          varchar(26) primary key,
     "name"        varchar(50),
     "description" varchar(255),
+    "protected"   boolean default false,
     "created_at"  timestamp with time zone,
     "updated_at"  timestamp with time zone,
     "deleted_at"  timestamp with time zone

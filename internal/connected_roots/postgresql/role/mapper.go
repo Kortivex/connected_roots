@@ -9,6 +9,7 @@ func toDomain(role *Roles) *connected_roots.Roles {
 		ID:          role.ID,
 		Name:        role.Name,
 		Description: role.Description,
+		Protected:   role.Protected,
 		CreatedAt:   role.CreatedAt,
 		UpdatedAt:   role.UpdatedAt,
 	}
