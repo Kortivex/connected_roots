@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Kortivex/connected_roots/pkg/pagination"
+	"github.com/Kortivex/connected_roots/pkg/ulid"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
@@ -14,6 +15,8 @@ import (
 
 const (
 	tracingRole          = "repository-db.role"
+	tracingRoleCreate    = "repository-db.role.create"
+	tracingRoleGet       = "repository-db.role.get"
 	tracingRoleListAllBy = "repository-db.role.list-all-by"
 )
 
@@ -32,6 +35,64 @@ func NewRepository(conf *config.Config, db *gorm.DB, logr *logger.Logger) *Repos
 		db:     db,
 		logger: log,
 	}
+}
+
+func (r *Repository) Create(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleCreate)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingRoleCreate)
+
+	log.Debug(fmt.Sprintf("role: %+v", role))
+
+	id, err := ulid.Generate()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleCreate, err)
+	}
+
+	roleDB := toDB(role, id)
+	result := r.db.WithContext(ctx).Model(&Roles{}).
+		Create(&roleDB)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleCreate, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s: %w", tracingRoleCreate, gorm.ErrRecordNotFound)
+	}
+
+	log.Debug(fmt.Sprintf("role: %+v", roleDB))
+
+	return toDomain(roleDB), nil
+}
+
+func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.Roles, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleGet)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingRoleGet)
+
+	log.Debug(fmt.Sprintf("role id: %+v", id))
+
+	roleDB := &Roles{}
+	result := r.db.WithContext(ctx).Model(&Roles{}).
+		Where("id = ?", id).
+		First(&roleDB)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleGet, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s: %w", tracingRoleGet, gorm.ErrRecordNotFound)
+	}
+
+	log.Debug(fmt.Sprintf("role: %+v", roleDB))
+
+	return toDomain(roleDB), nil
 }
 
 func (r *Repository) ListAllBy(ctx context.Context, rolesFilters *connected_roots.RolePaginationFilters, preloads ...string) (*pagination.Pagination, error) {

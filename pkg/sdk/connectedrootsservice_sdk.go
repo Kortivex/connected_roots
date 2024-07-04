@@ -15,10 +15,12 @@ const (
 	tracingConnectedRootsServiceUpdatePartiallyUser = "connected-roots.update-partially-user"
 	tracingConnectedRootsServiceAuthenticateUser    = "connected-roots.authenticate-user"
 
+	tracingConnectedRootsServiceSaveRole    = "connected-roots.save-roles"
 	tracingConnectedRootsServiceObtainRoles = "connected-roots.obtain-roles"
 
 	ErrMsgConnectedRootsServiceAuthenticateUserErr    = "authentication user failure"
 	ErrMsgConnectedRootsServiceObtainUserErr          = "obtain user failure"
+	ErrMsgConnectedRootsServiceSaveRoleErr            = "saving role failure"
 	ErrMsgConnectedRootsServiceObtainRolesErr         = "obtain roles failure"
 	ErrMsgConnectedRootsServiceUpdatePartiallyUserErr = "updating partially user failure"
 )
@@ -36,6 +38,7 @@ type IConnectedRootsServiceSDK interface {
 
 	////////////// ROLES //////////////
 
+	SaveRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error)
 	ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error)
 }
 
@@ -102,6 +105,26 @@ func (c *ConnectedRootsServiceSDK) UpdatePartiallyUser(ctx context.Context, user
 }
 
 ////////////// ROLES //////////////
+
+func (c *ConnectedRootsServiceSDK) SaveRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveRole)
+	defer sp.End()
+
+	resp, err := c.api.POSTRoles(ctx, role)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveRole, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveRole, resp.Error().(*APIError))
+	}
+
+	respRole, ok := resp.Result().(*sdk_models.RolesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveRole, errors.New(ErrMsgConnectedRootsServiceSaveRoleErr))
+	}
+
+	return respRole, nil
+}
 
 func (c *ConnectedRootsServiceSDK) ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error) {
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainRoles)

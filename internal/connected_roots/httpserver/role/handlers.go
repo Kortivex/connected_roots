@@ -17,7 +17,8 @@ import (
 const (
 	tracingRolesHandlers = "http-handler.role"
 
-	tracingListRolesHandlers = "http-handler.user.list-user"
+	tracingPostRolesHandlers = "http-handler.role.post-role"
+	tracingListRolesHandlers = "http-handler.role.list-roles"
 )
 
 type RolesHandlers struct {
@@ -38,6 +39,25 @@ func NewRolesHandlers(appCtx *connected_roots.Context) *RolesHandlers {
 		conf:    appCtx.Conf,
 		roleSvc: role.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *RolesHandlers) PostRolesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingPostRolesHandlers)
+	defer span.End()
+
+	roleBody := connected_roots.Roles{}
+	if err := c.Bind(&roleBody); err != nil {
+		err = fmt.Errorf("%s: %w", tracingPostRolesHandlers, errors.ErrInvalidPayload)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	rolesRes, err := h.roleSvc.Save(ctx, &roleBody)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingPostRolesHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusCreated, rolesRes)
 }
 
 func (h *RolesHandlers) ListRolesHandler(c echo.Context) error {

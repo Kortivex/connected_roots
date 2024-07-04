@@ -23,3 +23,12 @@ func toDomainSlice(roles []*Roles) []*connected_roots.Roles {
 	}
 	return rolesDomain
 }
+
+func toDB(role *connected_roots.Roles, id string) *Roles {
+	return &Roles{
+		ID:          id,
+		Name:        role.Name,
+		Description: role.Description,
+		Protected:   role.Protected,
+	}
+}

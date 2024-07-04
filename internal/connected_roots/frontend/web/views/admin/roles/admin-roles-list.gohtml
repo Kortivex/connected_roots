@@ -21,7 +21,7 @@
         <div class="col-auto">
             <div class="row g-2 g-sm-3">
                 <div class="col-auto">
-                    <a class="btn btn-phoenix-secondary bg-success-lighter" href="/roles/new">
+                    <a class="btn btn-phoenix-secondary bg-success-lighter" href="/admin/roles/new">
                         <span class="fas fa-plus me-2"></span>{{.list_button_create_role}}
                     </a>
                 </div>
@@ -59,11 +59,11 @@
                                     <span class="fas fa-ellipsis-h fs-10"></span>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end py-2" style="">
-                                    <a class="dropdown-item" href="/roles/view/{{$role.ID}}">{{$view_label}}</a>
-                                    <a class="dropdown-item" href="/roles/edit/{{$role.ID}}">{{$edit_label}}</a>
+                                    <a class="dropdown-item" href="/admin/roles/view/{{$role.ID}}">{{$view_label}}</a>
+                                    <a class="dropdown-item" href="/admin/roles/edit/{{$role.ID}}">{{$edit_label}}</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item text-danger"
-                                       href="/roles/delete/{{$role.ID}}">{{$remove_label}}</a>
+                                       href="/admin/roles/delete/{{$role.ID}}">{{$remove_label}}</a>
                                 </div>
                             </div>
                         </td>

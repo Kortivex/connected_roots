@@ -5,6 +5,7 @@ const (
 	BreadcrumbProfile     = "breadcrumb.profile"
 	BreadcrumbEditProfile = "breadcrumb.edit_profile"
 	BreadcrumbRoles       = "breadcrumb.roles"
+	BreadcrumbCreateRoles = "breadcrumb.create_roles"
 	BreadcrumbListRoles   = "breadcrumb.list_roles"
 
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
@@ -14,11 +15,19 @@ const (
 	NavbarLabelsUserNavManagementLabel = "navbar.labels.user_nav_management_label"
 	NavbarLabelsCollapsedViewLabel     = "navbar.labels.collapsed_view_label"
 
-	NotificationsEditProfileSuccessTitle   = "notifications.edit.profile.success_title"
-	NotificationsEditProfileSuccessMessage = "notifications.edit.profile.success_message"
+	NotificationsAdminRolesCreateSuccessTitle   = "notifications.admin.roles.create_success_title"
+	NotificationsAdminRolesCreateSuccessMessage = "notifications.admin.roles.create_success_message"
+	NotificationsEditProfileSuccessTitle        = "notifications.edit.profile.success_title"
+	NotificationsEditProfileSuccessMessage      = "notifications.edit.profile.success_message"
 
 	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
 	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
+
+	PagesAdminRolesCreateTitle            = "pages.admin.roles.create_title"
+	PagesAdminRolesCreateNameLabel        = "pages.admin.roles.create_name_label"
+	PagesAdminRolesCreateDescriptionLabel = "pages.admin.roles.create_description_label"
+	PagesAdminRolesCreateProtectedLabel   = "pages.admin.roles.create_protected_label"
+	PagesAdminRolesCreateButtonSubmitRole = "pages.admin.roles.create_button_submit_role"
 
 	PagesAdminRolesListTitle              = "pages.admin.roles.list_title"
 	PagesAdminRolesListButtonCreateRole   = "pages.admin.roles.list_button_create_role"

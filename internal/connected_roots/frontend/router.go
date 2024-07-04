@@ -45,10 +45,10 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// Role endpoints.
 	rolesHandler := role.NewRolesHandlers(ctx)
 	rolesGrp := adminGrp.Group("/roles")
-	rolesGrp.GET("/list", rolesHandler.GetRolesListHandler, s.SessionMiddleware).Name = "list-roles"
-	/*
-		rolesGrp.GET("/new", rolesHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "new-role"
-		rolesGrp.GET("/view/:role_id", rolesHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "view-role"
+	rolesGrp.GET("/list", rolesHandler.GetRolesListHandler, s.SessionMiddleware).Name = "get-list-roles"
+	rolesGrp.GET("/new", rolesHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-role"
+	rolesGrp.POST("/new", rolesHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-role"
+	/*	rolesGrp.GET("/view/:role_id", rolesHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "view-role"
 		rolesGrp.GET("/edit/:role_id", rolesHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "edit-role"
 		rolesGrp.GET("/delete/:role_id", rolesHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "delete-role"
 	*/

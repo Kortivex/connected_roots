@@ -2,25 +2,27 @@ package role
 
 import (
 	"fmt"
-	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
-	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
-	"github.com/Kortivex/connected_roots/pkg/logger/commons"
-	"github.com/Kortivex/connected_roots/pkg/sdk"
-	"net/http"
-
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
+	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
 	"github.com/Kortivex/connected_roots/pkg/logger"
+	"github.com/Kortivex/connected_roots/pkg/logger/commons"
+	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 const (
 	tracingRoleHandlers = "http-handler.role"
 
-	listRoleHandlerName = "http-handler.role.list-roles"
+	getCreateRoleHandlerName  = "http-handler.role.get-create-role"
+	postCreateRoleHandlerName = "http-handler.role.post-create-role"
+	getListRoleHandlerName    = "http-handler.role.get-list-roles"
 )
 
 type Handlers struct {
@@ -45,12 +47,65 @@ func NewRolesHandlers(appCtx *connected_roots.Context) *Handlers {
 	}
 }
 
-func (h *Handlers) GetRolesListHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), listRoleHandlerName)
+func (h *Handlers) GetRoleCreateHandler(c echo.Context) error {
+	_, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateRoleHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	log := loggerNew.WithTag(listRoleHandlerName)
+	_ = loggerNew.WithTag(getCreateRoleHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-roles-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonRoleCreatePageI18N(c)), map[string]interface{}{}))
+}
+
+func (h *Handlers) PostRoleCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postCreateRoleHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postCreateRoleHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	role := &sdk_models.RolesBody{
+		Name:        c.FormValue("name"),
+		Description: c.FormValue("description"),
+		Protected:   c.FormValue("protected") == "on",
+	}
+
+	log.Debug(fmt.Sprintf("role: %+v", role))
+
+	_, err = h.sdk.ConnectedRootsService.SDK.SaveRole(ctx, role)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-roles-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonRoleCreatePageI18N(c)), map[string]interface{}{
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminRolesCreateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminRolesCreateSuccessMessage),
+		}))
+}
+
+func (h *Handlers) GetRolesListHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListRoleHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(getListRoleHandlerName)
 
 	nextCursor := ""
 	if c.QueryParam("next_cursor") != "" {
@@ -77,7 +132,6 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleListPageI18N(c)), map[string]interface{}{
-			"active":     "roles-management",
 			"roles":      roles,
 			"pagination": pagination,
 		}))

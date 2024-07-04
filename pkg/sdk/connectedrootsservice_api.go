@@ -15,7 +15,8 @@ const (
 	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
 	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
 
-	traciConnectedRootsGetRolesPI = "connected-roots-service.http-client: get /roles"
+	traciConnectedRootsPostRolesAPI = "connected-roots-service.http-client: post /roles"
+	traciConnectedRootsGetRolesAPI  = "connected-roots-service.http-client: get /roles"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -31,6 +32,7 @@ type IConnectedRootsServiceAPI interface {
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
 	////////////// ROLES //////////////
 
+	POSTRoles(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
 	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
 }
 
@@ -118,12 +120,35 @@ func (c *ConnectedRootsServiceAPI) POSTUserAuthentication(ctx context.Context, u
 
 ////////////// ROLES //////////////
 
-func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRolesPI)
+func (c *ConnectedRootsServiceAPI) POSTRoles(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPostRolesAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsGetRolesPI)
+	log := loggerEmpty.WithTag(traciConnectedRootsPostRolesAPI)
+
+	log.Debug("request [POST] /roles")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(role).
+		SetResult(&sdk_models.RolesResponse{}).
+		SetError(&APIError{}).
+		Post("/roles")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRolesAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(traciConnectedRootsGetRolesAPI)
 
 	log.Debug("request [GET] /roles")
 

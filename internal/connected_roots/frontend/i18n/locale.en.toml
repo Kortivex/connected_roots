@@ -3,6 +3,7 @@ user = "User"
 profile = "Profile"
 edit_profile = "Edit Profile"
 roles = "Roles"
+create_roles = "Create"
 list_roles = "List"
 
 [navbar.labels]
@@ -13,6 +14,10 @@ user_nav_label = "Users"
 user_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
 
+[notifications.admin.roles]
+create_success_title = "Creation role success"
+create_success_message = "Role has been created successfully"
+
 [notifications.edit.profile]
 success_title = "Edit profile success"
 success_message = "Profile has been edited successfully"
@@ -22,6 +27,11 @@ profile_label = "Profile"
 sign_out_label = "Sign Out"
 
 [pages.admin.roles]
+create_title = "Create Roles"
+create_name_label = "Name"
+create_description_label = "Description"
+create_protected_label = "Protected"
+create_button_submit_role = "Submit"
 list_title = "List Roles"
 list_button_create_role = "Create Role"
 list_name_label = "Name"
