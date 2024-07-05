@@ -17,10 +17,11 @@ import (
 const (
 	tracingRolesHandlers = "http-handler.role"
 
-	tracingPostRolesHandlers = "http-handler.role.post-role"
-	tracingPutRolesHandlers  = "http-handler.role.put-role"
-	tracingGetRolesHandlers  = "http-handler.role.get-role"
-	tracingListRolesHandlers = "http-handler.role.list-roles"
+	tracingPostRolesHandlers   = "http-handler.role.post-role"
+	tracingPutRolesHandlers    = "http-handler.role.put-role"
+	tracingGetRolesHandlers    = "http-handler.role.get-role"
+	tracingListRolesHandlers   = "http-handler.role.list-roles"
+	tracingDeleteRolesHandlers = "http-handler.role.delete-role"
 
 	roleIDParam = "role_id"
 )
@@ -125,4 +126,21 @@ func (h *RolesHandlers) ListRolesHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, rolesRes)
+}
+
+func (h *RolesHandlers) DeleteRolesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingDeleteRolesHandlers)
+	defer span.End()
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	if err := h.roleSvc.Remove(ctx, roleID); err != nil {
+		err = fmt.Errorf("%s: %w", tracingDeleteRolesHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }

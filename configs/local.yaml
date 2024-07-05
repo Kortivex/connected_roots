@@ -32,6 +32,11 @@ frontend:
     path: "internal/connected_roots/frontend/i18n"
     en: "locale.en.toml"
     es: "locale.es.toml"
+  roles:
+    protected:
+      - "01J1G1BE7D2KNDKMHJE9W9TGN1"
+      - "01J1WQQ7RASGG8M6ASYPGAW0RX"
+      - "01J1WQQZM01ZVWPQWDZ0AAMYB6"
   debug: true
   recover: true
   body: "1M"
@@ -58,11 +63,11 @@ db:
     health:
       frequency: 10 # (Seconds)
 thirds:
-    sdk:
-      verbose: true
-      connectedrootsservice:
-        host: "http://localhost:47400"
-        api: "4cae8c84-dd29-42f3-8d58-ed371f1bc8ef"
+  sdk:
+    verbose: true
+    connectedrootsservice:
+      host: "http://localhost:47400"
+      api: "4cae8c84-dd29-42f3-8d58-ed371f1bc8ef"
 monitoring:
   observability:
     active: true

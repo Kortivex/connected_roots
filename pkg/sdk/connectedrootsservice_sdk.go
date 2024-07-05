@@ -15,10 +15,11 @@ const (
 	tracingConnectedRootsServiceUpdatePartiallyUser = "connected-roots.update-partially-user"
 	tracingConnectedRootsServiceAuthenticateUser    = "connected-roots.authenticate-user"
 
-	tracingConnectedRootsServiceSaveRole    = "connected-roots.save-roles"
-	tracingConnectedRootsServiceUpdateRole  = "connected-roots.update-roles"
+	tracingConnectedRootsServiceSaveRole    = "connected-roots.save-role"
+	tracingConnectedRootsServiceUpdateRole  = "connected-roots.update-role"
 	tracingConnectedRootsServiceObtainRole  = "connected-roots.obtain-role"
 	tracingConnectedRootsServiceObtainRoles = "connected-roots.obtain-roles"
+	tracingConnectedRootsServiceDeleteRole  = "connected-roots.delete-role"
 
 	ErrMsgConnectedRootsServiceAuthenticateUserErr    = "authentication user failure"
 	ErrMsgConnectedRootsServiceObtainUserErr          = "obtain user failure"
@@ -45,6 +46,7 @@ type IConnectedRootsServiceSDK interface {
 	SaveRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error)
 	ObtainRole(ctx context.Context, id string) (*sdk_models.RolesResponse, error)
 	ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error)
+	DeleteRole(ctx context.Context, id string) error
 }
 
 ////////////// USERS //////////////
@@ -198,4 +200,19 @@ func (c *ConnectedRootsServiceSDK) ObtainRoles(ctx context.Context, limit, nexCu
 	}
 
 	return roles, &respRoles.Paging, nil
+}
+
+func (c *ConnectedRootsServiceSDK) DeleteRole(ctx context.Context, id string) error {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceDeleteRole)
+	defer sp.End()
+
+	resp, err := c.api.DELETERole(ctx, id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteRole, err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainRole, resp.Error().(*APIError))
+	}
+
+	return nil
 }

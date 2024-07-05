@@ -25,8 +25,10 @@ const (
 	postCreateRoleHandlerName = "http-handler.role.post-create-role"
 	getUpdateRoleHandlerName  = "http-handler.role.get-update-role"
 	postUpdateRoleHandlerName = "http-handler.role.post-update-role"
-	getViewRoleHandlerName    = "http-handler.role.get-view-roles"
+	getViewRoleHandlerName    = "http-handler.role.get-view-role"
 	getListRoleHandlerName    = "http-handler.role.get-list-roles"
+	getDeleteRoleHandlerName  = "http-handler.role.get-delete-role"
+	postDeleteRoleHandlerName = "http-handler.role.post-delete-role"
 
 	roleIDParam = "role_id"
 )
@@ -243,7 +245,59 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleListPageI18N(c)), map[string]interface{}{
-			"roles":      roles,
-			"pagination": pagination,
+			"roles":           roles,
+			"protected_roles": h.conf.Roles.Protected,
+			"pagination":      pagination,
 		}))
+}
+
+func (h *Handlers) GetRoleDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteRoleHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getDeleteRoleHandlerName)
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		err := ferrors.ErrQueryParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	role, err := h.sdk.ConnectedRootsService.SDK.ObtainRole(ctx, roleID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-roles-delete.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonRoleDeletePageI18N(c)), map[string]interface{}{
+			"role": role,
+		}))
+}
+
+func (h *Handlers) PostRoleDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteRoleHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(postDeleteRoleHandlerName)
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		err := ferrors.ErrQueryParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sdk.ConnectedRootsService.SDK.DeleteRole(ctx, roleID); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Redirect(http.StatusFound, "/admin/roles/list")
 }

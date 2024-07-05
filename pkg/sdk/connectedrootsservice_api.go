@@ -15,10 +15,11 @@ const (
 	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
 	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post  /users/:user_id/auth"
 
-	traciConnectedRootsPostRoleAPI = "connected-roots-service.http-client: post /roles"
-	traciConnectedRootsPutRoleAPI  = "connected-roots-service.http-client: put /roles/:role_id"
-	traciConnectedRootsGetRoleAPI  = "connected-roots-service.http-client: get  /roles/:role_id"
-	traciConnectedRootsGetRolesAPI = "connected-roots-service.http-client: get  /roles"
+	traciConnectedRootsPostRoleAPI   = "connected-roots-service.http-client: post /roles"
+	traciConnectedRootsPutRoleAPI    = "connected-roots-service.http-client: put /roles/:role_id"
+	traciConnectedRootsGetRoleAPI    = "connected-roots-service.http-client: get /roles/:role_id"
+	traciConnectedRootsGetRolesAPI   = "connected-roots-service.http-client: get /roles"
+	traciConnectedRootsDeleteRoleAPI = "connected-roots-service.http-client: delete /roles/:role_id"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -38,6 +39,7 @@ type IConnectedRootsServiceAPI interface {
 	PUTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
 	GETRole(ctx context.Context, id string) (*resty.Response, error)
 	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
+	DELETERole(ctx context.Context, id string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -223,6 +225,26 @@ func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCurso
 		SetResult(&pagination.Pagination{}).
 		SetError(&APIError{}).
 		Get("/roles")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETERole(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsDeleteRoleAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(traciConnectedRootsDeleteRoleAPI)
+
+	log.Debug("request [DELETE] /roles/:role_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/roles/%s", id))
 	if err != nil {
 		return nil, err
 	}

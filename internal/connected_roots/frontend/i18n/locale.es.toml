@@ -7,6 +7,7 @@ create_roles = "Crear"
 update_roles = "Editar"
 list_roles = "Listar"
 view_roles = "Ver"
+delete_roles = "Borrar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -55,6 +56,10 @@ view_title = "Ver Roles"
 view_name_label = "Nombre"
 view_description_label = "Descripción"
 view_protected_label = "Protegido"
+delete_title = "Borrar Roles"
+delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
+delete_warning_message = "Esta acción es irreversible."
+delete_button_submit_role = "Borrar"
 
 [pages.common]
 site_title = "Raíces Conectadas"

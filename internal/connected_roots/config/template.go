@@ -49,6 +49,9 @@ type Frontend struct {
 		En   string `koanf:"en"`
 		Es   string `koanf:"es"`
 	}
+	Roles struct {
+		Protected []string `koanf:"protected"`
+	}
 	Debug    bool   `koanf:"debug"`
 	Recover  bool   `koanf:"recover"`
 	Body     string `koanf:"body"`

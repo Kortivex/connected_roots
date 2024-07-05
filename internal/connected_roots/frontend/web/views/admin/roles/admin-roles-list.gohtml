@@ -46,7 +46,9 @@
                 {{$view_label := .list_actions_view_label}}
                 {{$edit_label := .list_actions_edit_label}}
                 {{$remove_label := .list_actions_remove_label}}
+                {{$protected_roles := .protected_roles}}
                 {{range $role :=.roles}}
+                    {{$is_protected := false}}
                     <tr>
                         <td class="align-middle ps-3 id">{{ $role.ID }}</td>
                         <td class="align-middle ps-3 name">{{ $role.Name }}</td>
@@ -61,9 +63,16 @@
                                 <div class="dropdown-menu dropdown-menu-end py-2" style="">
                                     <a class="dropdown-item" href="/admin/roles/view/{{$role.ID}}">{{$view_label}}</a>
                                     <a class="dropdown-item" href="/admin/roles/edit/{{$role.ID}}">{{$edit_label}}</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger"
-                                       href="/admin/roles/delete/{{$role.ID}}">{{$remove_label}}</a>
+                                    {{range $index, $protected_role := $protected_roles}}
+                                        {{if eq $role.ID $protected_role}}
+                                            {{$is_protected = true}}
+                                        {{end}}
+                                    {{end}}
+                                    {{if not $is_protected}}
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger"
+                                           href="/admin/roles/delete/{{$role.ID}}">{{$remove_label}}</a>
+                                    {{end}}
                                 </div>
                             </div>
                         </td>

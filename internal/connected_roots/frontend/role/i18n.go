@@ -64,3 +64,16 @@ func CommonRoleListPageI18N(c echo.Context) map[string]interface{} {
 		"list_previous_label":       translator.T(c, translator.PagesAdminRolesListPreviousLabel),
 	}
 }
+
+func CommonRoleDeletePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                     translator.T(c, translator.PagesAdminRolesDeleteTitle),
+		"active":                    "roles-management",
+		"breadcrumb_roles":          translator.T(c, translator.BreadcrumbRoles),
+		"breadcrumb_delete_roles":   translator.T(c, translator.BreadcrumbDeleteRoles),
+		"delete_warning_title":      translator.T(c, translator.PagesAdminRolesDeleteWarningTitle),
+		"delete_warning_message":    translator.T(c, translator.PagesAdminRolesDeleteWarningMessage),
+		"delete_button_submit_role": translator.T(c, translator.PagesAdminRolesDeleteButtonSubmitRole),
+	}
+}

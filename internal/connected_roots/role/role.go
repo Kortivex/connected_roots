@@ -18,6 +18,7 @@ const (
 	tracingRoleUpdate    = "service.role.update"
 	tracingRoleObtain    = "service.role.obtain"
 	tracingRoleObtainAll = "service.role.obtain-all"
+	tracingRoleRemove    = "service.role.remove"
 )
 
 type Service struct {
@@ -94,4 +95,15 @@ func (s *Service) ObtainAll(ctx context.Context, filters *connected_roots.RolePa
 	}
 
 	return rolesRes, nil
+}
+
+func (s *Service) Remove(ctx context.Context, id string) error {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingRoleRemove)
+	defer span.End()
+
+	if err := s.roleRep.DeleteByID(ctx, id); err != nil {
+		return fmt.Errorf("%s: %w", tracingRoleRemove, err)
+	}
+
+	return nil
 }

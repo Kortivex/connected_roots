@@ -14,11 +14,12 @@ import (
 )
 
 const (
-	tracingRole          = "repository-db.role"
-	tracingRoleCreate    = "repository-db.role.create"
-	tracingRoleUpdate    = "repository-db.role.update"
-	tracingRoleGet       = "repository-db.role.get"
-	tracingRoleListAllBy = "repository-db.role.list-all-by"
+	tracingRole           = "repository-db.role"
+	tracingRoleCreate     = "repository-db.role.create"
+	tracingRoleUpdate     = "repository-db.role.update"
+	tracingRoleGetByID    = "repository-db.role.get-by-id"
+	tracingRoleListAllBy  = "repository-db.role.list-all-by"
+	tracingRoleDeleteByID = "repository-db.role.delete-by-id"
 )
 
 type Repository struct {
@@ -98,11 +99,11 @@ func (r *Repository) Update(ctx context.Context, role *connected_roots.Roles) (*
 }
 
 func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.Roles, error) {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleGet)
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleGetByID)
 	defer span.End()
 
 	loggerNew := r.logger.New()
-	log := loggerNew.WithTag(tracingRoleGet)
+	log := loggerNew.WithTag(tracingRoleGetByID)
 
 	log.Debug(fmt.Sprintf("role id: %+v", id))
 
@@ -112,11 +113,11 @@ func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.R
 		First(&roleDB)
 
 	if result.Error != nil {
-		return nil, fmt.Errorf("%s: %w", tracingRoleGet, result.Error)
+		return nil, fmt.Errorf("%s: %w", tracingRoleGetByID, result.Error)
 	}
 
 	if result.Error == nil && result.RowsAffected == 0 {
-		return nil, fmt.Errorf("%s: %w", tracingRoleGet, gorm.ErrRecordNotFound)
+		return nil, fmt.Errorf("%s: %w", tracingRoleGetByID, gorm.ErrRecordNotFound)
 	}
 
 	log.Debug(fmt.Sprintf("role: %+v", roleDB))
@@ -187,4 +188,30 @@ func (r *Repository) ListAllBy(ctx context.Context, rolesFilters *connected_root
 	log.Debug(fmt.Sprintf("roles: %+v", rolesDB))
 
 	return rolesPaginated, nil
+}
+
+func (r *Repository) DeleteByID(ctx context.Context, id string) error {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleDeleteByID)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingRoleDeleteByID)
+
+	log.Debug(fmt.Sprintf("role id: %+v", id))
+
+	roleDB := &Roles{ID: id}
+	result := r.db.WithContext(ctx).Model(&Roles{}).
+		Unscoped().
+		Where("id = ?", id).
+		Delete(&roleDB)
+
+	if result.Error != nil {
+		return fmt.Errorf("%s: %w", tracingRoleDeleteByID, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return fmt.Errorf("%s: %w", tracingRoleDeleteByID, gorm.ErrRecordNotFound)
+	}
+
+	return nil
 }
