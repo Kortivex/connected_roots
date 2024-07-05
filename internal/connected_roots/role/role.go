@@ -15,6 +15,8 @@ import (
 const (
 	tracingRole          = "service.role"
 	tracingRoleSave      = "service.role.save"
+	tracingRoleUpdate    = "service.role.update"
+	tracingRoleObtain    = "service.role.obtain"
 	tracingRoleObtainAll = "service.role.obtain-all"
 )
 
@@ -51,6 +53,35 @@ func (s *Service) Save(ctx context.Context, role *connected_roots.Roles) (*conne
 	}
 
 	return rolesRes, nil
+}
+
+func (s *Service) Update(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingRoleUpdate)
+	defer span.End()
+
+	rolesRes, err := s.roleRep.Update(ctx, role)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleUpdate, err)
+	}
+
+	rolesRes, err = s.roleRep.GetByID(ctx, rolesRes.ID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleUpdate, err)
+	}
+
+	return rolesRes, nil
+}
+
+func (s *Service) Obtain(ctx context.Context, id string) (*connected_roots.Roles, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingRoleObtain)
+	defer span.End()
+
+	roleRes, err := s.roleRep.GetByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleObtain, err)
+	}
+
+	return roleRes, nil
 }
 
 func (s *Service) ObtainAll(ctx context.Context, filters *connected_roots.RolePaginationFilters) (*pagination.Pagination, error) {

@@ -18,7 +18,11 @@ const (
 	tracingRolesHandlers = "http-handler.role"
 
 	tracingPostRolesHandlers = "http-handler.role.post-role"
+	tracingPutRolesHandlers  = "http-handler.role.put-role"
+	tracingGetRolesHandlers  = "http-handler.role.get-role"
 	tracingListRolesHandlers = "http-handler.role.list-roles"
+
+	roleIDParam = "role_id"
 )
 
 type RolesHandlers struct {
@@ -58,6 +62,50 @@ func (h *RolesHandlers) PostRolesHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, rolesRes)
+}
+
+func (h *RolesHandlers) PutRolesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingPutRolesHandlers)
+	defer span.End()
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	roleBody := connected_roots.Roles{}
+	if err := c.Bind(&roleBody); err != nil {
+		err = fmt.Errorf("%s: %w", tracingPutRolesHandlers, errors.ErrInvalidPayload)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	roleBody.ID = roleID
+
+	rolesRes, err := h.roleSvc.Update(ctx, &roleBody)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingPutRolesHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, rolesRes)
+}
+
+func (h *RolesHandlers) GetRolesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetRolesHandlers)
+	defer span.End()
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	rolesRes, err := h.roleSvc.Obtain(ctx, roleID)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingGetRolesHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, rolesRes)
 }
 
 func (h *RolesHandlers) ListRolesHandler(c echo.Context) error {

@@ -4,6 +4,7 @@ profile = "Perfil"
 edit_profile = "Editar Perfil"
 roles = "Roles"
 create_roles = "Crear"
+update_roles = "Editar"
 list_roles = "Listar"
 
 [navbar.labels]
@@ -17,6 +18,8 @@ collapsed_view_label = "Contraer Vista"
 [notifications.admin.roles]
 create_success_title = "Rol creado con éxito"
 create_success_message = "El rol ha sido creado exitosamente"
+update_success_title = "Rol actualizado con éxito"
+update_success_message = "El rol ha sido actualizado exitosamente"
 
 [notifications.edit.profile]
 success_title = "Perfil editado con éxito"
@@ -32,6 +35,11 @@ create_name_label = "Nombre"
 create_description_label = "Descripción"
 create_protected_label = "Protegido"
 create_button_submit_role = "Enviar"
+update_title = "Crear Roles"
+update_name_label = "Nombre"
+update_description_label = "Descripción"
+update_protected_label = "Protegido"
+update_button_submit_role = "Enviar"
 list_title = "Listar Roles"
 list_button_create_role = "Crear Rol"
 list_name_label = "Nombre"

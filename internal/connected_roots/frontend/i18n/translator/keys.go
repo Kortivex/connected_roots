@@ -6,6 +6,7 @@ const (
 	BreadcrumbEditProfile = "breadcrumb.edit_profile"
 	BreadcrumbRoles       = "breadcrumb.roles"
 	BreadcrumbCreateRoles = "breadcrumb.create_roles"
+	BreadcrumbUpdateRoles = "breadcrumb.update_roles"
 	BreadcrumbListRoles   = "breadcrumb.list_roles"
 
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
@@ -17,6 +18,8 @@ const (
 
 	NotificationsAdminRolesCreateSuccessTitle   = "notifications.admin.roles.create_success_title"
 	NotificationsAdminRolesCreateSuccessMessage = "notifications.admin.roles.create_success_message"
+	NotificationsAdminRolesUpdateSuccessTitle   = "notifications.admin.roles.update_success_title"
+	NotificationsAdminRolesUpdateSuccessMessage = "notifications.admin.roles.update_success_message"
 	NotificationsEditProfileSuccessTitle        = "notifications.edit.profile.success_title"
 	NotificationsEditProfileSuccessMessage      = "notifications.edit.profile.success_message"
 
@@ -28,6 +31,12 @@ const (
 	PagesAdminRolesCreateDescriptionLabel = "pages.admin.roles.create_description_label"
 	PagesAdminRolesCreateProtectedLabel   = "pages.admin.roles.create_protected_label"
 	PagesAdminRolesCreateButtonSubmitRole = "pages.admin.roles.create_button_submit_role"
+
+	PagesAdminRolesUpdateTitle            = "pages.admin.roles.update_title"
+	PagesAdminRolesUpdateNameLabel        = "pages.admin.roles.update_name_label"
+	PagesAdminRolesUpdateDescriptionLabel = "pages.admin.roles.update_description_label"
+	PagesAdminRolesUpdateProtectedLabel   = "pages.admin.roles.update_protected_label"
+	PagesAdminRolesUpdateButtonSubmitRole = "pages.admin.roles.update_button_submit_role"
 
 	PagesAdminRolesListTitle              = "pages.admin.roles.list_title"
 	PagesAdminRolesListButtonCreateRole   = "pages.admin.roles.list_button_create_role"

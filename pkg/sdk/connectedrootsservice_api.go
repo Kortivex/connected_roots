@@ -11,12 +11,14 @@ import (
 )
 
 const (
-	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get /users/:user_id"
+	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get   /users/:user_id"
 	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
-	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
+	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post  /users/:user_id/auth"
 
-	traciConnectedRootsPostRolesAPI = "connected-roots-service.http-client: post /roles"
-	traciConnectedRootsGetRolesAPI  = "connected-roots-service.http-client: get /roles"
+	traciConnectedRootsPostRoleAPI = "connected-roots-service.http-client: post /roles"
+	traciConnectedRootsPutRoleAPI  = "connected-roots-service.http-client: put /roles/:role_id"
+	traciConnectedRootsGetRoleAPI  = "connected-roots-service.http-client: get  /roles/:role_id"
+	traciConnectedRootsGetRolesAPI = "connected-roots-service.http-client: get  /roles"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -32,7 +34,9 @@ type IConnectedRootsServiceAPI interface {
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
 	////////////// ROLES //////////////
 
-	POSTRoles(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
+	POSTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
+	PUTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
+	GETRole(ctx context.Context, id string) (*resty.Response, error)
 	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
 }
 
@@ -120,12 +124,12 @@ func (c *ConnectedRootsServiceAPI) POSTUserAuthentication(ctx context.Context, u
 
 ////////////// ROLES //////////////
 
-func (c *ConnectedRootsServiceAPI) POSTRoles(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPostRolesAPI)
+func (c *ConnectedRootsServiceAPI) POSTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPostRoleAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsPostRolesAPI)
+	log := loggerEmpty.WithTag(traciConnectedRootsPostRoleAPI)
 
 	log.Debug("request [POST] /roles")
 
@@ -137,6 +141,50 @@ func (c *ConnectedRootsServiceAPI) POSTRoles(ctx context.Context, role *sdk_mode
 		SetResult(&sdk_models.RolesResponse{}).
 		SetError(&APIError{}).
 		Post("/roles")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPutRoleAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(traciConnectedRootsPutRoleAPI)
+
+	log.Debug("request [PUT] /roles/:role_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(role).
+		SetResult(&sdk_models.RolesResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/roles/%s", role.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETRole(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRoleAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(traciConnectedRootsGetRoleAPI)
+
+	log.Debug("request [GET] /roles/:role_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.RolesResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/roles/%s", id))
 	if err != nil {
 		return nil, err
 	}

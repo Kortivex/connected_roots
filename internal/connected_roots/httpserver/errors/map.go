@@ -17,6 +17,7 @@ var (
 	// ErrInvalidPayload is returned when a request body failed json schema validation.
 	ErrInvalidPayload         = errors.New("invalid payload")
 	ErrQueryParamInvalidValue = errors.New("error in query parameter value")
+	ErrPathParamInvalidValue  = errors.New("error in path parameter value")
 	ErrNotFound               = errors.New(gorm.ErrRecordNotFound.Error())
 )
 
@@ -25,5 +26,6 @@ var errorAPIMap = map[string]commons.ErrorS{
 	ErrBodyBadRequestWrongBody.Error(): {Status: http.StatusBadRequest, Message: ErrBodyBadRequestWrongBody.Error()},
 	ErrInvalidPayload.Error():          {Status: http.StatusBadRequest, Message: ErrInvalidPayload.Error()},
 	ErrQueryParamInvalidValue.Error():  {Status: http.StatusBadRequest, Message: ErrQueryParamInvalidValue.Error()},
+	ErrPathParamInvalidValue.Error():   {Status: http.StatusBadRequest, Message: ErrPathParamInvalidValue.Error()},
 	ErrNotFound.Error():                {Status: http.StatusNotFound, Message: ErrNotFound.Error()},
 }

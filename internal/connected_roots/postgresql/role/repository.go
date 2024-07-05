@@ -16,6 +16,7 @@ import (
 const (
 	tracingRole          = "repository-db.role"
 	tracingRoleCreate    = "repository-db.role.create"
+	tracingRoleUpdate    = "repository-db.role.update"
 	tracingRoleGet       = "repository-db.role.get"
 	tracingRoleListAllBy = "repository-db.role.list-all-by"
 )
@@ -61,6 +62,34 @@ func (r *Repository) Create(ctx context.Context, role *connected_roots.Roles) (*
 
 	if result.Error == nil && result.RowsAffected == 0 {
 		return nil, fmt.Errorf("%s: %w", tracingRoleCreate, gorm.ErrRecordNotFound)
+	}
+
+	log.Debug(fmt.Sprintf("role: %+v", roleDB))
+
+	return toDomain(roleDB), nil
+}
+
+func (r *Repository) Update(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleUpdate)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingRoleUpdate)
+
+	log.Debug(fmt.Sprintf("role: %+v", role))
+
+	roleDB := toDB(role, role.ID)
+	result := r.db.WithContext(ctx).Model(&Roles{}).
+		Omit("id", "created_at", "deleted_at").
+		Where("id = ?", role.ID).
+		Updates(&roleDB)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleUpdate, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s: %w", tracingRoleUpdate, gorm.ErrRecordNotFound)
 	}
 
 	log.Debug(fmt.Sprintf("role: %+v", roleDB))

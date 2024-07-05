@@ -48,8 +48,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	rolesGrp.GET("/list", rolesHandler.GetRolesListHandler, s.SessionMiddleware).Name = "get-list-roles"
 	rolesGrp.GET("/new", rolesHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-role"
 	rolesGrp.POST("/new", rolesHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-role"
+	rolesGrp.GET("/edit/:role_id", rolesHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "get-edit-role"
+	rolesGrp.POST("/edit/:role_id", rolesHandler.PostRoleUpdateHandler, s.SessionMiddleware).Name = "post-edit-role"
 	/*	rolesGrp.GET("/view/:role_id", rolesHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "view-role"
-		rolesGrp.GET("/edit/:role_id", rolesHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "edit-role"
 		rolesGrp.GET("/delete/:role_id", rolesHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "delete-role"
 	*/
 

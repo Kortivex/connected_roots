@@ -16,11 +16,15 @@ const (
 	tracingConnectedRootsServiceAuthenticateUser    = "connected-roots.authenticate-user"
 
 	tracingConnectedRootsServiceSaveRole    = "connected-roots.save-roles"
+	tracingConnectedRootsServiceUpdateRole  = "connected-roots.update-roles"
+	tracingConnectedRootsServiceObtainRole  = "connected-roots.obtain-role"
 	tracingConnectedRootsServiceObtainRoles = "connected-roots.obtain-roles"
 
 	ErrMsgConnectedRootsServiceAuthenticateUserErr    = "authentication user failure"
 	ErrMsgConnectedRootsServiceObtainUserErr          = "obtain user failure"
 	ErrMsgConnectedRootsServiceSaveRoleErr            = "saving role failure"
+	ErrMsgConnectedRootsServiceUpdateRoleErr          = "updating role failure"
+	ErrMsgConnectedRootsServiceObtainRoleErr          = "obtain role failure"
 	ErrMsgConnectedRootsServiceObtainRolesErr         = "obtain roles failure"
 	ErrMsgConnectedRootsServiceUpdatePartiallyUserErr = "updating partially user failure"
 )
@@ -39,6 +43,7 @@ type IConnectedRootsServiceSDK interface {
 	////////////// ROLES //////////////
 
 	SaveRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error)
+	ObtainRole(ctx context.Context, id string) (*sdk_models.RolesResponse, error)
 	ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error)
 }
 
@@ -110,7 +115,7 @@ func (c *ConnectedRootsServiceSDK) SaveRole(ctx context.Context, role *sdk_model
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveRole)
 	defer sp.End()
 
-	resp, err := c.api.POSTRoles(ctx, role)
+	resp, err := c.api.POSTRole(ctx, role)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveRole, err)
 	}
@@ -121,6 +126,46 @@ func (c *ConnectedRootsServiceSDK) SaveRole(ctx context.Context, role *sdk_model
 	respRole, ok := resp.Result().(*sdk_models.RolesResponse)
 	if !ok {
 		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveRole, errors.New(ErrMsgConnectedRootsServiceSaveRoleErr))
+	}
+
+	return respRole, nil
+}
+
+func (c *ConnectedRootsServiceSDK) UpdateRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceUpdateRole)
+	defer sp.End()
+
+	resp, err := c.api.PUTRole(ctx, role)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateRole, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateRole, resp.Error().(*APIError))
+	}
+
+	respRole, ok := resp.Result().(*sdk_models.RolesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateRole, errors.New(ErrMsgConnectedRootsServiceUpdateRoleErr))
+	}
+
+	return respRole, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainRole(ctx context.Context, id string) (*sdk_models.RolesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainRole)
+	defer sp.End()
+
+	resp, err := c.api.GETRole(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainRole, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainRole, resp.Error().(*APIError))
+	}
+
+	respRole, ok := resp.Result().(*sdk_models.RolesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainRole, errors.New(ErrMsgConnectedRootsServiceObtainRoleErr))
 	}
 
 	return respRole, nil

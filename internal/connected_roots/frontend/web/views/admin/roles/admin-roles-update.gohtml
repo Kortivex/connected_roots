@@ -1,0 +1,44 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_roles}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_update_roles}}</li>
+        </ol>
+    </nav>
+    <form id="update-role-form" method="POST" action="/admin/roles/edit/{{.role.ID}}"
+          enctype="application/x-www-form-urlencoded">
+        <div class="mb-3">
+            <label class="form-label" for="name">{{.update_name_label}}</label>
+            <input class="form-control" id="name" name="name" type="text" placeholder="{{.update_name_label}}"
+                   required="" value="{{.role.Name}}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="description">{{.update_description_label}}</label>
+            <input class="form-control" id="description" name="description" type="text"
+                   placeholder="{{.update_description_label}}" required="" value="{{.role.Description}}">
+        </div>
+        <div class="mb-3 form-check">
+            <input class="form-check-input" id="protected" name="protected" type="checkbox" value="{{.role.Protected}}"/>
+            <label class="form-check-label" for="protected">{{.update_protected_label}}</label>
+        </div>
+        <button class="btn btn-primary" type="submit">{{.update_button_submit_role}}</button>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

@@ -25,6 +25,8 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	rolesHandler := role.NewRolesHandlers(ctx)
 	rolesGrp := s.Echo.Group("/roles")
 	rolesGrp.POST("", rolesHandler.PostRolesHandler).Name = "post-role"
+	rolesGrp.PUT("/:role_id", rolesHandler.PutRolesHandler).Name = "put-role"
+	rolesGrp.GET("/:role_id", rolesHandler.GetRolesHandler).Name = "get-role"
 	rolesGrp.GET("", rolesHandler.ListRolesHandler).Name = "list-roles"
 
 	// Health endpoints.

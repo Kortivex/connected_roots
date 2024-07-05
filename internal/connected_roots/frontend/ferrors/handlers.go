@@ -1,11 +1,16 @@
 package ferrors
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
 
 	"github.com/labstack/echo/v4"
+)
+
+var (
+	ErrQueryParamInvalidValue = errors.New("error in query parameter value")
 )
 
 func Error401(c echo.Context) error {
