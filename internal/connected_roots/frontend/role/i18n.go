@@ -33,6 +33,19 @@ func CommonRoleUpdatePageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonRoleViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":             translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                  translator.T(c, translator.PagesAdminRolesViewTitle),
+		"active":                 "roles-management",
+		"breadcrumb_roles":       translator.T(c, translator.BreadcrumbRoles),
+		"breadcrumb_view_roles":  translator.T(c, translator.BreadcrumbViewRoles),
+		"view_name_label":        translator.T(c, translator.PagesAdminRolesViewNameLabel),
+		"view_description_label": translator.T(c, translator.PagesAdminRolesViewDescriptionLabel),
+		"view_protected_label":   translator.T(c, translator.PagesAdminRolesViewProtectedLabel),
+	}
+}
+
 func CommonRoleListPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                translator.T(c, translator.PagesCommonSiteTitle),

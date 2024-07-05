@@ -112,6 +112,7 @@ func (s *Service) setSetup() {
 	s.Echo.Static("/admin/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/roles/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/roles/edit/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/roles/view/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/users/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/users/profile/assets", s.conf.Frontend.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{

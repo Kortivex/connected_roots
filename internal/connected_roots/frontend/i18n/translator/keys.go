@@ -7,6 +7,7 @@ const (
 	BreadcrumbRoles       = "breadcrumb.roles"
 	BreadcrumbCreateRoles = "breadcrumb.create_roles"
 	BreadcrumbUpdateRoles = "breadcrumb.update_roles"
+	BreadcrumbViewRoles   = "breadcrumb.view_roles"
 	BreadcrumbListRoles   = "breadcrumb.list_roles"
 
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
@@ -48,6 +49,11 @@ const (
 	PagesAdminRolesListActionsRemoveLabel = "pages.admin.roles.list_actions_remove_label"
 	PagesAdminRolesListNextLabel          = "pages.admin.roles.list_next_label"
 	PagesAdminRolesListPreviousLabel      = "pages.admin.roles.list_previous_label"
+
+	PagesAdminRolesViewTitle            = "pages.admin.roles.view_title"
+	PagesAdminRolesViewNameLabel        = "pages.admin.roles.view_name_label"
+	PagesAdminRolesViewDescriptionLabel = "pages.admin.roles.view_description_label"
+	PagesAdminRolesViewProtectedLabel   = "pages.admin.roles.view_protected_label"
 
 	PagesCommonSiteTitle = "pages.common.site_title"
 

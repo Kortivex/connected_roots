@@ -25,6 +25,7 @@ const (
 	postCreateRoleHandlerName = "http-handler.role.post-create-role"
 	getUpdateRoleHandlerName  = "http-handler.role.get-update-role"
 	postUpdateRoleHandlerName = "http-handler.role.post-update-role"
+	getViewRoleHandlerName    = "http-handler.role.get-view-roles"
 	getListRoleHandlerName    = "http-handler.role.get-list-roles"
 
 	roleIDParam = "role_id"
@@ -176,6 +177,37 @@ func (h *Handlers) PostRoleUpdateHandler(c echo.Context) error {
 			"notification_type":    "success",
 			"notification_title":   translator.T(c, translator.NotificationsAdminRolesUpdateSuccessTitle),
 			"notification_message": translator.T(c, translator.NotificationsAdminRolesUpdateSuccessMessage),
+		}))
+}
+
+func (h *Handlers) GetRoleViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewRoleHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewRoleHandlerName)
+
+	roleID := c.Param(roleIDParam)
+	if roleID == "" {
+		err := ferrors.ErrQueryParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	role, err := h.sdk.ConnectedRootsService.SDK.ObtainRole(ctx, roleID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-roles-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonRoleViewPageI18N(c)), map[string]interface{}{
+			"role": role,
 		}))
 }
 

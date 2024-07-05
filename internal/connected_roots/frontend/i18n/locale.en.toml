@@ -6,6 +6,7 @@ roles = "Roles"
 create_roles = "Create"
 update_roles = "Update"
 list_roles = "List"
+view_roles = "View"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -50,6 +51,10 @@ list_actions_edit_label = "Edit"
 list_actions_remove_label = "Remove"
 list_next_label = "Next"
 list_previous_label = "Previous"
+view_title = "View Roles"
+view_name_label = "Name"
+view_description_label = "Description"
+view_protected_label = "Protected"
 
 [pages.common]
 site_title = "Connected Roots"
