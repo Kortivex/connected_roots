@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
+	"github.com/Kortivex/connected_roots/pkg/pagination"
 
 	"github.com/Kortivex/connected_roots/pkg/hashing"
 
@@ -16,9 +17,13 @@ import (
 
 const (
 	tracingUser                = "service.user"
+	tracingUserSave            = "service.user.save"
+	tracingUserUpdate          = "service.user.update"
 	tracingUserObtainFromEmail = "service.user.obtain-from-email"
 	tracingUserObtainFromID    = "service.user.obtain-from-id"
-	tracingUserUpdate          = "service.user.update"
+	tracingUserObtainAll       = "service.user.obtain-all"
+	tracingUserRemoveByID      = "service.user.remove-by-id"
+	tracingUserRemoveByEmail   = "service.user.remove-by-email"
 	tracingUserIsValidPassword = "service.user.is-valid-password"
 )
 
@@ -38,6 +43,46 @@ func New(conf *config.Config, db *gorm.DB, logr *logger.Logger) *Service {
 		logger:  logr,
 		userRep: user.NewRepository(conf, db, logr),
 	}
+}
+
+func (s *Service) Save(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserSave)
+	defer span.End()
+
+	passwordHashing, err := hashing.PasswordHashing(user.Password)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserSave, err)
+	}
+	user.Password = string(passwordHashing)
+
+	userRes, err := s.userRep.Create(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserSave, err)
+	}
+
+	userRes, err = s.userRep.GetByID(ctx, userRes.ID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserSave, err)
+	}
+
+	return userRes, nil
+}
+
+func (s *Service) Update(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserUpdate)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingUserUpdate)
+
+	usr, err := s.userRep.UpdateAll(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserUpdate, err)
+	}
+
+	log.Debug(fmt.Sprintf("user: %+v", usr))
+
+	return usr, nil
 }
 
 func (s *Service) ObtainFromID(ctx context.Context, email string) (*connected_roots.Users, error) {
@@ -74,21 +119,38 @@ func (s *Service) ObtainFromEmail(ctx context.Context, email string) (*connected
 	return usr, nil
 }
 
-func (s *Service) Update(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error) {
-	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserUpdate)
+func (s *Service) ObtainAll(ctx context.Context, filters *connected_roots.UserPaginationFilters) (*pagination.Pagination, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserObtainAll)
 	defer span.End()
 
-	loggerNew := s.logger.New()
-	log := loggerNew.WithTag(tracingUserUpdate)
-
-	usr, err := s.userRep.UpdateAll(ctx, user)
+	rolesRes, err := s.userRep.ListAllBy(ctx, filters, []string{"Role"}...)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", tracingUserUpdate, err)
+		return nil, fmt.Errorf("%s: %w", tracingUserObtainAll, err)
 	}
 
-	log.Debug(fmt.Sprintf("user: %+v", usr))
+	return rolesRes, nil
+}
 
-	return usr, nil
+func (s *Service) RemoveByID(ctx context.Context, id string) error {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserRemoveByID)
+	defer span.End()
+
+	if err := s.userRep.DeleteByID(ctx, id); err != nil {
+		return fmt.Errorf("%s: %w", tracingUserRemoveByID, err)
+	}
+
+	return nil
+}
+
+func (s *Service) RemoveByEmail(ctx context.Context, email string) error {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserRemoveByEmail)
+	defer span.End()
+
+	if err := s.userRep.DeleteByEmail(ctx, email); err != nil {
+		return fmt.Errorf("%s: %w", tracingUserRemoveByEmail, err)
+	}
+
+	return nil
 }
 
 func (s *Service) IsValidPassword(ctx context.Context, email, password string) (bool, error) {

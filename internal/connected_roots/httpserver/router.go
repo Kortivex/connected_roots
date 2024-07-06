@@ -17,8 +17,12 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// User endpoints.
 	usersHandler := user.NewUsersHandlers(ctx)
 	usersGrp := s.Echo.Group("/users")
-	usersGrp.GET("/:user_id", usersHandler.GetUserHandler).Name = "get-user"
+	usersGrp.POST("", usersHandler.PostUserHandler).Name = "post-user"
+	usersGrp.PUT("/:user_id", usersHandler.PutUserHandler).Name = "put-user"
 	usersGrp.PATCH("/:user_id", usersHandler.PatchUserPartiallyHandler).Name = "patch-user"
+	usersGrp.GET("/:user_id", usersHandler.GetUserHandler).Name = "get-user"
+	usersGrp.GET("", usersHandler.ListUsersHandler).Name = "list-users"
+	usersGrp.DELETE("/:user_id", usersHandler.DeleteUserHandler).Name = "delete-user"
 	usersGrp.POST("/:user_id/auth", usersHandler.PostUserAuthHandler).Name = "post-user-auth"
 
 	// Roles endpoints.

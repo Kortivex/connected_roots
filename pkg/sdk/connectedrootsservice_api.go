@@ -11,15 +11,19 @@ import (
 )
 
 const (
-	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get   /users/:user_id"
+	tracingConnectedRootsServicePostUserAPI           = "connected-roots-service.http-client: post /users"
+	tracingConnectedRootsServicePutUserAPI            = "connected-roots-service.http-client: put /users/:user_id"
 	tracingConnectedRootsServicePatchUserPartiallyAPI = "connected-roots-service.http-client: patch /users/:user_id"
-	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post  /users/:user_id/auth"
+	tracingConnectedRootsServiceGetUserAPI            = "connected-roots-service.http-client: get /users/:user_id"
+	tracingConnectedRootsGetUsersAPI                  = "connected-roots-service.http-client: get /users"
+	tracingConnectedRootsDeleteUserAPI                = "connected-roots-service.http-client: delete /users/:user_id"
+	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
 
-	traciConnectedRootsPostRoleAPI   = "connected-roots-service.http-client: post /roles"
-	traciConnectedRootsPutRoleAPI    = "connected-roots-service.http-client: put /roles/:role_id"
-	traciConnectedRootsGetRoleAPI    = "connected-roots-service.http-client: get /roles/:role_id"
-	traciConnectedRootsGetRolesAPI   = "connected-roots-service.http-client: get /roles"
-	traciConnectedRootsDeleteRoleAPI = "connected-roots-service.http-client: delete /roles/:role_id"
+	tracingConnectedRootsPostRoleAPI   = "connected-roots-service.http-client: post /roles"
+	tracingConnectedRootsPutRoleAPI    = "connected-roots-service.http-client: put /roles/:role_id"
+	tracingConnectedRootsGetRoleAPI    = "connected-roots-service.http-client: get /roles/:role_id"
+	tracingConnectedRootsGetRolesAPI   = "connected-roots-service.http-client: get /roles"
+	tracingConnectedRootsDeleteRoleAPI = "connected-roots-service.http-client: delete /roles/:role_id"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -30,8 +34,12 @@ type ConnectedRootsServiceAPI struct {
 type IConnectedRootsServiceAPI interface {
 	////////////// USERS //////////////
 
+	POSTUser(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
+	PUTUser(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
 	GETUser(ctx context.Context, userID string) (*resty.Response, error)
+	GETUsers(ctx context.Context, limit, nexCursor, prevCursor string, names, surnames, emails []string) (*resty.Response, error)
 	PATCHUserPartially(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
+	DELETEUser(ctx context.Context, id string) (*resty.Response, error)
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
 	////////////// ROLES //////////////
 
@@ -57,6 +65,52 @@ func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Log
 
 ////////////// USERS //////////////
 
+func (c *ConnectedRootsServiceAPI) POSTUser(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServicePostUserAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsServicePostUserAPI)
+
+	log.Debug("request [POST] /users")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, tracingConnectedRootsServicePostUserAPI).
+		SetBody(user).
+		SetResult(&sdk_models.UsersResponse{}).
+		SetError(&APIError{}).
+		Post("/users")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTUser(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServicePutUserAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsServicePutUserAPI)
+
+	log.Debug("request [PUT] /users/:user_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(user).
+		SetResult(&sdk_models.UsersResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/users/%s", user.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 func (c *ConnectedRootsServiceAPI) GETUser(ctx context.Context, userID string) (*resty.Response, error) {
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceGetUserAPI)
 	defer sp.End()
@@ -72,6 +126,52 @@ func (c *ConnectedRootsServiceAPI) GETUser(ctx context.Context, userID string) (
 		SetResult(&sdk_models.UsersResponse{}).
 		SetError(&APIError{}).
 		Get(fmt.Sprintf("/users/%s", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETUsers(ctx context.Context, limit, nexCursor, prevCursor string, names, surnames, emails []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUsersAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUsersAPI)
+
+	log.Debug("request [GET] /users")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, surname := range surnames {
+		request.SetQueryParam("surname[]", surname)
+	}
+
+	for _, email := range emails {
+		request.SetQueryParam("email[]", email)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get("/users")
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +195,26 @@ func (c *ConnectedRootsServiceAPI) PATCHUserPartially(ctx context.Context, user 
 		SetResult(&sdk_models.UsersResponse{}).
 		SetError(&APIError{}).
 		Patch(fmt.Sprintf("/users/%s", user.Email))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETEUser(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteUserAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteUserAPI)
+
+	log.Debug("request [DELETE] /users/:user_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/users/%s", id))
 	if err != nil {
 		return nil, err
 	}
@@ -127,11 +247,11 @@ func (c *ConnectedRootsServiceAPI) POSTUserAuthentication(ctx context.Context, u
 ////////////// ROLES //////////////
 
 func (c *ConnectedRootsServiceAPI) POSTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPostRoleAPI)
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPostRoleAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsPostRoleAPI)
+	log := loggerEmpty.WithTag(tracingConnectedRootsPostRoleAPI)
 
 	log.Debug("request [POST] /roles")
 
@@ -150,11 +270,11 @@ func (c *ConnectedRootsServiceAPI) POSTRole(ctx context.Context, role *sdk_model
 }
 
 func (c *ConnectedRootsServiceAPI) PUTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsPutRoleAPI)
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPutRoleAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsPutRoleAPI)
+	log := loggerEmpty.WithTag(tracingConnectedRootsPutRoleAPI)
 
 	log.Debug("request [PUT] /roles/:role_id")
 
@@ -173,11 +293,11 @@ func (c *ConnectedRootsServiceAPI) PUTRole(ctx context.Context, role *sdk_models
 }
 
 func (c *ConnectedRootsServiceAPI) GETRole(ctx context.Context, id string) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRoleAPI)
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetRoleAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsGetRoleAPI)
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetRoleAPI)
 
 	log.Debug("request [GET] /roles/:role_id")
 
@@ -194,11 +314,11 @@ func (c *ConnectedRootsServiceAPI) GETRole(ctx context.Context, id string) (*res
 }
 
 func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsGetRolesAPI)
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetRolesAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsGetRolesAPI)
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetRolesAPI)
 
 	log.Debug("request [GET] /roles")
 
@@ -232,11 +352,11 @@ func (c *ConnectedRootsServiceAPI) GETRoles(ctx context.Context, limit, nexCurso
 }
 
 func (c *ConnectedRootsServiceAPI) DELETERole(ctx context.Context, id string) (*resty.Response, error) {
-	ctx, sp := otel.Tracer("connected_roots").Start(ctx, traciConnectedRootsDeleteRoleAPI)
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteRoleAPI)
 	defer sp.End()
 
 	loggerEmpty := c.logger.New()
-	log := loggerEmpty.WithTag(traciConnectedRootsDeleteRoleAPI)
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteRoleAPI)
 
 	log.Debug("request [DELETE] /roles/:role_id")
 

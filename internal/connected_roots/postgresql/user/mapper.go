@@ -34,9 +34,18 @@ func toRoleDomain(rl *role.Roles) *connected_roots.Roles {
 	}
 }
 
-func toDB(user *connected_roots.Users) *Users {
+func toDomainSlice(users []*Users) []*connected_roots.Users {
+	usersDomain := []*connected_roots.Users{}
+	for _, user := range users {
+		roleDomain := toDomain(user)
+		usersDomain = append(usersDomain, roleDomain)
+	}
+	return usersDomain
+}
+
+func toDB(user *connected_roots.Users, id string) *Users {
 	return &Users{
-		ID:        user.ID,
+		ID:        id,
 		Name:      user.Name,
 		Surname:   user.Surname,
 		Email:     user.Email,
