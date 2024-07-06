@@ -14,11 +14,13 @@ import (
 )
 
 const (
-	tracingSession        = "service.session"
-	tracingSessionSave    = "service.session.save"
-	tracingSessionObtain  = "service.session.obtain"
-	tracingSessionClose   = "service.session.close"
-	tracingSessionIsValid = "service.session.is-valid"
+	tracingSession              = "service.session"
+	tracingSessionSave          = "service.session.save"
+	tracingSessionObtain        = "service.session.obtain"
+	tracingSessionClose         = "service.session.close"
+	tracingSessionIsValid       = "service.session.is-valid"
+	tracingSessionSaveMessage   = "service.session.save-message"
+	tracingSessionObtainMessage = "service.session.obtain-message"
 )
 
 type Service struct {
@@ -103,4 +105,38 @@ func (s *Service) Close(ctx context.Context, c echo.Context) error {
 	}
 
 	return nil
+}
+
+func (s *Service) SaveMessage(ctx context.Context, c echo.Context, name, value string) error {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSessionSaveMessage)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSessionSaveMessage)
+
+	log.Debug(fmt.Sprintf("flash name: %+v", name))
+	log.Debug(fmt.Sprintf("flash value: %+v", value))
+
+	if err := s.sessionRep.SetMessage(ctx, c, name, value); err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionSaveMessage, err)
+	}
+
+	return nil
+}
+
+func (s *Service) ObtainMessage(ctx context.Context, c echo.Context, name string) ([]string, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSessionObtainMessage)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSessionObtainMessage)
+
+	fm, err := s.sessionRep.GetMessage(ctx, c, name)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSessionObtainMessage, err)
+	}
+
+	log.Debug(fmt.Sprintf("flashes: %+v", fm))
+
+	return fm, nil
 }

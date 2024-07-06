@@ -14,10 +14,12 @@ import (
 )
 
 const (
-	tracingSession       = "repository-db.session"
-	tracingSessionCreate = "repository-db.session.create"
-	tracingSessionGet    = "repository-db.session.get"
-	tracingSessionDelete = "repository-db.session.delete"
+	tracingSession           = "repository-db.session"
+	tracingSessionCreate     = "repository-db.session.create"
+	tracingSessionGet        = "repository-db.session.get"
+	tracingSessionDelete     = "repository-db.session.delete"
+	tracingSessionGetMessage = "repository-db.session.get-message"
+	tracingSessionSetMessage = "repository-db.session.set-message"
 )
 
 type Repository struct {
@@ -122,4 +124,61 @@ func (r *Repository) Delete(ctx context.Context, c echo.Context) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) SetMessage(ctx context.Context, c echo.Context, name, value string) error {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSessionSetMessage)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSessionSetMessage)
+
+	result, err := session.Get(r.conf.Cookie.Name, c)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionSetMessage, err)
+	}
+
+	log.Debug(fmt.Sprintf("session: %+v", result))
+
+	result.AddFlash(value, name)
+
+	if err = result.Save(c.Request(), c.Response()); err != nil {
+		return fmt.Errorf("%s: %w", tracingSessionSetMessage, err)
+	}
+
+	return nil
+}
+
+func (r *Repository) GetMessage(ctx context.Context, c echo.Context, name string) ([]string, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSessionGetMessage)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSessionGetMessage)
+
+	result, err := session.Get(r.conf.Cookie.Name, c)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSessionGetMessage, err)
+	}
+
+	log.Debug(fmt.Sprintf("session: %+v", result))
+
+	fm := result.Flashes(name)
+
+	log.Debug(fmt.Sprintf("flashes: %+v", fm))
+
+	if len(fm) > 0 {
+		if err = result.Save(c.Request(), c.Response()); err != nil {
+			return nil, fmt.Errorf("%s: %w", tracingSessionGetMessage, err)
+		}
+
+		var flashes []string
+		for _, fl := range fm {
+			flashes = append(flashes, fl.(string))
+		}
+
+		return flashes, nil
+	}
+
+	return []string{}, nil
 }

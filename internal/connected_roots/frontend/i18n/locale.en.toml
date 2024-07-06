@@ -11,6 +11,7 @@ delete_roles = "Delete"
 users = "Users"
 list_users = "List"
 view_users = "View"
+delete_users = "Delete"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -25,6 +26,16 @@ create_success_title = "Creation role success"
 create_success_message = "Role has been created successfully"
 update_success_title = "Update role success"
 update_success_message = "Role has been updated successfully"
+delete_success_title = "Delete role success"
+delete_success_message = "Role has been deleted successfully"
+
+[notifications.admin.users]
+create_success_title = "Creation user success"
+create_success_message = "User has been created successfully"
+update_success_title = "Update user success"
+update_success_message = "User has been updated successfully"
+delete_success_title = "Delete user success"
+delete_success_message = "User has been deleted successfully"
 
 [notifications.edit.profile]
 success_title = "Edit profile success"
@@ -85,6 +96,10 @@ view_email_label = "Email"
 view_phone_label = "Phone"
 view_language_label = "Language"
 view_role_label = "Role"
+delete_title = "Delete Users"
+delete_warning_title = "Are you sure you want to delete it?"
+delete_warning_message = "This action is irreversible."
+delete_button_submit_user = "Delete"
 
 [pages.common]
 site_title = "Connected Roots"

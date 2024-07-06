@@ -66,8 +66,8 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 		adminUsersGrp.GET("/edit/:user_id", usersHandler.GetUserUpdateHandler, s.SessionMiddleware).Name = "get-edit-user"
 		adminUsersGrp.POST("/edit/:user_id", usersHandler.PostUserUpdateHandler, s.SessionMiddleware).Name = "post-edit-user"*/
 	adminUsersGrp.GET("/view/:user_id", usersHandler.GetUserViewHandler, s.SessionMiddleware).Name = "get-view-user"
-	/*	adminUsersGrp.GET("/delete/:user_id", usersHandler.GetUserDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
-		adminUsersGrp.POST("/delete/:user_id", usersHandler.PostUserDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"*/
+	adminUsersGrp.GET("/delete/:user_id", usersHandler.GetUserDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
+	adminUsersGrp.POST("/delete/:user_id", usersHandler.PostUserDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

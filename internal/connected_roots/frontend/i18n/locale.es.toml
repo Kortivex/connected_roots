@@ -11,6 +11,7 @@ delete_roles = "Borrar"
 users = "Usuarios"
 list_users = "Listar"
 view_users = "Ver"
+delete_users = "Borrar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -25,6 +26,16 @@ create_success_title = "Rol creado con éxito"
 create_success_message = "El rol ha sido creado exitosamente"
 update_success_title = "Rol actualizado con éxito"
 update_success_message = "El rol ha sido actualizado exitosamente"
+delete_success_title = "Rol borrado con éxito"
+delete_success_message = "El rol ha sido borrado exitosamente"
+
+[notifications.admin.users]
+create_success_title = "Usuario creado con éxito"
+create_success_message = "El usuario ha sido creado exitosamente"
+update_success_title = "Usuario actualizado con éxito"
+update_success_message = "El usuario ha sido actualizado exitosamente"
+delete_success_title = "Usuario borrado con éxito"
+delete_success_message = "El usuario ha sido borrado exitosamente"
 
 [notifications.edit.profile]
 success_title = "Perfil editado con éxito"
@@ -85,6 +96,10 @@ view_email_label = "Email"
 view_phone_label = "Teléfono"
 view_language_label = "Lenguaje"
 view_role_label = "Rol"
+delete_title = "Borrar Usuarios"
+delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
+delete_warning_message = "Esta acción es irreversible."
+delete_button_submit_user = "Borrar"
 
 [pages.common]
 site_title = "Raíces Conectadas"

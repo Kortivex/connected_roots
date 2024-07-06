@@ -1,0 +1,38 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_users}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_delete_users}}</li>
+        </ol>
+    </nav>
+    <form id="update-role-form" method="POST" action="/admin/users/delete/{{.user.ID}}"
+          enctype="application/x-www-form-urlencoded">
+        <div class="col-sm-10 col-md-6 col-lg-6 col-xl-4 col-xxl-4 mx-auto mt-10">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h4 class="card-title text-white">{{.delete_warning_title}}</h4>
+                    <p class="card-text">{{.delete_warning_message}}</p>
+                </div>
+                <button class="btn btn-danger" type="submit">{{.delete_button_submit_user}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

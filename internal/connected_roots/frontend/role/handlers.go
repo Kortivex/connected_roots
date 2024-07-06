@@ -220,6 +220,22 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListRoleHandlerName)
 
+	message, err := h.sessionSvc.ObtainMessage(c.Request().Context(), c, "message")
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	log.Debug(fmt.Sprintf("message: %s", message))
+
+	notifications := map[string]interface{}{}
+	if len(message) > 0 && message[0] == "success" {
+		notifications = map[string]interface{}{
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminRolesDeleteSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminRolesDeleteSuccessMessage),
+		}
+	}
+
 	nextCursor := ""
 	if c.QueryParam("next_cursor") != "" {
 		nextCursor = c.QueryParam("next_cursor")
@@ -242,13 +258,13 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleListPageI18N(c)), map[string]interface{}{
 			"roles":           roles,
 			"protected_roles": h.conf.Roles.Protected,
 			"pagination":      pagination,
-		}))
+		}), notifications))
 }
 
 func (h *Handlers) GetRoleDeleteHandler(c echo.Context) error {
@@ -296,6 +312,10 @@ func (h *Handlers) PostRoleDeleteHandler(c echo.Context) error {
 	}
 
 	if err := h.sdk.ConnectedRootsService.SDK.DeleteRole(ctx, roleID); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 

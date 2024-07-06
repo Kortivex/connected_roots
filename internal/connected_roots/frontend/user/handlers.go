@@ -21,8 +21,10 @@ import (
 const (
 	tracingUserHandlers = "http-handler.user"
 
-	getViewUserHandlerName  = "http-handler.user.get-view-user"
-	getListUsersHandlerName = "http-handler.user.get-list-users"
+	getViewUserHandlerName     = "http-handler.user.get-view-user"
+	getListUsersHandlerName    = "http-handler.user.get-list-users"
+	getDeleteUsersHandlerName  = "http-handler.user.get-delete-user"
+	postDeleteUsersHandlerName = "http-handler.user.post-delete-user"
 
 	getUserProfileHandlerName      = "http-handler.user.get-user-profile"
 	getEditUserProfileHandlerName  = "http-handler.user.get-edit-user-profile"
@@ -91,6 +93,22 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListUsersHandlerName)
 
+	message, err := h.sessionSvc.ObtainMessage(c.Request().Context(), c, "message")
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	log.Debug(fmt.Sprintf("message: %s", message))
+
+	notifications := map[string]interface{}{}
+	if len(message) > 0 && message[0] == "success" {
+		notifications = map[string]interface{}{
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminUsersDeleteSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminUsersDeleteSuccessMessage),
+		}
+	}
+
 	nextCursor := ""
 	if c.QueryParam("next_cursor") != "" {
 		nextCursor = c.QueryParam("next_cursor")
@@ -113,13 +131,68 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-users-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserListPageI18N(c)), map[string]interface{}{
 			"users":           users,
 			"protected_roles": h.conf.Roles.Protected,
 			"pagination":      pagination,
+		}), notifications))
+}
+
+func (h *Handlers) GetUserDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteUsersHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getDeleteUsersHandlerName)
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-users-delete.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserDeletePageI18N(c)), map[string]interface{}{
+			"user": user,
 		}))
+}
+
+func (h *Handlers) PostUserDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteUsersHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(postDeleteUsersHandlerName)
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sdk.ConnectedRootsService.SDK.DeleteUser(ctx, userID); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Redirect(http.StatusFound, "/admin/users/list")
 }
 
 func (h *Handlers) GetUserProfileHandler(c echo.Context) error {

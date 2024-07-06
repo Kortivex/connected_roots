@@ -13,6 +13,7 @@ const (
 	BreadcrumbUsers       = "breadcrumb.users"
 	BreadcrumbViewUsers   = "breadcrumb.view_users"
 	BreadcrumbListUsers   = "breadcrumb.list_users"
+	BreadcrumbDeleteUsers = "breadcrumb.delete_users"
 
 	NavbarLabelsAdminNavLabel          = "navbar.labels.admin_nav_label"
 	NavbarLabelsRoleNavLabel           = "navbar.labels.role_nav_label"
@@ -21,15 +22,25 @@ const (
 	NavbarLabelsUserNavManagementLabel = "navbar.labels.user_nav_management_label"
 	NavbarLabelsCollapsedViewLabel     = "navbar.labels.collapsed_view_label"
 
+	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
+	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
+
+	NotificationsEditProfileSuccessTitle   = "notifications.edit.profile.success_title"
+	NotificationsEditProfileSuccessMessage = "notifications.edit.profile.success_message"
+
 	NotificationsAdminRolesCreateSuccessTitle   = "notifications.admin.roles.create_success_title"
 	NotificationsAdminRolesCreateSuccessMessage = "notifications.admin.roles.create_success_message"
 	NotificationsAdminRolesUpdateSuccessTitle   = "notifications.admin.roles.update_success_title"
 	NotificationsAdminRolesUpdateSuccessMessage = "notifications.admin.roles.update_success_message"
-	NotificationsEditProfileSuccessTitle        = "notifications.edit.profile.success_title"
-	NotificationsEditProfileSuccessMessage      = "notifications.edit.profile.success_message"
+	NotificationsAdminRolesDeleteSuccessTitle   = "notifications.admin.roles.delete_success_title"
+	NotificationsAdminRolesDeleteSuccessMessage = "notifications.admin.roles.delete_success_message"
 
-	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
-	TopBarLabelsSignOutLabel = "topbar.labels.sign_out_label"
+	NotificationsAdminUsersCreateSuccessTitle   = "notifications.admin.users.create_success_title"
+	NotificationsAdminUsersCreateSuccessMessage = "notifications.admin.users.create_success_message"
+	NotificationsAdminUsersUpdateSuccessTitle   = "notifications.admin.users.update_success_title"
+	NotificationsAdminUsersUpdateSuccessMessage = "notifications.admin.users.update_success_message"
+	NotificationsAdminUsersDeleteSuccessTitle   = "notifications.admin.users.delete_success_title"
+	NotificationsAdminUsersDeleteSuccessMessage = "notifications.admin.users.delete_success_message"
 
 	PagesAdminRolesCreateTitle            = "pages.admin.roles.create_title"
 	PagesAdminRolesCreateNameLabel        = "pages.admin.roles.create_name_label"
@@ -63,6 +74,11 @@ const (
 	PagesAdminRolesViewNameLabel        = "pages.admin.roles.view_name_label"
 	PagesAdminRolesViewDescriptionLabel = "pages.admin.roles.view_description_label"
 	PagesAdminRolesViewProtectedLabel   = "pages.admin.roles.view_protected_label"
+
+	PagesAdminUsersDeleteTitle            = "pages.admin.users.delete_title"
+	PagesAdminUsersDeleteWarningTitle     = "pages.admin.users.delete_warning_title"
+	PagesAdminUsersDeleteWarningMessage   = "pages.admin.users.delete_warning_message"
+	PagesAdminUsersDeleteButtonSubmitUser = "pages.admin.users.delete_button_submit_user"
 
 	PagesAdminUsersListTitle              = "pages.admin.users.list_title"
 	PagesAdminUsersListButtonCreateUser   = "pages.admin.users.list_button_create_user"

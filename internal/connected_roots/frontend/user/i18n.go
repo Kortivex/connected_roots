@@ -43,6 +43,19 @@ func CommonUserListPageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonUserDeletePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                     translator.T(c, translator.PagesAdminUsersDeleteTitle),
+		"active":                    "users-management",
+		"breadcrumb_users":          translator.T(c, translator.BreadcrumbUsers),
+		"breadcrumb_delete_users":   translator.T(c, translator.BreadcrumbDeleteUsers),
+		"delete_warning_title":      translator.T(c, translator.PagesAdminUsersDeleteWarningTitle),
+		"delete_warning_message":    translator.T(c, translator.PagesAdminUsersDeleteWarningMessage),
+		"delete_button_submit_user": translator.T(c, translator.PagesAdminUsersDeleteButtonSubmitUser),
+	}
+}
+
 func CommonUserProfilePageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":          translator.T(c, translator.PagesCommonSiteTitle),
