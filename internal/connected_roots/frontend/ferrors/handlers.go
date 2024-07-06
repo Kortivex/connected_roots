@@ -1,7 +1,8 @@
 package ferrors
 
 import (
-	"errors"
+	"github.com/Kortivex/connected_roots/pkg/logger/commons"
+	"github.com/Kortivex/connected_roots/pkg/utils"
 	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
@@ -9,9 +10,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var (
-	ErrPathParamInvalidValue = errors.New("error in path parameter value")
-)
+func MatchError(err error) *commons.ErrorS {
+	switch e := utils.UnwrapErr(err).(type) {
+	default:
+		if value, ok := errorAPIMap[e.Error()]; ok {
+			return commons.NewErrorS(value.Status, value.Message, value.Details, err).(*commons.ErrorS)
+		}
+
+		return commons.NewErrorS(http.StatusInternalServerError, ErrSomethingWentWrong.Error(), nil, err).(*commons.ErrorS)
+	}
+}
 
 func Error401(c echo.Context) error {
 	return c.Render(http.StatusOK, "401.gohtml", translator.AddDataKeys(CommonErrorsPageI18N(c), map[string]interface{}{

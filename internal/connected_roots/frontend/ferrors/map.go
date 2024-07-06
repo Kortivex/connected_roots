@@ -1,12 +1,10 @@
-package errors
+package ferrors
 
 import (
 	"errors"
-	"net/http"
-
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
-
 	"gorm.io/gorm"
+	"net/http"
 )
 
 var (

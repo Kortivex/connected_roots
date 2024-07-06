@@ -53,7 +53,7 @@ func toDB(user *connected_roots.Users, id string) *Users {
 		Password:  user.Password,
 		Telephone: user.Telephone,
 		Language:  user.Language,
-		RoleID:    user.Role.ID,
+		RoleID:    user.RoleID,
 		BaseModel: postgresql.BaseModel{
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,

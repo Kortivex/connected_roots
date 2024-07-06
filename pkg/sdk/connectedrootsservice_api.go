@@ -77,7 +77,7 @@ func (c *ConnectedRootsServiceAPI) POSTUser(ctx context.Context, user *sdk_model
 	request := c.Rest.Client.R()
 	response, err := request.
 		SetContext(ctx).
-		SetHeader(HeaderContentType, tracingConnectedRootsServicePostUserAPI).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
 		SetBody(user).
 		SetResult(&sdk_models.UsersResponse{}).
 		SetError(&APIError{}).

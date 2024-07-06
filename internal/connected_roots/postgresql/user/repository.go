@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Kortivex/connected_roots/pkg/pagination"
 	"github.com/Kortivex/connected_roots/pkg/ulid"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
@@ -60,6 +61,9 @@ func (r *Repository) Create(ctx context.Context, user *connected_roots.Users) (*
 		Create(&userDB)
 
 	if result.Error != nil {
+		if result.Error.(*pgconn.PgError).Code == "23505" {
+			return nil, fmt.Errorf("%s: %w", tracingUserCreate, gorm.ErrDuplicatedKey)
+		}
 		return nil, fmt.Errorf("%s: %w", tracingUserCreate, result.Error)
 	}
 

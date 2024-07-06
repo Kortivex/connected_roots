@@ -2,25 +2,27 @@ package user
 
 import (
 	"fmt"
-	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
-	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
-	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
-	"github.com/Kortivex/connected_roots/pkg/logger/commons"
-	"github.com/Kortivex/connected_roots/pkg/sdk"
-	"net/http"
-
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
+	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
 	"github.com/Kortivex/connected_roots/pkg/logger"
+	"github.com/Kortivex/connected_roots/pkg/logger/commons"
+	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 const (
 	tracingUserHandlers = "http-handler.user"
 
+	getCreateUserHandlerName   = "http-handler.user.get-create-user"
+	postCreateUserHandlerName  = "http-handler.user.post-create-user"
 	getViewUserHandlerName     = "http-handler.user.get-view-user"
 	getListUsersHandlerName    = "http-handler.user.get-list-users"
 	getDeleteUsersHandlerName  = "http-handler.user.get-delete-user"
@@ -53,6 +55,87 @@ func NewUsersHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetUserCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateUserHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getCreateUserHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	roles, _, err := h.sdk.ConnectedRootsService.SDK.ObtainRoles(ctx, "10000", "", "", nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-users-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserCreatePageI18N(c)), map[string]interface{}{
+			"roles": roles,
+		}))
+}
+
+func (h *Handlers) PostUserCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postCreateUserHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postCreateUserHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user := &sdk_models.UsersBody{
+		Name:      c.FormValue("name"),
+		Surname:   c.FormValue("surname"),
+		Email:     c.FormValue("email"),
+		Password:  c.FormValue("password"),
+		Telephone: c.FormValue("phone"),
+		Language:  c.FormValue("language"),
+		RoleID:    c.FormValue("role-id"),
+	}
+
+	log.Debug(fmt.Sprintf("user: %+v", user))
+
+	notifications := map[string]interface{}{
+		"notification_type":    "success",
+		"notification_title":   translator.T(c, translator.NotificationsAdminUsersCreateSuccessTitle),
+		"notification_message": translator.T(c, translator.NotificationsAdminUsersCreateSuccessMessage),
+	}
+	roles, _, err := h.sdk.ConnectedRootsService.SDK.ObtainRoles(ctx, "10000", "", "", nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if _, err = h.sdk.ConnectedRootsService.SDK.SaveUser(ctx, user); err != nil {
+		if ferrors.MatchError(err).Message == ferrors.ErrDuplicateKey.Error() {
+			notifications = map[string]interface{}{
+				"notification_type":    "error",
+				"notification_title":   translator.T(c, translator.NotificationsAdminUsersCreateErrorDuplicatedTitle),
+				"notification_message": translator.T(c, translator.NotificationsAdminUsersCreateErrorDuplicatedMessage),
+			}
+		} else {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
+	return c.Render(http.StatusOK, "admin-users-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserCreatePageI18N(c)),
+			notifications), map[string]interface{}{
+			"user":  user,
+			"roles": roles,
+		}))
 }
 
 func (h *Handlers) GetUserViewHandler(c echo.Context) error {

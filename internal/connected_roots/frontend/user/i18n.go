@@ -5,6 +5,26 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonUserCreatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                      translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                           translator.T(c, translator.PagesAdminUsersCreateTitle),
+		"active":                          "users-management",
+		"breadcrumb_users":                translator.T(c, translator.BreadcrumbUsers),
+		"breadcrumb_create_users":         translator.T(c, translator.BreadcrumbCreateUsers),
+		"create_name_label":               translator.T(c, translator.PagesAdminUsersCreateNameLabel),
+		"create_surname_label":            translator.T(c, translator.PagesAdminUsersCreateSurnameLabel),
+		"create_email_label":              translator.T(c, translator.PagesAdminUsersCreateEmailLabel),
+		"create_password_label":           translator.T(c, translator.PagesAdminUsersCreatePasswordLabel),
+		"create_phone_label":              translator.T(c, translator.PagesAdminUsersCreatePhoneLabel),
+		"create_language_label":           translator.T(c, translator.PagesAdminUsersCreateLanguageLabel),
+		"create_language_selection_label": translator.T(c, translator.PagesAdminUsersCreateLanguageSelectionLabel),
+		"create_role_label":               translator.T(c, translator.PagesAdminUsersCreateRoleLabel),
+		"create_role_selection_label":     translator.T(c, translator.PagesAdminUsersCreateRoleSelectionLabel),
+		"create_button_submit_user":       translator.T(c, translator.PagesAdminUsersCreateButtonSubmitUser),
+	}
+}
+
 func CommonUserViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":            translator.T(c, translator.PagesCommonSiteTitle),

@@ -25,6 +25,10 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 
 func ParseTemplates(path string) (*template.Template, error) {
 	t := template.New("")
+	t.Funcs(template.FuncMap{
+		"ToUpper": strings.ToUpper,
+		"ToLower": strings.ToLower,
+	})
 	err := filepath.Walk(path, func(path string, _ os.FileInfo, err error) error {
 		if strings.Contains(path, ".gohtml") {
 			_, err = t.ParseFiles(path)
