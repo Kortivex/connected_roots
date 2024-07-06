@@ -8,6 +8,8 @@ update_roles = "Editar"
 list_roles = "Listar"
 view_roles = "Ver"
 delete_roles = "Borrar"
+users = "Usuarios"
+list_users = "Listar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -60,6 +62,21 @@ delete_title = "Borrar Roles"
 delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
 delete_warning_message = "Esta acción es irreversible."
 delete_button_submit_role = "Borrar"
+
+[pages.admin.users]
+list_title = "Listar Usuarios"
+list_button_create_user = "Crear Usuario"
+list_name_label = "Nombre"
+list_surname_label = "Apellidos"
+list_email_label = "Email"
+list_phone_label = "Teléfono"
+list_role_label = "Rol"
+list_actions_label = "ACCIONES"
+list_actions_view_label = "Ver"
+list_actions_edit_label = "Editar"
+list_actions_remove_label = "Eliminar"
+list_next_label = "Siguiente"
+list_previous_label = "Anterior"
 
 [pages.common]
 site_title = "Raíces Conectadas"

@@ -23,12 +23,12 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	homeHandler := home.NewHomeHandlers(ctx)
 	s.Echo.GET("/", homeHandler.GetHomeHandler).Name = "get-home"
 
-	// Login endpoints.
+	// Login endpoints:
 	loginHandler := login.NewLoginHandlers(ctx)
 	s.Echo.GET("/login", loginHandler.GetLoginHandler).Name = "get-login"
 	s.Echo.POST("/login", loginHandler.PostLoginHandler).Name = "post-login"
 
-	// Logout endpoints.
+	// Logout endpoints:
 	logoutHandler := logout.NewLogoutHandlers(ctx)
 	s.Echo.GET("/logout", logoutHandler.GetLogoutHandler, s.SessionMiddleware).Name = "get-logout"
 
@@ -39,20 +39,35 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	usersGrp.GET("/profile/edit", usersHandler.GetEditUserProfileHandler, s.SessionMiddleware).Name = "get-edit-user-profile"
 	usersGrp.POST("/profile/edit", usersHandler.PostEditUserProfileHandler, s.SessionMiddleware).Name = "post-edit-user-profile"
 
-	// Admin endpoints.
+	// Admin endpoints:
+	// |
+	// |
 	adminGrp := s.Echo.Group("/admin")
-
-	// Role endpoints.
+	// |
+	// |
+	// + --- Role endpoints:
 	rolesHandler := role.NewRolesHandlers(ctx)
-	rolesGrp := adminGrp.Group("/roles")
-	rolesGrp.GET("/list", rolesHandler.GetRolesListHandler, s.SessionMiddleware).Name = "get-list-roles"
-	rolesGrp.GET("/new", rolesHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-role"
-	rolesGrp.POST("/new", rolesHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-role"
-	rolesGrp.GET("/edit/:role_id", rolesHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "get-edit-role"
-	rolesGrp.POST("/edit/:role_id", rolesHandler.PostRoleUpdateHandler, s.SessionMiddleware).Name = "post-edit-role"
-	rolesGrp.GET("/view/:role_id", rolesHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "get-view-role"
-	rolesGrp.GET("/delete/:role_id", rolesHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "get-delete-role"
-	rolesGrp.POST("/delete/:role_id", rolesHandler.PostRoleDeleteHandler, s.SessionMiddleware).Name = "post-delete-role"
+	adminRolesGrp := adminGrp.Group("/roles")
+	adminRolesGrp.GET("/list", rolesHandler.GetRolesListHandler, s.SessionMiddleware).Name = "get-list-roles"
+	adminRolesGrp.GET("/new", rolesHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-role"
+	adminRolesGrp.POST("/new", rolesHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-role"
+	adminRolesGrp.GET("/edit/:role_id", rolesHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "get-edit-role"
+	adminRolesGrp.POST("/edit/:role_id", rolesHandler.PostRoleUpdateHandler, s.SessionMiddleware).Name = "post-edit-role"
+	adminRolesGrp.GET("/view/:role_id", rolesHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "get-view-role"
+	adminRolesGrp.GET("/delete/:role_id", rolesHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "get-delete-role"
+	adminRolesGrp.POST("/delete/:role_id", rolesHandler.PostRoleDeleteHandler, s.SessionMiddleware).Name = "post-delete-role"
+	// |
+	// |
+	// + --- User endpoints:
+	adminUsersGrp := adminGrp.Group("/users")
+	adminUsersGrp.GET("/list", usersHandler.GetUsersListHandler, s.SessionMiddleware).Name = "get-list-users"
+	/*	adminUsersGrp.GET("/new", usersHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-user"
+		adminUsersGrp.POST("/new", usersHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-user"
+		adminUsersGrp.GET("/edit/:user_id", usersHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "get-edit-user"
+		adminUsersGrp.POST("/edit/:user_id", usersHandler.PostRoleUpdateHandler, s.SessionMiddleware).Name = "post-edit-user"
+		adminUsersGrp.GET("/view/:user_id", usersHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "get-view-user"
+		adminUsersGrp.GET("/delete/:user_id", usersHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
+		adminUsersGrp.POST("/delete/:user_id", usersHandler.PostRoleDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

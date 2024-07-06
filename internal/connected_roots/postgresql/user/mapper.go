@@ -15,6 +15,7 @@ func toDomain(user *Users) *connected_roots.Users {
 		Password:  user.Password,
 		Telephone: user.Telephone,
 		Language:  user.Language,
+		RoleID:    user.RoleID,
 		Role:      toRoleDomain(user.Role),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,

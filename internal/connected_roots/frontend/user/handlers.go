@@ -20,6 +20,8 @@ import (
 const (
 	tracingUserHandlers = "http-handler.user"
 
+	getListUsersHandlerName = "http-handler.user.get-list-users"
+
 	getUserProfileHandlerName      = "http-handler.user.get-user-profile"
 	getEditUserProfileHandlerName  = "http-handler.user.get-edit-user-profile"
 	postEditUserProfileHandlerName = "http-handler.user.post-edit-user-profile"
@@ -45,6 +47,44 @@ func NewUsersHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetUsersListHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListUsersHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(getListUsersHandlerName)
+
+	nextCursor := ""
+	if c.QueryParam("next_cursor") != "" {
+		nextCursor = c.QueryParam("next_cursor")
+		log.Debug(fmt.Sprintf("next_cursor: %s", nextCursor))
+	}
+	prevCursor := ""
+	if c.QueryParam("previous_cursor") != "" {
+		prevCursor = c.QueryParam("previous_cursor")
+		log.Debug(fmt.Sprintf("previous_cursor: %s", prevCursor))
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	users, pagination, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "20", nextCursor, prevCursor, nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-users-list.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserListPageI18N(c)), map[string]interface{}{
+			"users":           users,
+			"protected_roles": h.conf.Roles.Protected,
+			"pagination":      pagination,
+		}))
 }
 
 func (h *Handlers) GetUserProfileHandler(c echo.Context) error {

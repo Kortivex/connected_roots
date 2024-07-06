@@ -5,6 +5,28 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonUserListPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                     translator.T(c, translator.PagesAdminUsersListTitle),
+		"active":                    "users-management",
+		"breadcrumb_users":          translator.T(c, translator.BreadcrumbUsers),
+		"breadcrumb_list_users":     translator.T(c, translator.BreadcrumbListUsers),
+		"list_button_create_user":   translator.T(c, translator.PagesAdminUsersListButtonCreateUser),
+		"list_name_label":           translator.T(c, translator.PagesAdminUsersListNameLabel),
+		"list_surname_label":        translator.T(c, translator.PagesAdminUsersListSurnameLabel),
+		"list_email_label":          translator.T(c, translator.PagesAdminUsersListEmailLabel),
+		"list_phone_label":          translator.T(c, translator.PagesAdminUsersListPhoneLabel),
+		"list_role_label":           translator.T(c, translator.PagesAdminUsersListRoleLabel),
+		"list_actions_label":        translator.T(c, translator.PagesAdminUsersListActionsLabel),
+		"list_actions_view_label":   translator.T(c, translator.PagesAdminUsersListActionsViewLabel),
+		"list_actions_edit_label":   translator.T(c, translator.PagesAdminUsersListActionsEditLabel),
+		"list_actions_remove_label": translator.T(c, translator.PagesAdminUsersListActionsRemoveLabel),
+		"list_next_label":           translator.T(c, translator.PagesAdminUsersListNextLabel),
+		"list_previous_label":       translator.T(c, translator.PagesAdminUsersListPreviousLabel),
+	}
+}
+
 func CommonUserProfilePageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":          translator.T(c, translator.PagesCommonSiteTitle),

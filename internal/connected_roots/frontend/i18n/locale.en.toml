@@ -8,6 +8,8 @@ update_roles = "Update"
 list_roles = "List"
 view_roles = "View"
 delete_roles = "Delete"
+users = "Users"
+list_users = "List"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -60,6 +62,21 @@ delete_title = "Delete Roles"
 delete_warning_title = "Are you sure you want to delete it?"
 delete_warning_message = "This action is irreversible."
 delete_button_submit_role = "Delete"
+
+[pages.admin.users]
+list_title = "List Users"
+list_button_create_user = "Create User"
+list_name_label = "Name"
+list_surname_label = "Surname"
+list_email_label = "Email"
+list_phone_label = "Phone"
+list_role_label = "Role"
+list_actions_label = "ACTIONS"
+list_actions_view_label = "View"
+list_actions_edit_label = "Edit"
+list_actions_remove_label = "Remove"
+list_next_label = "Next"
+list_previous_label = "Previous"
 
 [pages.common]
 site_title = "Connected Roots"
