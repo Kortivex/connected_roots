@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrQueryParamInvalidValue = errors.New("error in query parameter value")
+	ErrPathParamInvalidValue = errors.New("error in path parameter value")
 )
 
 func Error401(c echo.Context) error {

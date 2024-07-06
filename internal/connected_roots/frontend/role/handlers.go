@@ -117,7 +117,7 @@ func (h *Handlers) GetRoleUpdateHandler(c echo.Context) error {
 
 	roleID := c.Param(roleIDParam)
 	if roleID == "" {
-		err := ferrors.ErrQueryParamInvalidValue
+		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -148,7 +148,7 @@ func (h *Handlers) PostRoleUpdateHandler(c echo.Context) error {
 
 	roleID := c.Param(roleIDParam)
 	if roleID == "" {
-		err := ferrors.ErrQueryParamInvalidValue
+		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -191,7 +191,7 @@ func (h *Handlers) GetRoleViewHandler(c echo.Context) error {
 
 	roleID := c.Param(roleIDParam)
 	if roleID == "" {
-		err := ferrors.ErrQueryParamInvalidValue
+		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -260,7 +260,7 @@ func (h *Handlers) GetRoleDeleteHandler(c echo.Context) error {
 
 	roleID := c.Param(roleIDParam)
 	if roleID == "" {
-		err := ferrors.ErrQueryParamInvalidValue
+		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -291,7 +291,7 @@ func (h *Handlers) PostRoleDeleteHandler(c echo.Context) error {
 
 	roleID := c.Param(roleIDParam)
 	if roleID == "" {
-		err := ferrors.ErrQueryParamInvalidValue
+		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 

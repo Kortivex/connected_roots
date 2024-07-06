@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
 	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 	"github.com/Kortivex/connected_roots/pkg/sdk"
@@ -20,11 +21,14 @@ import (
 const (
 	tracingUserHandlers = "http-handler.user"
 
+	getViewUserHandlerName  = "http-handler.user.get-view-user"
 	getListUsersHandlerName = "http-handler.user.get-list-users"
 
 	getUserProfileHandlerName      = "http-handler.user.get-user-profile"
 	getEditUserProfileHandlerName  = "http-handler.user.get-edit-user-profile"
 	postEditUserProfileHandlerName = "http-handler.user.post-edit-user-profile"
+
+	userIDParam = "user_id"
 )
 
 type Handlers struct {
@@ -47,6 +51,37 @@ func NewUsersHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetUserViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewUserHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewUserHandlerName)
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-users-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserViewPageI18N(c)), map[string]interface{}{
+			"user": user,
+		}))
 }
 
 func (h *Handlers) GetUsersListHandler(c echo.Context) error {

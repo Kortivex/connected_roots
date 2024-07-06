@@ -10,6 +10,7 @@ view_roles = "View"
 delete_roles = "Delete"
 users = "Users"
 list_users = "List"
+view_users = "View"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -77,6 +78,13 @@ list_actions_edit_label = "Edit"
 list_actions_remove_label = "Remove"
 list_next_label = "Next"
 list_previous_label = "Previous"
+view_title = "View Users"
+view_name_label = "Name"
+view_surname_label = "Surname"
+view_email_label = "Email"
+view_phone_label = "Phone"
+view_language_label = "Language"
+view_role_label = "Role"
 
 [pages.common]
 site_title = "Connected Roots"

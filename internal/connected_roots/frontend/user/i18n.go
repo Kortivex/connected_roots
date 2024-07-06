@@ -5,6 +5,22 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonUserViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":            translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                 translator.T(c, translator.PagesAdminUsersViewTitle),
+		"active":                "users-management",
+		"breadcrumb_users":      translator.T(c, translator.BreadcrumbUsers),
+		"breadcrumb_view_users": translator.T(c, translator.BreadcrumbViewUsers),
+		"view_name_label":       translator.T(c, translator.PagesAdminUsersViewNameLabel),
+		"view_surname_label":    translator.T(c, translator.PagesAdminUsersViewSurnameLabel),
+		"view_email_label":      translator.T(c, translator.PagesAdminUsersViewEmailLabel),
+		"view_phone_label":      translator.T(c, translator.PagesAdminUsersViewPhoneLabel),
+		"view_language_label":   translator.T(c, translator.PagesAdminUsersViewLanguageLabel),
+		"view_role_label":       translator.T(c, translator.PagesAdminUsersViewRoleLabel),
+	}
+}
+
 func CommonUserListPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                translator.T(c, translator.PagesCommonSiteTitle),

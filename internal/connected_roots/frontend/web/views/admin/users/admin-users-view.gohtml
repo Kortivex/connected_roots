@@ -1,0 +1,56 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_users}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_view_users}}</li>
+        </ol>
+    </nav>
+    <div class="mb-3">
+        <label class="form-label" for="name">{{.view_name_label}}</label>
+        <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
+               required="" value="{{.user.Name}}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="surname">{{.view_surname_label}}</label>
+        <input class="form-control" id="surname" name="surname" type="text"
+               placeholder="{{.view_surname_label}}" required="" value="{{.user.Surname}}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="email">{{.view_email_label}}</label>
+        <input class="form-control" id="email" name="email" type="text"
+               placeholder="{{.view_email_label}}" required="" value="{{.user.Email}}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="phone">{{.view_phone_label}}</label>
+        <input class="form-control" id="phone" name="phone" type="text"
+               placeholder="{{.view_phone_label}}" required="" value="{{.user.Telephone}}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="language">{{.view_language_label}}</label>
+        <input class="form-control" id="language" name="language" type="text"
+               placeholder="{{.view_language_label}}" required="" value="{{.user.Language}}" readonly>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="role">{{.view_role_label}}</label>
+        <input class="form-control" id="role" name="role" type="text"
+               placeholder="{{.view_role_label}}" required="" value="{{.user.Role.Name}}" readonly>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

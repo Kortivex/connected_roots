@@ -61,13 +61,13 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// + --- User endpoints:
 	adminUsersGrp := adminGrp.Group("/users")
 	adminUsersGrp.GET("/list", usersHandler.GetUsersListHandler, s.SessionMiddleware).Name = "get-list-users"
-	/*	adminUsersGrp.GET("/new", usersHandler.GetRoleCreateHandler, s.SessionMiddleware).Name = "get-new-user"
-		adminUsersGrp.POST("/new", usersHandler.PostRoleCreateHandler, s.SessionMiddleware).Name = "post-new-user"
-		adminUsersGrp.GET("/edit/:user_id", usersHandler.GetRoleUpdateHandler, s.SessionMiddleware).Name = "get-edit-user"
-		adminUsersGrp.POST("/edit/:user_id", usersHandler.PostRoleUpdateHandler, s.SessionMiddleware).Name = "post-edit-user"
-		adminUsersGrp.GET("/view/:user_id", usersHandler.GetRoleViewHandler, s.SessionMiddleware).Name = "get-view-user"
-		adminUsersGrp.GET("/delete/:user_id", usersHandler.GetRoleDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
-		adminUsersGrp.POST("/delete/:user_id", usersHandler.PostRoleDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"*/
+	/*	adminUsersGrp.GET("/new", usersHandler.GetUserCreateHandler, s.SessionMiddleware).Name = "get-new-user"
+		adminUsersGrp.POST("/new", usersHandler.PostUserCreateHandler, s.SessionMiddleware).Name = "post-new-user"
+		adminUsersGrp.GET("/edit/:user_id", usersHandler.GetUserUpdateHandler, s.SessionMiddleware).Name = "get-edit-user"
+		adminUsersGrp.POST("/edit/:user_id", usersHandler.PostUserUpdateHandler, s.SessionMiddleware).Name = "post-edit-user"*/
+	adminUsersGrp.GET("/view/:user_id", usersHandler.GetUserViewHandler, s.SessionMiddleware).Name = "get-view-user"
+	/*	adminUsersGrp.GET("/delete/:user_id", usersHandler.GetUserDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
+		adminUsersGrp.POST("/delete/:user_id", usersHandler.PostUserDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

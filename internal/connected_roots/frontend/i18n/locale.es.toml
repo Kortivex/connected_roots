@@ -10,6 +10,7 @@ view_roles = "Ver"
 delete_roles = "Borrar"
 users = "Usuarios"
 list_users = "Listar"
+view_users = "Ver"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -77,6 +78,13 @@ list_actions_edit_label = "Editar"
 list_actions_remove_label = "Eliminar"
 list_next_label = "Siguiente"
 list_previous_label = "Anterior"
+view_title = "Ver Usuarios"
+view_name_label = "Nombre"
+view_surname_label = "Apellido"
+view_email_label = "Email"
+view_phone_label = "Teléfono"
+view_language_label = "Lenguaje"
+view_role_label = "Rol"
 
 [pages.common]
 site_title = "Raíces Conectadas"
