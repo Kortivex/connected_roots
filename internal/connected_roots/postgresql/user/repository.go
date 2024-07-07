@@ -84,10 +84,15 @@ func (r *Repository) UpdateAll(ctx context.Context, user *connected_roots.Users)
 	log := loggerNew.WithTag(tracingUserUpdateAll)
 
 	userDB := toDB(user, user.ID)
-	result := r.db.WithContext(ctx).Model(&Users{}).
-		Select("*").
-		Where(fmt.Sprintf("%s = ?", "email"), user.Email).
-		Updates(&userDB)
+	query := r.db.WithContext(ctx).Model(&Users{}).
+		Select("*")
+
+	if user.Password == "" {
+		query = query.Omit("password")
+	}
+
+	query = query.Where(fmt.Sprintf("%s = ?", "email"), user.Email)
+	result := query.Updates(&userDB)
 
 	if result.Error != nil {
 		return nil, fmt.Errorf("%s: %w", tracingUserUpdateAll, result.Error)

@@ -11,59 +11,59 @@
     <nav class="mb-3" aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a>{{.breadcrumb_users}}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_create_users}}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_update_users}}</li>
         </ol>
     </nav>
-    <form id="create-role-form" method="POST" action="/admin/users/new"
+    <form id="update-role-form" method="POST" action="/admin/users/edit/{{ if .user }}{{ .user.ID }}{{ end }}"
           enctype="application/x-www-form-urlencoded">
         <div class="mb-3">
-            <label class="form-label" for="name">{{.create_name_label}}</label>
-            <input class="form-control" id="name" name="name" type="text" placeholder="{{.create_name_label}}"
+            <label class="form-label" for="name">{{.update_name_label}}</label>
+            <input class="form-control" id="name" name="name" type="text" placeholder="{{.update_name_label}}"
                    required="" value="{{ if .user }}{{ .user.Name }}{{ end }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="surname">{{.create_surname_label}}</label>
+            <label class="form-label" for="surname">{{.update_surname_label}}</label>
             <input class="form-control" id="surname" name="surname" type="text"
-                   placeholder="{{.create_surname_label}}" required="" value="{{ if .user }}{{ .user.Surname }}{{ end }}">
+                   placeholder="{{.update_surname_label}}" required="" value="{{ if .user }}{{ .user.Surname }}{{ end }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="email">{{.create_email_label}}</label>
+            <label class="form-label" for="email">{{.update_email_label}}</label>
             <input class="form-control" id="email" name="email" type="email"
-                   placeholder="{{.create_email_label}}" required="" value="{{ if .user }}{{ .user.Email }}{{ end }}">
+                   placeholder="{{.update_email_label}}" disabled value="{{ if .user }}{{ .user.Email }}{{ end }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="password">{{.create_password_label}}</label>
-            <input class="form-control" id="password" name="password" type="password"
-                   placeholder="{{.create_password_label}}" required="" value="{{ if .user }}{{ .user.Password }}{{ end }}">
+            <label class="form-label" for="password">{{.update_password_label}}</label>
+            <input class="form-control" id="password" name="password" type="text"
+                   placeholder="{{.update_password_label}}" value="{{ if .user }}{{ .user.Password }}{{ end }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="phone">{{.create_phone_label}}</label>
+            <label class="form-label" for="phone">{{.update_phone_label}}</label>
             <input class="form-control" id="phone" name="phone" type="text"
-                   placeholder="{{.create_phone_label}}" required="" value="{{ if .user }}{{ .user.Telephone }}{{ end }}">
+                   placeholder="{{.update_phone_label}}" required="" value="{{ if .user }}{{ .user.Telephone }}{{ end }}">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="language">{{.create_language_label}}</label>
+            <label class="form-label" for="language">{{.update_language_label}}</label>
             <select class="form-select" id="language" name="language" data-choices="data-choices"
                     data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
                     required>
-                <option value="">{{.create_language_selection_label}}...</option>
+                <option value="">{{.update_language_selection_label}}...</option>
                 <option value="es" {{ if and .user (eq .user.Language "es") }} selected {{ end }}>es</option>
                 <option value="en" {{ if and .user (eq .user.Language "en") }} selected {{ end }}>en</option>
             </select>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="role-id">{{.create_role_label}}</label>
+            <label class="form-label" for="role-id">{{.update_role_label}}</label>
             <select class="form-select" id="role-id" name="role-id" data-choices="data-choices"
                     data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
                     required>
-                <option value="">{{.create_role_selection_label}}...</option>
+                <option value="">{{.update_role_selection_label}}...</option>
                 {{ $user :=.user }}
                 {{range $role :=.roles }}
                     <option value="{{ $role.ID }}" {{ if and $user (eq $user.RoleID $role.ID) }} selected {{ end }}>{{ $role.Name }}</option>
                 {{end}}
             </select>
         </div>
-        <button class="btn btn-primary" type="submit">{{.create_button_submit_user}}</button>
+        <button class="btn btn-primary" type="submit">{{.update_button_submit_user}}</button>
     </form>
 </div>
 {{ template "navbar_footer" . }}

@@ -25,6 +25,26 @@ func CommonUserCreatePageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonUserUpdatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                      translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                           translator.T(c, translator.PagesAdminUsersUpdateTitle),
+		"active":                          "users-management",
+		"breadcrumb_users":                translator.T(c, translator.BreadcrumbUsers),
+		"breadcrumb_update_users":         translator.T(c, translator.BreadcrumbUpdateUsers),
+		"update_name_label":               translator.T(c, translator.PagesAdminUsersUpdateNameLabel),
+		"update_surname_label":            translator.T(c, translator.PagesAdminUsersUpdateSurnameLabel),
+		"update_email_label":              translator.T(c, translator.PagesAdminUsersUpdateEmailLabel),
+		"update_password_label":           translator.T(c, translator.PagesAdminUsersUpdatePasswordLabel),
+		"update_phone_label":              translator.T(c, translator.PagesAdminUsersUpdatePhoneLabel),
+		"update_language_label":           translator.T(c, translator.PagesAdminUsersUpdateLanguageLabel),
+		"update_language_selection_label": translator.T(c, translator.PagesAdminUsersUpdateLanguageSelectionLabel),
+		"update_role_label":               translator.T(c, translator.PagesAdminUsersUpdateRoleLabel),
+		"update_role_selection_label":     translator.T(c, translator.PagesAdminUsersUpdateRoleSelectionLabel),
+		"update_button_submit_user":       translator.T(c, translator.PagesAdminUsersUpdateButtonSubmitUser),
+	}
+}
+
 func CommonUserViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":            translator.T(c, translator.PagesCommonSiteTitle),

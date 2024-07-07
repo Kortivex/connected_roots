@@ -75,6 +75,14 @@ func (s *Service) Update(ctx context.Context, user *connected_roots.Users) (*con
 	loggerNew := s.logger.New()
 	log := loggerNew.WithTag(tracingUserUpdate)
 
+	if user.Password != "" {
+		passwordHashing, err := hashing.PasswordHashing(user.Password)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", tracingUserUpdate, err)
+		}
+		user.Password = string(passwordHashing)
+	}
+
 	usr, err := s.userRep.UpdateAll(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingUserUpdate, err)

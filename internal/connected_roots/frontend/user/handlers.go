@@ -23,6 +23,8 @@ const (
 
 	getCreateUserHandlerName   = "http-handler.user.get-create-user"
 	postCreateUserHandlerName  = "http-handler.user.post-create-user"
+	getUpdateUserHandlerName   = "http-handler.user.get-update-user"
+	postUpdateUserHandlerName  = "http-handler.user.post-update-user"
 	getViewUserHandlerName     = "http-handler.user.get-view-user"
 	getListUsersHandlerName    = "http-handler.user.get-list-users"
 	getDeleteUsersHandlerName  = "http-handler.user.get-delete-user"
@@ -135,6 +137,107 @@ func (h *Handlers) PostUserCreateHandler(c echo.Context) error {
 			notifications), map[string]interface{}{
 			"user":  user,
 			"roles": roles,
+		}))
+}
+
+func (h *Handlers) GetUserUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUpdateUserHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getUpdateUserHandlerName)
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user.Password = ""
+
+	roles, _, err := h.sdk.ConnectedRootsService.SDK.ObtainRoles(ctx, "10000", "", "", nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-users-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserUpdatePageI18N(c)), map[string]interface{}{
+			"user":  user,
+			"roles": roles,
+		}))
+}
+
+func (h *Handlers) PostUserUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postUpdateUserHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postUpdateUserHandlerName)
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	user.ID = userID
+	user.Name = c.FormValue("name")
+	user.Surname = c.FormValue("surname")
+	user.Password = c.FormValue("password")
+	user.Telephone = c.FormValue("phone")
+	user.Language = c.FormValue("language")
+	user.RoleID = c.FormValue("role-id")
+
+	log.Debug(fmt.Sprintf("user: %+v", user))
+
+	roles, _, err := h.sdk.ConnectedRootsService.SDK.ObtainRoles(ctx, "10000", "", "", nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if _, err = h.sdk.ConnectedRootsService.SDK.UpdateUser(ctx, user.ToUsersBody()); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if sess.UserID == userID {
+		sess.Name = user.Name
+		sess.Surname = user.Surname
+		if _, err = h.sessionSvc.Save(ctx, c, sess); err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
+	return c.Render(http.StatusOK, "admin-users-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserUpdatePageI18N(c)), map[string]interface{}{
+			"user":                 user,
+			"roles":                roles,
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminUsersUpdateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminUsersUpdateSuccessMessage),
 		}))
 }
 
@@ -394,6 +497,8 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 	user.Name = name
 	user.Surname = surname
 	user.Telephone = phone
+
+	user.Password = ""
 
 	user, err = h.sdk.ConnectedRootsService.SDK.UpdatePartiallyUser(ctx, user.ToUsersBody())
 	if err != nil {

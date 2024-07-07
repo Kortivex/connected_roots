@@ -56,13 +56,13 @@ func NewRolesHandlers(appCtx *connected_roots.Context) *Handlers {
 }
 
 func (h *Handlers) GetRoleCreateHandler(c echo.Context) error {
-	_, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateRoleHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateRoleHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
 	_ = loggerNew.WithTag(getCreateRoleHandlerName)
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -80,7 +80,7 @@ func (h *Handlers) PostRoleCreateHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(postCreateRoleHandlerName)
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -121,7 +121,7 @@ func (h *Handlers) GetRoleUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -152,7 +152,7 @@ func (h *Handlers) PostRoleUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -195,7 +195,7 @@ func (h *Handlers) GetRoleViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -220,7 +220,7 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListRoleHandlerName)
 
-	message, err := h.sessionSvc.ObtainMessage(c.Request().Context(), c, "message")
+	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -247,7 +247,7 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 		log.Debug(fmt.Sprintf("previous_cursor: %s", prevCursor))
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -280,7 +280,7 @@ func (h *Handlers) GetRoleDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -315,7 +315,7 @@ func (h *Handlers) PostRoleDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
+	if err := h.sessionSvc.SaveMessage(ctx, c, "message", "success"); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 

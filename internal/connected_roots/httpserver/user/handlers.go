@@ -93,6 +93,12 @@ func (h *UsersHandlers) PutUserHandler(c echo.Context) error {
 			return errors.NewErrorResponse(c, err)
 		}
 	}
+	userRes.Name = userBody.Name
+	userRes.Surname = userBody.Surname
+	userRes.Password = userBody.Password
+	userRes.Telephone = userBody.Telephone
+	userRes.Language = userBody.Language
+	userRes.RoleID = userBody.RoleID
 
 	userRes, err = h.userSvc.Update(ctx, userRes)
 	if err != nil {
@@ -132,6 +138,10 @@ func (h *UsersHandlers) PatchUserPartiallyHandler(c echo.Context) error {
 	userRes.Name = userBody.Name
 	userRes.Surname = userBody.Surname
 	userRes.Telephone = userBody.Telephone
+
+	if userBody.Password == "" {
+		userRes.Password = userBody.Password
+	}
 
 	userRes, err = h.userSvc.Update(ctx, userRes)
 	if err != nil {
