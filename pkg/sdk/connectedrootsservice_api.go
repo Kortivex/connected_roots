@@ -24,6 +24,15 @@ const (
 	tracingConnectedRootsGetRoleAPI    = "connected-roots-service.http-client: get /roles/:role_id"
 	tracingConnectedRootsGetRolesAPI   = "connected-roots-service.http-client: get /roles"
 	tracingConnectedRootsDeleteRoleAPI = "connected-roots-service.http-client: delete /roles/:role_id"
+
+	tracingConnectedRootsPostOrchardAPI   = "connected-roots-service.http-client: post /orchards"
+	tracingConnectedRootsPutOrchardAPI    = "connected-roots-service.http-client: put /orchards/:orchard_id"
+	tracingConnectedRootsGetOrchardAPI    = "connected-roots-service.http-client: get /orchards/:orchard_id"
+	tracingConnectedRootsGetOrchardsAPI   = "connected-roots-service.http-client: get /orchards"
+	tracingConnectedRootsDeleteOrchardAPI = "connected-roots-service.http-client: delete /orchards/:orchard_id"
+
+	tracingConnectedRootsGetUserOrchardAPI  = "connected-roots-service.http-client: get /users/:user_id/orchards/:orchard_id"
+	tracingConnectedRootsGetUserOrchardsAPI = "connected-roots-service.http-client: get /users/:user_id/orchards"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -48,6 +57,18 @@ type IConnectedRootsServiceAPI interface {
 	GETRole(ctx context.Context, id string) (*resty.Response, error)
 	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
 	DELETERole(ctx context.Context, id string) (*resty.Response, error)
+
+	////////////// ORCHARDS //////////////
+
+	POSTOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*resty.Response, error)
+	PUTOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*resty.Response, error)
+	GETOrchard(ctx context.Context, id string) (*resty.Response, error)
+	DELETEOrchard(ctx context.Context, id string) (*resty.Response, error)
+
+	////////////// USERS - ORCHARDS //////////////
+
+	GETUserOrchard(ctx context.Context, userID, id string) (*resty.Response, error)
+	GETUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -365,6 +386,206 @@ func (c *ConnectedRootsServiceAPI) DELETERole(ctx context.Context, id string) (*
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/roles/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// ORCHARDS //////////////
+
+func (c *ConnectedRootsServiceAPI) POSTOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPostOrchardAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPostOrchardAPI)
+
+	log.Debug("request [POST] /orchards")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(orchard).
+		SetResult(&sdk_models.OrchardsResponse{}).
+		SetError(&APIError{}).
+		Post("/orchards")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPutOrchardAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPutOrchardAPI)
+
+	log.Debug("request [PUT] /orchards/:orchard_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(orchard).
+		SetResult(&sdk_models.OrchardsResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/orchards/%s", orchard.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETOrchard(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetOrchardAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetOrchardAPI)
+
+	log.Debug("request [GET] /orchards/:orchard_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.OrchardsResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/orchards/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETOrchards(ctx context.Context, limit, nexCursor, prevCursor string, names, locations, userIDs []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetOrchardsAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetOrchardsAPI)
+
+	log.Debug("request [GET] /orchards")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, location := range locations {
+		request.SetQueryParam("location[]", location)
+	}
+
+	for _, userID := range userIDs {
+		request.SetQueryParam("user_id[]", userID)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get("/orchards")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETEOrchard(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteOrchardAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteOrchardAPI)
+
+	log.Debug("request [DELETE] /orchards/:orchard_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/orchards/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// USERS - ORCHARDS //////////////
+
+func (c *ConnectedRootsServiceAPI) GETUserOrchard(ctx context.Context, userID, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserOrchardAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserOrchardAPI)
+
+	log.Debug("request [GET] /users/:user_id/orchards/:orchard_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.OrchardsResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/orchards/%s", userID, id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserOrchardsAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserOrchardsAPI)
+
+	log.Debug("request [GET] /users/:user_id/orchards")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, location := range locations {
+		request.SetQueryParam("location[]", location)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/orchards", userID))
 	if err != nil {
 		return nil, err
 	}

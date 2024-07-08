@@ -9,3 +9,7 @@ type Roles struct {
 	Protected   bool   `gorm:"column:protected;type:boolean"`
 	postgresql.BaseModel
 }
+
+func (r *Roles) TableName() string {
+	return "roles"
+}

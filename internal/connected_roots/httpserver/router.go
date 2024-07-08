@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
 	"net/http"
 
@@ -33,6 +34,18 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	rolesGrp.GET("/:role_id", rolesHandler.GetRolesHandler).Name = "get-role"
 	rolesGrp.GET("", rolesHandler.ListRolesHandler).Name = "list-roles"
 	rolesGrp.DELETE("/:role_id", rolesHandler.DeleteRolesHandler).Name = "delete-role"
+
+	// Orchard endpoints.
+	orchardsHandler := orchard.NewOrchardsHandlers(ctx)
+	orchardsGrp := s.Echo.Group("/orchards")
+	orchardsGrp.POST("", orchardsHandler.PostOrchardHandler).Name = "post-orchard"
+	orchardsGrp.PUT("/:orchard_id", orchardsHandler.PutOrchardHandler).Name = "put-orchard"
+	orchardsGrp.GET("/:orchard_id", orchardsHandler.GetOrchardHandler).Name = "get-orchard"
+	orchardsGrp.GET("", orchardsHandler.ListOrchardsHandler).Name = "list-orchards"
+	orchardsGrp.DELETE("/:orchard_id", orchardsHandler.DeleteOrchardHandler).Name = "delete-orchard"
+	// User-Orchard endpoints.
+	usersGrp.GET("/:user_id/orchards/:orchard_id", orchardsHandler.GetUserOrchardHandler).Name = "get-user-orchard"
+	usersGrp.GET("/:user_id/orchards", orchardsHandler.ListUserOrchardsHandler).Name = "get-user-orchards"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

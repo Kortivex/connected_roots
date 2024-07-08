@@ -25,6 +25,15 @@ const (
 	tracingConnectedRootsServiceObtainRoles = "connected-roots.obtain-roles"
 	tracingConnectedRootsServiceDeleteRole  = "connected-roots.delete-role"
 
+	tracingConnectedRootsServiceSaveOrchard    = "connected-roots.save-orchard"
+	tracingConnectedRootsServiceUpdateOrchard  = "connected-roots.update-orchard"
+	tracingConnectedRootsServiceObtainOrchard  = "connected-roots.obtain-orchard"
+	tracingConnectedRootsServiceObtainOrchards = "connected-roots.obtain-orchards"
+	tracingConnectedRootsServiceDeleteOrchard  = "connected-roots.delete-orchard"
+
+	tracingConnectedRootsServiceObtainUserOrchard  = "connected-roots.obtain-user-orchard"
+	tracingConnectedRootsServiceObtainUserOrchards = "connected-roots.obtain-user-orchards"
+
 	ErrMsgConnectedRootsServiceSaveRoleErr    = "saving role failure"
 	ErrMsgConnectedRootsServiceUpdateRoleErr  = "updating role failure"
 	ErrMsgConnectedRootsServiceObtainRoleErr  = "obtain role failure"
@@ -36,6 +45,14 @@ const (
 	ErrMsgConnectedRootsServiceObtainUserErr          = "obtain user failure"
 	ErrMsgConnectedRootsServiceObtainUsersErr         = "obtain users failure"
 	ErrMsgConnectedRootsServiceAuthenticateUserErr    = "authentication user failure"
+
+	ErrMsgConnectedRootsServiceSaveOrchardErr    = "saving orchard failure"
+	ErrMsgConnectedRootsServiceUpdateOrchardErr  = "updating orchard failure"
+	ErrMsgConnectedRootsServiceObtainOrchardErr  = "obtain orchard failure"
+	ErrMsgConnectedRootsServiceObtainOrchardsErr = "obtain orchards failure"
+
+	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain orchard failure"
+	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain orchards failure"
 )
 
 type ConnectedRootsServiceSDK struct {
@@ -60,6 +77,19 @@ type IConnectedRootsServiceSDK interface {
 	ObtainRole(ctx context.Context, id string) (*sdk_models.RolesResponse, error)
 	ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error)
 	DeleteRole(ctx context.Context, id string) error
+
+	////////////// ORCHARDS //////////////
+
+	SaveOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*sdk_models.OrchardsResponse, error)
+	UpdateOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*sdk_models.OrchardsResponse, error)
+	ObtainOrchard(ctx context.Context, id string) (*sdk_models.OrchardsResponse, error)
+	ObtainOrchards(ctx context.Context, limit, nexCursor, prevCursor string, names, locations, userIDs []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error)
+	DeleteOrchard(ctx context.Context, id string) error
+
+	////////////// USERS - ORCHARDS //////////////
+
+	ObtainUserOrchard(ctx context.Context, userID, id string) (*sdk_models.OrchardsResponse, error)
+	ObtainUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error)
 }
 
 ////////////// USERS //////////////
@@ -312,4 +342,161 @@ func (c *ConnectedRootsServiceSDK) DeleteRole(ctx context.Context, id string) er
 	}
 
 	return nil
+}
+
+////////////// ORCHARDS //////////////
+
+func (c *ConnectedRootsServiceSDK) SaveOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*sdk_models.OrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveOrchard)
+	defer sp.End()
+
+	resp, err := c.api.POSTOrchard(ctx, orchard)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveOrchard, resp.Error().(*APIError))
+	}
+
+	respOrchard, ok := resp.Result().(*sdk_models.OrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveOrchard, errors.New(ErrMsgConnectedRootsServiceSaveOrchardErr))
+	}
+
+	return respOrchard, nil
+}
+
+func (c *ConnectedRootsServiceSDK) UpdateOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*sdk_models.OrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceUpdateOrchard)
+	defer sp.End()
+
+	resp, err := c.api.PUTOrchard(ctx, orchard)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateOrchard, resp.Error().(*APIError))
+	}
+
+	respOrchard, ok := resp.Result().(*sdk_models.OrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateOrchard, errors.New(ErrMsgConnectedRootsServiceUpdateOrchardErr))
+	}
+
+	return respOrchard, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainOrchard(ctx context.Context, id string) (*sdk_models.OrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainOrchard)
+	defer sp.End()
+
+	resp, err := c.api.GETOrchard(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchard, resp.Error().(*APIError))
+	}
+
+	respOrchard, ok := resp.Result().(*sdk_models.OrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchard, errors.New(ErrMsgConnectedRootsServiceObtainOrchardErr))
+	}
+
+	return respOrchard, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainOrchards(ctx context.Context, limit, nexCursor, prevCursor string, names, locations, userIDs []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainOrchards)
+	defer sp.End()
+
+	resp, err := c.api.GETOrchards(ctx, limit, nexCursor, prevCursor, names, locations, userIDs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchards, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchards, resp.Error().(*APIError))
+	}
+
+	respOrchards, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchards, errors.New(ErrMsgConnectedRootsServiceObtainOrchardsErr))
+	}
+
+	orchards := []*sdk_models.OrchardsResponse{}
+	orchardsByte, err := json.Marshal(respOrchards.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchards, err)
+	}
+	if err = json.Unmarshal(orchardsByte, &orchards); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainOrchards, err)
+	}
+
+	return orchards, &respOrchards.Paging, nil
+}
+
+func (c *ConnectedRootsServiceSDK) DeleteOrchard(ctx context.Context, id string) error {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceDeleteOrchard)
+	defer sp.End()
+
+	resp, err := c.api.DELETEOrchard(ctx, id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteOrchard, err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteOrchard, resp.Error().(*APIError))
+	}
+
+	return nil
+}
+
+////////////// USERS - ORCHARDS //////////////
+
+func (c *ConnectedRootsServiceSDK) ObtainUserOrchard(ctx context.Context, userID, id string) (*sdk_models.OrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainUserOrchard)
+	defer sp.End()
+
+	resp, err := c.api.GETUserOrchard(ctx, userID, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchard, resp.Error().(*APIError))
+	}
+
+	respOrchard, ok := resp.Result().(*sdk_models.OrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchard, errors.New(ErrMsgConnectedRootsServiceObtainUserOrchardErr))
+	}
+
+	return respOrchard, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainUserOrchards)
+	defer sp.End()
+
+	resp, err := c.api.GETUserOrchards(ctx, userID, limit, nexCursor, prevCursor, names, locations)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchards, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchards, resp.Error().(*APIError))
+	}
+
+	respOrchards, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchards, errors.New(ErrMsgConnectedRootsServiceObtainUserOrchardsErr))
+	}
+
+	orchards := []*sdk_models.OrchardsResponse{}
+	orchardsByte, err := json.Marshal(respOrchards.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchards, err)
+	}
+	if err = json.Unmarshal(orchardsByte, &orchards); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserOrchards, err)
+	}
+
+	return orchards, &respOrchards.Paging, nil
 }
