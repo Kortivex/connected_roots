@@ -120,6 +120,10 @@ func (s *Service) setSetup() {
 	s.Echo.Static("/admin/users/edit/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/users/view/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/users/delete/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/edit/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/view/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/delete/assets", s.conf.Frontend.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{
 		Templates: template.Must(templates.ParseTemplates(s.conf.Frontend.Templates)),
 	}

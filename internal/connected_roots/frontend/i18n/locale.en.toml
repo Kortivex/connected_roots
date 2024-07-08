@@ -14,6 +14,12 @@ update_users = "Update"
 list_users = "List"
 view_users = "View"
 delete_users = "Delete"
+orchards = "Orchards"
+create_orchards = "Create"
+update_orchards = "Update"
+list_orchards = "List"
+view_orchards = "View"
+delete_orchards = "Delete"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -21,7 +27,17 @@ role_nav_label = "Roles"
 role_nav_management_label = "Management"
 user_nav_label = "Users"
 user_nav_management_label = "Management"
+orchard_nav_label = "Orchards"
+orchard_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
+
+[notifications.admin.orchards]
+create_success_title = "Creation orchard success"
+create_success_message = "Orchard has been created successfully"
+update_success_title = "Update orchard success"
+update_success_message = "Orchard has been updated successfully"
+delete_success_title = "Delete orchard success"
+delete_success_message = "Orchard has been deleted successfully"
 
 [notifications.admin.roles]
 create_success_title = "Creation role success"
@@ -48,6 +64,20 @@ success_message = "Profile has been edited successfully"
 [topbar.labels]
 profile_label = "Profile"
 sign_out_label = "Sign Out"
+
+[pages.admin.orchards]
+list_title = "List Orchards"
+list_button_create_orchard = "Create Orchard"
+list_name_label = "Name"
+list_location_label = "Location"
+list_user_label = "User"
+list_crop_type_label = "Crop"
+list_actions_label = "ACTIONS"
+list_actions_view_label = "View"
+list_actions_edit_label = "Edit"
+list_actions_remove_label = "Remove"
+list_next_label = "Next"
+list_previous_label = "Previous"
 
 [pages.admin.roles]
 create_title = "Create Roles"

@@ -1,6 +1,7 @@
 package frontend
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/user"
 	"net/http"
 
@@ -68,6 +69,19 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminUsersGrp.GET("/view/:user_id", usersHandler.GetUserViewHandler, s.SessionMiddleware).Name = "get-view-user"
 	adminUsersGrp.GET("/delete/:user_id", usersHandler.GetUserDeleteHandler, s.SessionMiddleware).Name = "get-delete-user"
 	adminUsersGrp.POST("/delete/:user_id", usersHandler.PostUserDeleteHandler, s.SessionMiddleware).Name = "post-delete-user"
+	// |
+	// |
+	// + --- Orchard endpoints:
+	orchardsHandler := orchard.NewOrchardsHandlers(ctx)
+	adminOrchardsGrp := adminGrp.Group("/orchards")
+	adminOrchardsGrp.GET("/list", orchardsHandler.GetOrchardsListHandler, s.SessionMiddleware).Name = "get-list-orchards"
+	/*	adminOrchardsGrp.GET("/new", orchardsHandler.GetOrchardCreateHandler, s.SessionMiddleware).Name = "get-new-orchard"
+		adminOrchardsGrp.POST("/new", orchardsHandler.PostOrchardCreateHandler, s.SessionMiddleware).Name = "post-new-orchard"
+		adminOrchardsGrp.GET("/edit/:orchard_id", orchardsHandler.GetOrchardUpdateHandler, s.SessionMiddleware).Name = "get-edit-orchard"
+		adminOrchardsGrp.POST("/edit/:orchard_id", orchardsHandler.PostOrchardUpdateHandler, s.SessionMiddleware).Name = "post-edit-orchard"
+		adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
+		adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
+		adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

@@ -7,12 +7,14 @@ import (
 
 func CommonNavBarI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
-		"admin_nav_label":           translator.T(c, translator.NavbarLabelsAdminNavLabel),
-		"role_nav_label":            translator.T(c, translator.NavbarLabelsRoleNavLabel),
-		"role_nav_management_label": translator.T(c, translator.NavbarLabelsRoleNavManagementLabel),
-		"user_nav_label":            translator.T(c, translator.NavbarLabelsUserNavLabel),
-		"user_nav_management_label": translator.T(c, translator.NavbarLabelsUserNavManagementLabel),
-		"collapsed_view_label":      translator.T(c, translator.NavbarLabelsCollapsedViewLabel),
+		"admin_nav_label":              translator.T(c, translator.NavbarLabelsAdminNavLabel),
+		"role_nav_label":               translator.T(c, translator.NavbarLabelsRoleNavLabel),
+		"role_nav_management_label":    translator.T(c, translator.NavbarLabelsRoleNavManagementLabel),
+		"user_nav_label":               translator.T(c, translator.NavbarLabelsUserNavLabel),
+		"user_nav_management_label":    translator.T(c, translator.NavbarLabelsUserNavManagementLabel),
+		"orchard_nav_label":            translator.T(c, translator.NavbarLabelsOrchardNavLabel),
+		"orchard_nav_management_label": translator.T(c, translator.NavbarLabelsOrchardNavManagementLabel),
+		"collapsed_view_label":         translator.T(c, translator.NavbarLabelsCollapsedViewLabel),
 	}
 }
 

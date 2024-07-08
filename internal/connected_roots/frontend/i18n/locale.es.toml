@@ -14,6 +14,12 @@ update_users = "Editar"
 list_users = "Listar"
 view_users = "Ver"
 delete_users = "Borrar"
+orchards = "Huertos"
+create_orchards = "Crear"
+update_orchards = "Editar"
+list_orchards = "Listar"
+view_orchards = "Ver"
+delete_orchards = "Borrar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -21,7 +27,17 @@ role_nav_label = "Roles"
 role_nav_management_label = "Administrar"
 user_nav_label = "Usuarios"
 user_nav_management_label = "Administrar"
+orchard_nav_label = "Huertos"
+orchard_nav_management_label = "Administrar"
 collapsed_view_label = "Contraer Vista"
+
+[notifications.admin.orchards]
+create_success_title = "Huerto creado con éxito"
+create_success_message = "El huerto ha sido creado exitosamente"
+update_success_title = "Huerto actualizado con éxito"
+update_success_message = "El huerto ha sido actualizado exitosamente"
+delete_success_title = "Huerto borrado con éxito"
+delete_success_message = "El huerto ha sido borrado exitosamente"
 
 [notifications.admin.roles]
 create_success_title = "Rol creado con éxito"
@@ -48,6 +64,20 @@ success_message = "El perfil ha sido editado exitosamente"
 [topbar.labels]
 profile_label = "Perfil"
 sign_out_label = "Desconectar"
+
+[pages.admin.orchards]
+list_title = "Listar Huertos"
+list_button_create_orchard = "Crear Huerto"
+list_name_label = "Nombre"
+list_location_label = "Localización"
+list_user_label = "Usuario"
+list_crop_type_label = "Cultivo"
+list_actions_label = "ACCIONES"
+list_actions_view_label = "Ver"
+list_actions_edit_label = "Editar"
+list_actions_remove_label = "Eliminar"
+list_next_label = "Siguiente"
+list_previous_label = "Anterior"
 
 [pages.admin.roles]
 create_title = "Crear Roles"
