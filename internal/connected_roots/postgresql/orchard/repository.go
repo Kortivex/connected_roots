@@ -108,6 +108,8 @@ func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.O
 
 	orchardDB := &Orchards{}
 	result := r.db.WithContext(ctx).Model(&Orchards{}).
+		Preload("User").
+		Preload("CropType").
 		Where("id = ?", id).
 		First(&orchardDB)
 

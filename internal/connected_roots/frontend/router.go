@@ -78,9 +78,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	/*	adminOrchardsGrp.GET("/new", orchardsHandler.GetOrchardCreateHandler, s.SessionMiddleware).Name = "get-new-orchard"
 		adminOrchardsGrp.POST("/new", orchardsHandler.PostOrchardCreateHandler, s.SessionMiddleware).Name = "post-new-orchard"
 		adminOrchardsGrp.GET("/edit/:orchard_id", orchardsHandler.GetOrchardUpdateHandler, s.SessionMiddleware).Name = "get-edit-orchard"
-		adminOrchardsGrp.POST("/edit/:orchard_id", orchardsHandler.PostOrchardUpdateHandler, s.SessionMiddleware).Name = "post-edit-orchard"
-		adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
-		adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
+		adminOrchardsGrp.POST("/edit/:orchard_id", orchardsHandler.PostOrchardUpdateHandler, s.SessionMiddleware).Name = "post-edit-orchard"*/
+	adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
+	/*	adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
 		adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"*/
 
 	// Health endpoints.

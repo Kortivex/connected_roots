@@ -74,6 +74,16 @@ const (
 	PagesAdminOrchardsListNextLabel           = "pages.admin.orchards.list_next_label"
 	PagesAdminOrchardsListPreviousLabel       = "pages.admin.orchards.list_previous_label"
 
+	PagesAdminOrchardsViewTitle           = "pages.admin.orchards.view_title"
+	PagesAdminOrchardsViewNameLabel       = "pages.admin.orchards.view_name_label"
+	PagesAdminOrchardsViewLocationLabel   = "pages.admin.orchards.view_location_label"
+	PagesAdminOrchardsViewSizeLabel       = "pages.admin.orchards.view_size_label"
+	PagesAdminOrchardsViewSoilLabel       = "pages.admin.orchards.view_soil_label"
+	PagesAdminOrchardsViewFertilizerLabel = "pages.admin.orchards.view_fertilizer_label"
+	PagesAdminOrchardsViewCompostingLabel = "pages.admin.orchards.view_composting_label"
+	PagesAdminOrchardsViewUserLabel       = "pages.admin.orchards.view_user_label"
+	PagesAdminOrchardsViewCropTypeLabel   = "pages.admin.orchards.view_crop_type_label"
+
 	PagesAdminRolesCreateTitle            = "pages.admin.roles.create_title"
 	PagesAdminRolesCreateNameLabel        = "pages.admin.roles.create_name_label"
 	PagesAdminRolesCreateDescriptionLabel = "pages.admin.roles.create_description_label"
