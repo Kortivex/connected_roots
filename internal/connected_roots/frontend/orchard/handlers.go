@@ -137,3 +137,58 @@ func (h *Handlers) GetOrchardsListHandler(c echo.Context) error {
 			"pagination": pagination,
 		}), notifications))
 }
+
+func (h *Handlers) GetOrchardDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getDeleteOrchardHandlerName)
+
+	orchardId := c.Param(orchardIDParam)
+	if orchardId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-delete.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardDeletePageI18N(c)), map[string]interface{}{
+			"orchard": orchard,
+		}))
+}
+
+func (h *Handlers) PostOrchardDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(postDeleteOrchardHandlerName)
+
+	orchardId := c.Param(orchardIDParam)
+	if orchardId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sdk.ConnectedRootsService.SDK.DeleteOrchard(ctx, orchardId); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sessionSvc.SaveMessage(ctx, c, "message", "success"); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Redirect(http.StatusFound, "/admin/orchards/list")
+}

@@ -84,6 +84,11 @@ const (
 	PagesAdminOrchardsViewUserLabel       = "pages.admin.orchards.view_user_label"
 	PagesAdminOrchardsViewCropTypeLabel   = "pages.admin.orchards.view_crop_type_label"
 
+	PagesAdminOrchardsDeleteTitle               = "pages.admin.orchards.delete_title"
+	PagesAdminOrchardsDeleteWarningTitle        = "pages.admin.orchards.delete_warning_title"
+	PagesAdminOrchardsDeleteWarningMessage      = "pages.admin.orchards.delete_warning_message"
+	PagesAdminOrchardsDeleteButtonSubmitOrchard = "pages.admin.orchards.delete_button_submit_orchard"
+
 	PagesAdminRolesCreateTitle            = "pages.admin.roles.create_title"
 	PagesAdminRolesCreateNameLabel        = "pages.admin.roles.create_name_label"
 	PagesAdminRolesCreateDescriptionLabel = "pages.admin.roles.create_description_label"

@@ -43,3 +43,16 @@ func CommonOrchardListPageI18N(c echo.Context) map[string]interface{} {
 		"list_previous_label":        translator.T(c, translator.PagesAdminOrchardsListPreviousLabel),
 	}
 }
+
+func CommonOrchardDeletePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                   translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                        translator.T(c, translator.PagesAdminOrchardsDeleteTitle),
+		"active":                       "orchards-management",
+		"breadcrumb_roles":             translator.T(c, translator.BreadcrumbOrchards),
+		"breadcrumb_delete_orchards":   translator.T(c, translator.BreadcrumbDeleteOrchards),
+		"delete_warning_title":         translator.T(c, translator.PagesAdminOrchardsDeleteWarningTitle),
+		"delete_warning_message":       translator.T(c, translator.PagesAdminOrchardsDeleteWarningMessage),
+		"delete_button_submit_orchard": translator.T(c, translator.PagesAdminOrchardsDeleteButtonSubmitOrchard),
+	}
+}

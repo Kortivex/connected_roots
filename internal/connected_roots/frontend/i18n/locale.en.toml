@@ -87,6 +87,10 @@ view_fertilizer_label = "Fertilizer"
 view_composting_label = "Composting"
 view_user_label = "User"
 view_crop_type_label = "Crop Type"
+delete_title = "Delete Orchards"
+delete_warning_title = "Are you sure you want to delete it?"
+delete_warning_message = "This action is irreversible."
+delete_button_submit_orchard = "Delete"
 
 [pages.admin.roles]
 create_title = "Create Roles"

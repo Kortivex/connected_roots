@@ -80,8 +80,8 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 		adminOrchardsGrp.GET("/edit/:orchard_id", orchardsHandler.GetOrchardUpdateHandler, s.SessionMiddleware).Name = "get-edit-orchard"
 		adminOrchardsGrp.POST("/edit/:orchard_id", orchardsHandler.PostOrchardUpdateHandler, s.SessionMiddleware).Name = "post-edit-orchard"*/
 	adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
-	/*	adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
-		adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"*/
+	adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
+	adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

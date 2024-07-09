@@ -87,6 +87,10 @@ view_fertilizer_label = "Fertilizante"
 view_composting_label = "Compostaje"
 view_user_label = "Usuario"
 view_crop_type_label = "Cultivo"
+delete_title = "Borrar Huertos"
+delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
+delete_warning_message = "Esta acción es irreversible."
+delete_button_submit_orchard = "Borrar"
 
 [pages.admin.roles]
 create_title = "Crear Roles"
