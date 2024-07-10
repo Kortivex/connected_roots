@@ -11,10 +11,12 @@ import (
 	"github.com/Kortivex/connected_roots/pkg/logger"
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -52,6 +54,82 @@ func NewOrchardsHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetOrchardCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getCreateOrchardHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropTypes, _, err := h.sdk.ConnectedRootsService.SDK.ObtainCropTypes(ctx, "10000", "", "", nil, nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardCreatePageI18N(c)), map[string]interface{}{
+			"users":      users,
+			"crop_types": cropTypes,
+		}))
+}
+
+func (h *Handlers) PostOrchardCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postCreateOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postCreateOrchardHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	size, err := strconv.ParseFloat(c.FormValue("size"), 64)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchard := &sdk_models.OrchardsBody{
+		Name:       c.FormValue("name"),
+		Location:   c.FormValue("location"),
+		Size:       size,
+		Soil:       c.FormValue("soil"),
+		Fertilizer: c.FormValue("fertilizer"),
+		Composting: c.FormValue("composting"),
+		UserID:     c.FormValue("user-id"),
+		CropTypeID: c.FormValue("crop-type-id"),
+	}
+
+	log.Debug(fmt.Sprintf("orchard: %+v", orchard))
+
+	_, err = h.sdk.ConnectedRootsService.SDK.SaveOrchard(ctx, orchard)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardCreatePageI18N(c)), map[string]interface{}{
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminOrchardsCreateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminOrchardsCreateSuccessMessage),
+		}))
 }
 
 func (h *Handlers) GetOrchardViewHandler(c echo.Context) error {

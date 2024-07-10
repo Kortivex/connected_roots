@@ -11,6 +11,12 @@ import (
 )
 
 const (
+	tracingConnectedRootsServiceSaveCropType    = "connected-roots.save-crop-type"
+	tracingConnectedRootsServiceUpdateCropType  = "connected-roots.update-crop-type"
+	tracingConnectedRootsServiceObtainCropType  = "connected-roots.obtain-crop-type"
+	tracingConnectedRootsServiceObtainCropTypes = "connected-roots.obtain-crop-types"
+	tracingConnectedRootsServiceDeleteCropType  = "connected-roots.delete-crop-type"
+
 	tracingConnectedRootsServiceSaveUser            = "connected-roots.save-user"
 	tracingConnectedRootsServiceUpdateUser          = "connected-roots.update-user"
 	tracingConnectedRootsServiceUpdatePartiallyUser = "connected-roots.update-partially-user"
@@ -46,13 +52,18 @@ const (
 	ErrMsgConnectedRootsServiceObtainUsersErr         = "obtain users failure"
 	ErrMsgConnectedRootsServiceAuthenticateUserErr    = "authentication user failure"
 
+	ErrMsgConnectedRootsServiceSaveCropTypeErr    = "saving crop type failure"
+	ErrMsgConnectedRootsServiceUpdateCropTypeErr  = "updating crop type failure"
+	ErrMsgConnectedRootsServiceObtainCropTypeErr  = "obtain crop type failure"
+	ErrMsgConnectedRootsServiceObtainCropTypesErr = "obtain crop types failure"
+
 	ErrMsgConnectedRootsServiceSaveOrchardErr    = "saving orchard failure"
 	ErrMsgConnectedRootsServiceUpdateOrchardErr  = "updating orchard failure"
 	ErrMsgConnectedRootsServiceObtainOrchardErr  = "obtain orchard failure"
 	ErrMsgConnectedRootsServiceObtainOrchardsErr = "obtain orchards failure"
 
-	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain orchard failure"
-	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain orchards failure"
+	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain user orchard failure"
+	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain user orchards failure"
 )
 
 type ConnectedRootsServiceSDK struct {
@@ -90,6 +101,10 @@ type IConnectedRootsServiceSDK interface {
 
 	ObtainUserOrchard(ctx context.Context, userID, id string) (*sdk_models.OrchardsResponse, error)
 	ObtainUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error)
+
+	////////////// CROP TYPES //////////////
+
+	ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error)
 }
 
 ////////////// USERS //////////////
@@ -499,4 +514,35 @@ func (c *ConnectedRootsServiceSDK) ObtainUserOrchards(ctx context.Context, userI
 	}
 
 	return orchards, &respOrchards.Paging, nil
+}
+
+////////////// CROP TYPES //////////////
+
+func (c *ConnectedRootsServiceSDK) ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainCropTypes)
+	defer sp.End()
+
+	resp, err := c.api.GETCropTypes(ctx, limit, nexCursor, prevCursor, names, scientificNames, plantingSeasons, harvestSeasons)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropTypes, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropTypes, resp.Error().(*APIError))
+	}
+
+	respCropTypes, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropTypes, errors.New(ErrMsgConnectedRootsServiceObtainCropTypesErr))
+	}
+
+	orchards := []*sdk_models.CropTypesResponse{}
+	orchardsByte, err := json.Marshal(respCropTypes.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropTypes, err)
+	}
+	if err = json.Unmarshal(orchardsByte, &orchards); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropTypes, err)
+	}
+
+	return orchards, &respCropTypes.Paging, nil
 }

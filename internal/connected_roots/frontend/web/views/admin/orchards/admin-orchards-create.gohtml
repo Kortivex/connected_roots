@@ -1,0 +1,86 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_orchards}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_create_orchards}}</li>
+        </ol>
+    </nav>
+    <form id="create-orchard-form" method="POST" action="/admin/orchards/new"
+          enctype="application/x-www-form-urlencoded">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="name">{{.create_name_label}}</label>
+                <input class="form-control" id="name" name="name" type="text" placeholder="{{.create_name_label}}"
+                       required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="location">{{.create_location_label}}</label>
+                <input class="form-control" id="location" name="location" type="text"
+                       placeholder="{{.create_location_label}}" required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="size">{{.create_size_label}}</label>
+                <input class="form-control" id="size" name="size" type="text"
+                       placeholder="{{.create_size_label}}" required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="soil">{{.create_soil_label}}</label>
+                <input class="form-control" id="soil" name="soil" type="text"
+                       placeholder="{{.create_soil_label}}" required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="fertilizer">{{.create_fertilizer_label}}</label>
+                <input class="form-control" id="fertilizer" name="fertilizer" type="text"
+                       placeholder="{{.create_fertilizer_label}}" required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="composting">{{.create_composting_label}}</label>
+                <input class="form-control" id="composting" name="composting" type="text"
+                       placeholder="{{.create_composting_label}}" required="" value="">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="user-id">{{.create_user_label}}</label>
+                <select class="form-select" id="user-id" name="user-id" data-choices="data-choices"
+                        data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
+                        required>
+                    <option value="">{{.create_user_selection_label}}...</option>
+                    {{range $user :=.users }}
+                        <option value="{{ $user.ID }}">{{ $user.Name }}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="crop-type-id">{{.create_crop_type_label}}</label>
+                <select class="form-select" id="crop-type-id" name="crop-type-id" data-choices="data-choices"
+                        data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
+                        required>
+                    <option value="">{{.create_crop_type_selection_label}}...</option>
+                    {{range $crop_type :=.crop_types }}
+                        <option value="{{ $crop_type.ID }}">{{ $crop_type.Name }}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary" type="submit">{{.create_button_submit_orchard}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

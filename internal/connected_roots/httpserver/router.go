@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
 	"net/http"
@@ -46,6 +47,11 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// User-Orchard endpoints.
 	usersGrp.GET("/:user_id/orchards/:orchard_id", orchardsHandler.GetUserOrchardHandler).Name = "get-user-orchard"
 	usersGrp.GET("/:user_id/orchards", orchardsHandler.ListUserOrchardsHandler).Name = "get-user-orchards"
+
+	// Crop Types endpoints.
+	cropTypesHandler := crop_types.NewCropTypesHandlers(ctx)
+	cropTypesGrp := s.Echo.Group("/crop-types")
+	cropTypesGrp.GET("", cropTypesHandler.ListCropTypesHandler).Name = "list-crop-types"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

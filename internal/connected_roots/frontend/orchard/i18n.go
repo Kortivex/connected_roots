@@ -5,6 +5,27 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonOrchardCreatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                       translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                            translator.T(c, translator.PagesAdminOrchardsCreateTitle),
+		"active":                           "orchards-management",
+		"breadcrumb_orchards":              translator.T(c, translator.BreadcrumbOrchards),
+		"breadcrumb_create_orchards":       translator.T(c, translator.BreadcrumbCreateOrchards),
+		"create_name_label":                translator.T(c, translator.PagesAdminOrchardsCreateNameLabel),
+		"create_location_label":            translator.T(c, translator.PagesAdminOrchardsCreateLocationLabel),
+		"create_size_label":                translator.T(c, translator.PagesAdminOrchardsCreateSizeLabel),
+		"create_soil_label":                translator.T(c, translator.PagesAdminOrchardsCreateSoilLabel),
+		"create_fertilizer_label":          translator.T(c, translator.PagesAdminOrchardsCreateFertilizerLabel),
+		"create_composting_label":          translator.T(c, translator.PagesAdminOrchardsCreateCompostingLabel),
+		"create_user_label":                translator.T(c, translator.PagesAdminOrchardsCreateUserLabel),
+		"create_user_selection_label":      translator.T(c, translator.PagesAdminOrchardsCreateUserSelectionLabel),
+		"create_crop_type_label":           translator.T(c, translator.PagesAdminOrchardsCreateCropTypeLabel),
+		"create_crop_type_selection_label": translator.T(c, translator.PagesAdminOrchardsCreateCropTypeSelectionLabel),
+		"create_button_submit_orchard":     translator.T(c, translator.PagesAdminOrchardsCreateButtonSubmitOrchard),
+	}
+}
+
 func CommonOrchardViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":               translator.T(c, translator.PagesCommonSiteTitle),

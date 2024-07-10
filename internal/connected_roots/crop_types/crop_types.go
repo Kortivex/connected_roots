@@ -1,0 +1,52 @@
+package crop_types
+
+import (
+	"context"
+	"fmt"
+	"github.com/Kortivex/connected_roots/internal/connected_roots"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/crop_type"
+	"github.com/Kortivex/connected_roots/pkg/logger"
+	"github.com/Kortivex/connected_roots/pkg/pagination"
+	"go.opentelemetry.io/otel"
+	"gorm.io/gorm"
+)
+
+const (
+	tracingCropType             = "service.crop-types"
+	tracingCropTypeSave         = "service.crop-types.save"
+	tracingCropTypeUpdate       = "service.crop-types.update"
+	tracingCropTypeObtainFromID = "service.crop-types.obtain-from-id"
+	tracingCropTypeObtainAll    = "service.crop-types.obtain-all"
+	tracingCropTypeRemoveByID   = "service.crop-types.remove-by-id"
+)
+
+type Service struct {
+	conf   *config.Config
+	logger *logger.Logger
+	// Repositories
+	cropTypeRep *crop_type.Repository
+}
+
+func New(conf *config.Config, db *gorm.DB, logr *logger.Logger) *Service {
+	loggerEmpty := logr.NewEmpty()
+	logr = loggerEmpty.WithTag(tracingCropType)
+
+	return &Service{
+		conf:        conf,
+		logger:      logr,
+		cropTypeRep: crop_type.NewRepository(conf, db, logr),
+	}
+}
+
+func (s *Service) ObtainAll(ctx context.Context, filters *connected_roots.CropTypePaginationFilters) (*pagination.Pagination, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingCropTypeObtainAll)
+	defer span.End()
+
+	cropTypesRes, err := s.cropTypeRep.ListAllBy(ctx, filters, []string{}...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingCropTypeObtainAll, err)
+	}
+
+	return cropTypesRes, nil
+}

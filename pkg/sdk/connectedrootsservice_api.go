@@ -33,6 +33,12 @@ const (
 
 	tracingConnectedRootsGetUserOrchardAPI  = "connected-roots-service.http-client: get /users/:user_id/orchards/:orchard_id"
 	tracingConnectedRootsGetUserOrchardsAPI = "connected-roots-service.http-client: get /users/:user_id/orchards"
+
+	tracingConnectedRootsPostCropTypeAPI   = "connected-roots-service.http-client: post /crop-types"
+	tracingConnectedRootsPutCropTypeAPI    = "connected-roots-service.http-client: put /crop-types/:crop_type_id"
+	tracingConnectedRootsGetCropTypeAPI    = "connected-roots-service.http-client: get /crop-types/:crop_type_id"
+	tracingConnectedRootsGetCropTypesAPI   = "connected-roots-service.http-client: get /crop-types"
+	tracingConnectedRootsDeleteCropTypeAPI = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -69,6 +75,10 @@ type IConnectedRootsServiceAPI interface {
 
 	GETUserOrchard(ctx context.Context, userID, id string) (*resty.Response, error)
 	GETUserOrchards(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, locations []string) (*resty.Response, error)
+
+	////////////// CROP TYPES //////////////
+
+	GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -586,6 +596,58 @@ func (c *ConnectedRootsServiceAPI) GETUserOrchards(ctx context.Context, userID, 
 		SetResult(&pagination.Pagination{}).
 		SetError(&APIError{}).
 		Get(fmt.Sprintf("/users/%s/orchards", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// CROP TYPES //////////////
+
+func (c *ConnectedRootsServiceAPI) GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetCropTypesAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetCropTypesAPI)
+
+	log.Debug("request [GET] /crop-types")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, scientificName := range scientificNames {
+		request.SetQueryParam("scientific_name[]", scientificName)
+	}
+
+	for _, plantingSeason := range plantingSeasons {
+		request.SetQueryParam("planting_season[]", plantingSeason)
+	}
+
+	for _, harvestSeason := range harvestSeasons {
+		request.SetQueryParam("harvest_season[]", harvestSeason)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get("/crop-types")
 	if err != nil {
 		return nil, err
 	}

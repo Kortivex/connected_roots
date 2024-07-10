@@ -1,6 +1,7 @@
 package connected_roots
 
 import (
+	"github.com/Kortivex/connected_roots/pkg/pagination"
 	"time"
 )
 
@@ -15,4 +16,16 @@ type CropTypes struct {
 	Description    string    `json:"description"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+type CropTypeFilters struct {
+	Name           []string `query:"name[]"`
+	ScientificName []string `query:"scientific_name[]"`
+	PlantingSeason []string `query:"planting_season[]"`
+	HarvestSeason  []string `query:"harvest_season[]"`
+}
+
+type CropTypePaginationFilters struct {
+	pagination.PaginatorParams
+	CropTypeFilters
 }
