@@ -36,6 +36,11 @@ func toDomain(session *sessions.Session) *connected_roots.Session {
 		roleID = roleVal.(string)
 	}
 
+	role := ""
+	if roleVal, ok := session.Values["role"]; ok {
+		role = roleVal.(string)
+	}
+
 	return &connected_roots.Session{
 		ID:       session.ID,
 		Email:    email,
@@ -43,7 +48,8 @@ func toDomain(session *sessions.Session) *connected_roots.Session {
 		Name:     name,
 		Surname:  surname,
 		Language: language,
-		Role:     roleID,
+		RoleID:   roleID,
+		Role:     role,
 		Cookie: &connected_roots.Cookie{
 			Path:     session.Options.Path,
 			Domain:   session.Options.Domain,

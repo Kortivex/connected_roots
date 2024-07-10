@@ -125,7 +125,9 @@ func (h *Handlers) PostLoginHandler(c echo.Context) error {
 		Name:     user.Name,
 		Surname:  user.Surname,
 		Language: user.Language,
-		Role:     user.Role.Name}
+		Role:     user.Role.Name,
+		RoleID:   user.Role.ID,
+	}
 
 	if _, err = h.sessionSvc.Save(ctx, c, sess); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)

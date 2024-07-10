@@ -55,7 +55,8 @@ func (r *Repository) Create(ctx context.Context, c echo.Context, sess *connected
 	result.Values["name"] = sess.Name
 	result.Values["surname"] = sess.Surname
 	result.Values["language"] = sess.Language
-	result.Values["role_id"] = sess.Role
+	result.Values["role_id"] = sess.RoleID
+	result.Values["role"] = sess.Role
 	if err = result.Save(c.Request(), c.Response()); err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingSessionCreate, err)
 	}

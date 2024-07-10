@@ -12,6 +12,7 @@ type Session struct {
 	Surname  string  `json:"surname"`
 	Language string  `json:"language"`
 	Role     string  `json:"role"`
+	RoleID   string  `json:"role_id"`
 	Cookie   *Cookie `json:"cookie,omitempty"`
 }
 
