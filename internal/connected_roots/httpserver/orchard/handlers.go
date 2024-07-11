@@ -62,13 +62,13 @@ func (h *OrchardsHandlers) PostOrchardHandler(c echo.Context) error {
 		return errors.NewErrorResponse(c, err)
 	}
 
-	rolesRes, err := h.orchardSvc.Save(ctx, &orchardBody)
+	orchardRes, err := h.orchardSvc.Save(ctx, &orchardBody)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", tracingPostOrchardsHandlers, err)
 		return errors.NewErrorResponse(c, err)
 	}
 
-	return c.JSON(http.StatusCreated, rolesRes)
+	return c.JSON(http.StatusCreated, orchardRes)
 }
 
 func (h *OrchardsHandlers) PutOrchardHandler(c echo.Context) error {
@@ -88,13 +88,13 @@ func (h *OrchardsHandlers) PutOrchardHandler(c echo.Context) error {
 
 	orchardBody.ID = orchardID
 
-	rolesRes, err := h.orchardSvc.Update(ctx, &orchardBody)
+	orchardRes, err := h.orchardSvc.Update(ctx, &orchardBody)
 	if err != nil {
 		err = fmt.Errorf("%s: %w", tracingPutOrchardsHandlers, err)
 		return errors.NewErrorResponse(c, err)
 	}
 
-	return c.JSON(http.StatusOK, rolesRes)
+	return c.JSON(http.StatusOK, orchardRes)
 }
 
 func (h *OrchardsHandlers) GetOrchardHandler(c echo.Context) error {

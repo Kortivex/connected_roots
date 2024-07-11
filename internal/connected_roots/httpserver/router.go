@@ -51,7 +51,11 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// Crop Types endpoints.
 	cropTypesHandler := crop_types.NewCropTypesHandlers(ctx)
 	cropTypesGrp := s.Echo.Group("/crop-types")
+	cropTypesGrp.POST("", cropTypesHandler.PostCropTypeHandler).Name = "post-crop-type"
+	cropTypesGrp.PUT("/:crop_type_id", cropTypesHandler.PutCropTypeHandler).Name = "put-crop-type"
+	cropTypesGrp.GET("/:crop_type_id", cropTypesHandler.GetCropTypeHandler).Name = "get-crop-type"
 	cropTypesGrp.GET("", cropTypesHandler.ListCropTypesHandler).Name = "list-crop-types"
+	cropTypesGrp.DELETE("/:crop_type_id", cropTypesHandler.DeleteCropTypeHandler).Name = "delete-crop-type"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

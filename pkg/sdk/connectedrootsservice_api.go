@@ -78,7 +78,11 @@ type IConnectedRootsServiceAPI interface {
 
 	////////////// CROP TYPES //////////////
 
+	POSTCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*resty.Response, error)
+	PUTCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*resty.Response, error)
+	GETCropType(ctx context.Context, id string) (*resty.Response, error)
 	GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error)
+	DELETECropType(ctx context.Context, id string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -604,6 +608,73 @@ func (c *ConnectedRootsServiceAPI) GETUserOrchards(ctx context.Context, userID, 
 
 ////////////// CROP TYPES //////////////
 
+func (c *ConnectedRootsServiceAPI) POSTCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPostCropTypeAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPostCropTypeAPI)
+
+	log.Debug("request [POST] /crop-types")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(cropType).
+		SetResult(&sdk_models.CropTypesResponse{}).
+		SetError(&APIError{}).
+		Post("/crop-types")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPutCropTypeAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPutCropTypeAPI)
+
+	log.Debug("request [PUT] /crop-types/:crop_type_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(cropType).
+		SetResult(&sdk_models.CropTypesResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/crop-types/%s", cropType.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETCropType(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetCropTypeAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetCropTypeAPI)
+
+	log.Debug("request [GET] /crop-types/:crop_type_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.CropTypesResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/crop-types/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 func (c *ConnectedRootsServiceAPI) GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error) {
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetCropTypesAPI)
 	defer sp.End()
@@ -648,6 +719,26 @@ func (c *ConnectedRootsServiceAPI) GETCropTypes(ctx context.Context, limit, nexC
 		SetResult(&pagination.Pagination{}).
 		SetError(&APIError{}).
 		Get("/crop-types")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETECropType(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteCropTypeAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteCropTypeAPI)
+
+	log.Debug("request [DELETE] /crop-types/:crop_type_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/crop-types/%s", id))
 	if err != nil {
 		return nil, err
 	}

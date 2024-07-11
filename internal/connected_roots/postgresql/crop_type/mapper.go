@@ -27,3 +27,16 @@ func toDomainSlice(cropTypes []*CropTypes) []*connected_roots.CropTypes {
 	}
 	return cropTypesDomain
 }
+
+func toDB(cropType *connected_roots.CropTypes, id string) *CropTypes {
+	return &CropTypes{
+		ID:             id,
+		Name:           cropType.Name,
+		ScientificName: cropType.ScientificName,
+		LifeCycle:      cropType.LifeCycle,
+		PlantingSeason: cropType.PlantingSeason,
+		HarvestSeason:  cropType.HarvestSeason,
+		Irrigation:     cropType.Irrigation,
+		Description:    cropType.Description,
+	}
+}

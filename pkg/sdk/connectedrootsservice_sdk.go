@@ -104,7 +104,11 @@ type IConnectedRootsServiceSDK interface {
 
 	////////////// CROP TYPES //////////////
 
+	SaveCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*sdk_models.CropTypesResponse, error)
+	UpdateCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*sdk_models.CropTypesResponse, error)
+	ObtainCropType(ctx context.Context, id string) (*sdk_models.CropTypesResponse, error)
 	ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error)
+	DeleteCropType(ctx context.Context, id string) error
 }
 
 ////////////// USERS //////////////
@@ -518,6 +522,66 @@ func (c *ConnectedRootsServiceSDK) ObtainUserOrchards(ctx context.Context, userI
 
 ////////////// CROP TYPES //////////////
 
+func (c *ConnectedRootsServiceSDK) SaveCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*sdk_models.CropTypesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveCropType)
+	defer sp.End()
+
+	resp, err := c.api.POSTCropType(ctx, cropType)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveCropType, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveCropType, resp.Error().(*APIError))
+	}
+
+	respCropType, ok := resp.Result().(*sdk_models.CropTypesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveCropType, errors.New(ErrMsgConnectedRootsServiceSaveCropTypeErr))
+	}
+
+	return respCropType, nil
+}
+
+func (c *ConnectedRootsServiceSDK) UpdateCropType(ctx context.Context, cropType *sdk_models.CropTypesBody) (*sdk_models.CropTypesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceUpdateCropType)
+	defer sp.End()
+
+	resp, err := c.api.PUTCropType(ctx, cropType)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateCropType, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateCropType, resp.Error().(*APIError))
+	}
+
+	respCropType, ok := resp.Result().(*sdk_models.CropTypesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateCropType, errors.New(ErrMsgConnectedRootsServiceUpdateCropTypeErr))
+	}
+
+	return respCropType, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainCropType(ctx context.Context, id string) (*sdk_models.CropTypesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainCropType)
+	defer sp.End()
+
+	resp, err := c.api.GETCropType(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropType, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropType, resp.Error().(*APIError))
+	}
+
+	respCropType, ok := resp.Result().(*sdk_models.CropTypesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainCropType, errors.New(ErrMsgConnectedRootsServiceObtainCropTypeErr))
+	}
+
+	return respCropType, nil
+}
+
 func (c *ConnectedRootsServiceSDK) ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error) {
 	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainCropTypes)
 	defer sp.End()
@@ -545,4 +609,19 @@ func (c *ConnectedRootsServiceSDK) ObtainCropTypes(ctx context.Context, limit, n
 	}
 
 	return orchards, &respCropTypes.Paging, nil
+}
+
+func (c *ConnectedRootsServiceSDK) DeleteCropType(ctx context.Context, id string) error {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceDeleteCropType)
+	defer sp.End()
+
+	resp, err := c.api.DELETECropType(ctx, id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteCropType, err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteCropType, resp.Error().(*APIError))
+	}
+
+	return nil
 }
