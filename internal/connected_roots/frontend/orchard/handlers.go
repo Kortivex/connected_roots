@@ -132,6 +132,116 @@ func (h *Handlers) PostOrchardCreateHandler(c echo.Context) error {
 		}))
 }
 
+func (h *Handlers) GetOrchardUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUpdateOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getUpdateOrchardHandlerName)
+
+	orchardID := c.Param(orchardIDParam)
+	if orchardID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropTypes, _, err := h.sdk.ConnectedRootsService.SDK.ObtainCropTypes(ctx, "10000", "", "", nil, nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
+			"users":      users,
+			"crop_types": cropTypes,
+			"orchard":    orchard,
+		}))
+}
+
+func (h *Handlers) PostOrchardUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postUpdateOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postUpdateOrchardHandlerName)
+
+	orchardID := c.Param(orchardIDParam)
+	if orchardID == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardID)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	size, err := strconv.ParseFloat(c.FormValue("size"), 64)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchard.Name = c.FormValue("name")
+	orchard.Location = c.FormValue("location")
+	orchard.Size = size
+	orchard.Soil = c.FormValue("soil")
+	orchard.Fertilizer = c.FormValue("fertilizer")
+	orchard.Composting = c.FormValue("composting")
+	orchard.UserID = c.FormValue("user-id")
+	orchard.CropTypeID = c.FormValue("crop-type-id")
+
+	log.Debug(fmt.Sprintf("orchard: %+v", orchard))
+
+	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropTypes, _, err := h.sdk.ConnectedRootsService.SDK.ObtainCropTypes(ctx, "10000", "", "", nil, nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	_, err = h.sdk.ConnectedRootsService.SDK.UpdateOrchard(ctx, orchard.ToOrchardBody())
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
+			"users":                users,
+			"crop_types":           cropTypes,
+			"orchard":              orchard,
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminOrchardsUpdateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminOrchardsUpdateSuccessMessage),
+		}))
+}
+
 func (h *Handlers) GetOrchardViewHandler(c echo.Context) error {
 	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewOrchardHandlerName)
 	defer span.End()

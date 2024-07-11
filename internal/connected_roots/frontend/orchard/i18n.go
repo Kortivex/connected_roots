@@ -26,6 +26,27 @@ func CommonOrchardCreatePageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonOrchardUpdatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                       translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                            translator.T(c, translator.PagesAdminOrchardsUpdateTitle),
+		"active":                           "orchards-management",
+		"breadcrumb_orchards":              translator.T(c, translator.BreadcrumbOrchards),
+		"breadcrumb_update_orchards":       translator.T(c, translator.BreadcrumbUpdateOrchards),
+		"update_name_label":                translator.T(c, translator.PagesAdminOrchardsUpdateNameLabel),
+		"update_location_label":            translator.T(c, translator.PagesAdminOrchardsUpdateLocationLabel),
+		"update_size_label":                translator.T(c, translator.PagesAdminOrchardsUpdateSizeLabel),
+		"update_soil_label":                translator.T(c, translator.PagesAdminOrchardsUpdateSoilLabel),
+		"update_fertilizer_label":          translator.T(c, translator.PagesAdminOrchardsUpdateFertilizerLabel),
+		"update_composting_label":          translator.T(c, translator.PagesAdminOrchardsUpdateCompostingLabel),
+		"update_user_label":                translator.T(c, translator.PagesAdminOrchardsUpdateUserLabel),
+		"update_user_selection_label":      translator.T(c, translator.PagesAdminOrchardsUpdateUserSelectionLabel),
+		"update_crop_type_label":           translator.T(c, translator.PagesAdminOrchardsUpdateCropTypeLabel),
+		"update_crop_type_selection_label": translator.T(c, translator.PagesAdminOrchardsUpdateCropTypeSelectionLabel),
+		"update_button_submit_orchard":     translator.T(c, translator.PagesAdminOrchardsUpdateButtonSubmitOrchard),
+	}
+}
+
 func CommonOrchardViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":               translator.T(c, translator.PagesCommonSiteTitle),
