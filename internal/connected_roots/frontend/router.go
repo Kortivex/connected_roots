@@ -1,6 +1,7 @@
 package frontend
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/user"
 	"net/http"
@@ -82,6 +83,19 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
 	adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
 	adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"
+	// |
+	// |
+	// + --- CropTypes endpoints:
+	cropTypesHandler := crop_types.NewCropTypesHandlers(ctx)
+	adminCropTypesGrp := adminGrp.Group("/crop-types")
+	adminCropTypesGrp.GET("/list", cropTypesHandler.GetCropTypesListHandler, s.SessionMiddleware).Name = "get-list-crop-types"
+	/*	adminCropTypesGrp.GET("/new", cropTypesHandler.GetCropTypeCreateHandler, s.SessionMiddleware).Name = "get-new-crop-type"
+		adminCropTypesGrp.POST("/new", cropTypesHandler.PostCropTypeCreateHandler, s.SessionMiddleware).Name = "post-new-crop-type"
+		adminCropTypesGrp.GET("/edit/:crop_types_id", cropTypesHandler.GetCropTypeUpdateHandler, s.SessionMiddleware).Name = "get-edit-crop-type"
+		adminCropTypesGrp.POST("/edit/:crop_types_id", cropTypesHandler.PostCropTypeUpdateHandler, s.SessionMiddleware).Name = "post-edit-crop-type"
+		adminCropTypesGrp.GET("/view/:crop_types_id", cropTypesHandler.GetCropTypeViewHandler, s.SessionMiddleware).Name = "get-view-crop-type"
+		adminCropTypesGrp.GET("/delete/:crop_types_id", cropTypesHandler.GetCropTypeDeleteHandler, s.SessionMiddleware).Name = "get-delete-crop-type"
+		adminCropTypesGrp.POST("/delete/:crop_types_id", cropTypesHandler.PostCropTypeDeleteHandler, s.SessionMiddleware).Name = "post-delete-crop-type"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

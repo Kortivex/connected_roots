@@ -20,6 +20,12 @@ update_orchards = "Editar"
 list_orchards = "Listar"
 view_orchards = "Ver"
 delete_orchards = "Borrar"
+crop_types = "Cultivos"
+create_crop_types = "Crear"
+update_crop_types = "Editar"
+list_crop_types = "Listar"
+view_crop_types = "Ver"
+delete_crop_types = "Borrar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -29,7 +35,17 @@ user_nav_label = "Usuarios"
 user_nav_management_label = "Administrar"
 orchard_nav_label = "Huertos"
 orchard_nav_management_label = "Administrar"
+crop_type_nav_label = "Cultivos"
+crop_type_nav_management_label = "Administrar"
 collapsed_view_label = "Contraer Vista"
+
+[notifications.admin.crop_types]
+create_success_title = "Cultivo creado con éxito"
+create_success_message = "El cultivo ha sido creado exitosamente"
+update_success_title = "Cultivo actualizado con éxito"
+update_success_message = "El cultivo ha sido actualizado exitosamente"
+delete_success_title = "Cultivo borrado con éxito"
+delete_success_message = "El cultivo ha sido borrado exitosamente"
 
 [notifications.admin.orchards]
 create_success_title = "Huerto creado con éxito"
@@ -64,6 +80,22 @@ success_message = "El perfil ha sido editado exitosamente"
 [topbar.labels]
 profile_label = "Perfil"
 sign_out_label = "Desconectar"
+
+[pages.admin.crop_types]
+list_title = "Listar Cultivos"
+list_button_create_crop_type = "Crear Cultivo"
+list_name_label = "Nombre"
+list_scientific_name_label = "Nombre Científico"
+list_life_cycle_label = "Ciclo Vital"
+list_planting_season_label = "Temporada de Siembra"
+list_harvest_season_label = "Temporada de Cosecha"
+list_irrigation_label = "Riego"
+list_actions_label = "ACCIONES"
+list_actions_view_label = "Ver"
+list_actions_edit_label = "Editar"
+list_actions_remove_label = "Eliminar"
+list_next_label = "Siguiente"
+list_previous_label = "Anterior"
 
 [pages.admin.orchards]
 create_title = "Crear Huertos"

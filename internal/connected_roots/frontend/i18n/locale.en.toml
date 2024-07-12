@@ -20,6 +20,12 @@ update_orchards = "Update"
 list_orchards = "List"
 view_orchards = "View"
 delete_orchards = "Delete"
+crop_types = "Crop Types"
+create_crop_types = "Create"
+update_crop_types = "Update"
+list_crop_types = "List"
+view_crop_types = "View"
+delete_crop_types = "Delete"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -29,7 +35,17 @@ user_nav_label = "Users"
 user_nav_management_label = "Management"
 orchard_nav_label = "Orchards"
 orchard_nav_management_label = "Management"
+crop_type_nav_label = "Crop Types"
+crop_type_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
+
+[notifications.admin.crop_types]
+create_success_title = "Creation crop type success"
+create_success_message = "Crop type has been created successfully"
+update_success_title = "Update crop type success"
+update_success_message = "Crop type has been updated successfully"
+delete_success_title = "Delete crop type success"
+delete_success_message = "Crop type has been deleted successfully"
 
 [notifications.admin.orchards]
 create_success_title = "Creation orchard success"
@@ -64,6 +80,22 @@ success_message = "Profile has been edited successfully"
 [topbar.labels]
 profile_label = "Profile"
 sign_out_label = "Sign Out"
+
+[pages.admin.crop_types]
+list_title = "List Crop Types"
+list_button_create_crop_type = "Create Crop Type"
+list_name_label = "Name"
+list_scientific_name_label = "Scientific Name"
+list_life_cycle_label = "Life Cycle"
+list_planting_season_label = "Planting Season"
+list_harvest_season_label = "Harvest Season"
+list_irrigation_label = "Irrigation"
+list_actions_label = "ACTIONS"
+list_actions_view_label = "View"
+list_actions_edit_label = "Edit"
+list_actions_remove_label = "Remove"
+list_next_label = "Next"
+list_previous_label = "Previous"
 
 [pages.admin.orchards]
 create_title = "Create Orchards"
