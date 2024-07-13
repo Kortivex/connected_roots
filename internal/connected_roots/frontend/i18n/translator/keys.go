@@ -95,6 +95,11 @@ const (
 	PagesAdminCropTypesListNextLabel            = "pages.admin.crop_types.list_next_label"
 	PagesAdminCropTypesListPreviousLabel        = "pages.admin.crop_types.list_previous_label"
 
+	PagesAdminCropTypesDeleteTitle                = "pages.admin.crop_types.delete_title"
+	PagesAdminCropTypesDeleteWarningTitle         = "pages.admin.crop_types.delete_warning_title"
+	PagesAdminCropTypesDeleteWarningMessage       = "pages.admin.crop_types.delete_warning_message"
+	PagesAdminCropTypesDeleteButtonSubmitCropType = "pages.admin.crop_types.delete_button_submit_crop_type"
+
 	PagesAdminOrchardsCreateTitle                  = "pages.admin.orchards.create_title"
 	PagesAdminOrchardsCreateNameLabel              = "pages.admin.orchards.create_name_label"
 	PagesAdminOrchardsCreateLocationLabel          = "pages.admin.orchards.create_location_label"

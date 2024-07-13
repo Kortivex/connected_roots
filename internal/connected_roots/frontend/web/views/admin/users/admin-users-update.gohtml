@@ -14,7 +14,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_update_users}}</li>
         </ol>
     </nav>
-    <form id="update-role-form" method="POST" action="/admin/users/edit/{{ if .user }}{{ .user.ID }}{{ end }}"
+    <form id="update-user-form" method="POST" action="/admin/users/edit/{{ if .user }}{{ .user.ID }}{{ end }}"
           enctype="application/x-www-form-urlencoded">
         <div class="mb-3">
             <label class="form-label" for="name">{{.update_name_label}}</label>

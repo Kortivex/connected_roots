@@ -39,3 +39,16 @@ func CommonCropTypeListPageI18N(c echo.Context) map[string]interface{} {
 		"list_previous_label":          translator.T(c, translator.PagesAdminCropTypesListPreviousLabel),
 	}
 }
+
+func CommonCropTypeDeletePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminCropTypesDeleteTitle),
+		"active":                         "crop-types-management",
+		"breadcrumb_crop_types":          translator.T(c, translator.BreadcrumbCropTypes),
+		"breadcrumb_delete_crop_types":   translator.T(c, translator.BreadcrumbDeleteCropTypes),
+		"delete_warning_title":           translator.T(c, translator.PagesAdminCropTypesDeleteWarningTitle),
+		"delete_warning_message":         translator.T(c, translator.PagesAdminCropTypesDeleteWarningMessage),
+		"delete_button_submit_crop_type": translator.T(c, translator.PagesAdminCropTypesDeleteButtonSubmitCropType),
+	}
+}

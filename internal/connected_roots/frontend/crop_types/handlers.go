@@ -137,3 +137,58 @@ func (h *Handlers) GetCropTypesListHandler(c echo.Context) error {
 			"pagination": pagination,
 		}), notifications))
 }
+
+func (h *Handlers) GetCropTypeDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getDeleteCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-delete.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeDeletePageI18N(c)), map[string]interface{}{
+			"crop_type": cropType,
+		}))
+}
+
+func (h *Handlers) PostCropTypeDeleteHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(postDeleteCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sdk.ConnectedRootsService.SDK.DeleteCropType(ctx, cropTypeId); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Redirect(http.StatusFound, "/admin/crop-types/list")
+}

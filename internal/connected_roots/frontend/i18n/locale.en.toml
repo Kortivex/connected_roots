@@ -99,6 +99,10 @@ view_life_cycle_label = "Life Cycle"
 view_planting_season_label = "Planting Season"
 view_harvest_season_label = "Harvest Season"
 view_irrigation_label = "Irrigation"
+delete_title = "Delete Crop Types"
+delete_warning_title = "Are you sure you want to delete it?"
+delete_warning_message = "This action is irreversible."
+delete_button_submit_crop_type = "Delete"
 
 [pages.admin.orchards]
 create_title = "Create Orchards"

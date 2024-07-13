@@ -10,11 +10,11 @@
 <div class="content">
     <nav class="mb-3" aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a>{{.breadcrumb_orchards}}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_delete_orchards}}</li>
+            <li class="breadcrumb-item"><a>{{.breadcrumb_crop_types}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_delete_crop_types}}</li>
         </ol>
     </nav>
-    <form id="delete-orchard-form" method="POST" action="/admin/orchards/delete/{{.orchard.ID}}"
+    <form id="delete-crop-types-form" method="POST" action="/admin/crop-types/delete/{{.crop_type.ID}}"
           enctype="application/x-www-form-urlencoded">
         <div class="col-sm-10 col-md-6 col-lg-6 col-xl-4 col-xxl-4 mx-auto mt-10">
             <div class="card text-white bg-warning">
@@ -22,7 +22,7 @@
                     <h4 class="card-title text-white">{{.delete_warning_title}}</h4>
                     <p class="card-text">{{.delete_warning_message}}</p>
                 </div>
-                <button class="btn btn-danger" type="submit">{{.delete_button_submit_orchard}}</button>
+                <button class="btn btn-danger" type="submit">{{.delete_button_submit_crop_type}}</button>
             </div>
         </div>
     </form>

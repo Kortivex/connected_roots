@@ -153,7 +153,7 @@ func (h *Handlers) GetUserUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -254,7 +254,7 @@ func (h *Handlers) GetUserViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -279,7 +279,7 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListUsersHandlerName)
 
-	message, err := h.sessionSvc.ObtainMessage(c.Request().Context(), c, "message")
+	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -339,7 +339,7 @@ func (h *Handlers) GetUserDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -374,7 +374,7 @@ func (h *Handlers) PostUserDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
+	if err := h.sessionSvc.SaveMessage(ctx, c, "message", "success"); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -388,7 +388,7 @@ func (h *Handlers) GetUserProfileHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	_ = loggerNew.WithTag(getUserProfileHandlerName)
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -418,7 +418,7 @@ func (h *Handlers) GetEditUserProfileHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	_ = loggerNew.WithTag(getEditUserProfileHandlerName)
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -446,7 +446,7 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(postEditUserProfileHandlerName)
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}

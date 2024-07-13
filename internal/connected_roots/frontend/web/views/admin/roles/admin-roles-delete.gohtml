@@ -14,7 +14,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_delete_roles}}</li>
         </ol>
     </nav>
-    <form id="update-role-form" method="POST" action="/admin/roles/delete/{{.role.ID}}"
+    <form id="delete-role-form" method="POST" action="/admin/roles/delete/{{.role.ID}}"
           enctype="application/x-www-form-urlencoded">
         <div class="col-sm-10 col-md-6 col-lg-6 col-xl-4 col-xxl-4 mx-auto mt-10">
             <div class="card text-white bg-warning">
