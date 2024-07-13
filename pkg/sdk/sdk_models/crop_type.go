@@ -10,6 +10,7 @@ type CropTypesBody struct {
 	PlantingSeason string    `json:"planting_season"`
 	HarvestSeason  string    `json:"harvest_season"`
 	Irrigation     string    `json:"irrigation"`
+	ImageURL       string    `json:"image_url"`
 	Description    string    `json:"description"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
@@ -23,6 +24,7 @@ type CropTypesResponse struct {
 	PlantingSeason string    `json:"planting_season"`
 	HarvestSeason  string    `json:"harvest_season"`
 	Irrigation     string    `json:"irrigation"`
+	ImageURL       string    `json:"image_url"`
 	Description    string    `json:"description"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
@@ -37,6 +39,7 @@ func (ct *CropTypesResponse) ToCropTypeBody() *CropTypesBody {
 		PlantingSeason: ct.PlantingSeason,
 		HarvestSeason:  ct.HarvestSeason,
 		Irrigation:     ct.Irrigation,
+		ImageURL:       ct.ImageURL,
 		Description:    ct.Description,
 		CreatedAt:      ct.CreatedAt,
 		UpdatedAt:      ct.UpdatedAt,

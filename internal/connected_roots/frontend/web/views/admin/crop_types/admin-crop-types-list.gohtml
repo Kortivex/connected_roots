@@ -29,7 +29,7 @@
         </div>
     </div>
     <div id="list-crop-types"
-         data-list='{"valueNames":["id","name","scientific-name","life-cycle","planting-season","harvest-season","irrigation"],"page":20,"pagination":false}'>
+         data-list='{"valueNames":["id","name","scientific-name"],"page":20,"pagination":false}'>
         <div class="table-responsive">
             <table class="table table-sm fs-8 mb-0">
                 <thead>
@@ -38,14 +38,6 @@
                     <th class="sort border-top border-translucent ps-3" data-sort="name">{{.list_name_label}}</th>
                     <th class="sort border-top border-translucent"
                         data-sort="scientific-name">{{.list_scientific_name_label}}</th>
-                    <th class="sort border-top border-translucent"
-                        data-sort="life-cycle">{{.list_life_cycle_label}}</th>
-                    <th class="sort border-top border-translucent"
-                        data-sort="planting-season">{{.list_planting_season_label}}</th>
-                    <th class="sort border-top border-translucent"
-                        data-sort="harvest-season">{{.list_harvest_season_label}}</th>
-                    <th class="sort border-top border-translucent"
-                        data-sort="irrigation">{{.list_irrigation_label}}</th>
                     <th class="sort text-end align-middle pe-0 border-top border-translucent"
                         scope="col">{{.list_actions_label}}</th>
                 </tr>
@@ -59,10 +51,6 @@
                         <td class="align-middle ps-3 id">{{ $crop_type.ID }}</td>
                         <td class="align-middle ps-3 name">{{ $crop_type.Name }}</td>
                         <td class="align-middle scientific-name">{{ $crop_type.ScientificName }}</td>
-                        <td class="align-middle life-cycle">{{ $crop_type.LifeCycle }}</td>
-                        <td class="align-middle planting-season">{{ $crop_type.PlantingSeason }}</td>
-                        <td class="align-middle harvest-season">{{ $crop_type.HarvestSeason }}</td>
-                        <td class="align-middle irrigation">{{ $crop_type.Irrigation }}</td>
                         <td class="align-middle white-space-nowrap text-end pe-0">
                             <div class="btn-reveal-trigger position-static">
                                 <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"

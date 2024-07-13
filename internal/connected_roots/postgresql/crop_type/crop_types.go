@@ -10,6 +10,7 @@ type CropTypes struct {
 	PlantingSeason string `gorm:"column:planting_season;type:varchar(100)"`
 	HarvestSeason  string `gorm:"column:harvest_season;type:varchar(100)"`
 	Irrigation     string `gorm:"column:irrigation;type:varchar(100)"`
+	ImageURL       string `gorm:"column:image_url;type:text"`
 	Description    string `gorm:"column:description;type:text"`
 	postgresql.BaseModel
 }

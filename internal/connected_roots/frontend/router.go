@@ -91,11 +91,11 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminCropTypesGrp.GET("/list", cropTypesHandler.GetCropTypesListHandler, s.SessionMiddleware).Name = "get-list-crop-types"
 	/*	adminCropTypesGrp.GET("/new", cropTypesHandler.GetCropTypeCreateHandler, s.SessionMiddleware).Name = "get-new-crop-type"
 		adminCropTypesGrp.POST("/new", cropTypesHandler.PostCropTypeCreateHandler, s.SessionMiddleware).Name = "post-new-crop-type"
-		adminCropTypesGrp.GET("/edit/:crop_types_id", cropTypesHandler.GetCropTypeUpdateHandler, s.SessionMiddleware).Name = "get-edit-crop-type"
-		adminCropTypesGrp.POST("/edit/:crop_types_id", cropTypesHandler.PostCropTypeUpdateHandler, s.SessionMiddleware).Name = "post-edit-crop-type"
-		adminCropTypesGrp.GET("/view/:crop_types_id", cropTypesHandler.GetCropTypeViewHandler, s.SessionMiddleware).Name = "get-view-crop-type"
-		adminCropTypesGrp.GET("/delete/:crop_types_id", cropTypesHandler.GetCropTypeDeleteHandler, s.SessionMiddleware).Name = "get-delete-crop-type"
-		adminCropTypesGrp.POST("/delete/:crop_types_id", cropTypesHandler.PostCropTypeDeleteHandler, s.SessionMiddleware).Name = "post-delete-crop-type"*/
+		adminCropTypesGrp.GET("/edit/:crop_type_id", cropTypesHandler.GetCropTypeUpdateHandler, s.SessionMiddleware).Name = "get-edit-crop-type"
+		adminCropTypesGrp.POST("/edit/:crop_type_id", cropTypesHandler.PostCropTypeUpdateHandler, s.SessionMiddleware).Name = "post-edit-crop-type"*/
+	adminCropTypesGrp.GET("/view/:crop_type_id", cropTypesHandler.GetCropTypeViewHandler, s.SessionMiddleware).Name = "get-view-crop-type"
+	/*	adminCropTypesGrp.GET("/delete/:crop_type_id", cropTypesHandler.GetCropTypeDeleteHandler, s.SessionMiddleware).Name = "get-delete-crop-type"
+		adminCropTypesGrp.POST("/delete/:crop_type_id", cropTypesHandler.PostCropTypeDeleteHandler, s.SessionMiddleware).Name = "post-delete-crop-type"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

@@ -13,6 +13,7 @@ func toDomain(cropType *CropTypes) *connected_roots.CropTypes {
 		PlantingSeason: cropType.PlantingSeason,
 		HarvestSeason:  cropType.HarvestSeason,
 		Irrigation:     cropType.Irrigation,
+		ImageURL:       cropType.ImageURL,
 		Description:    cropType.Description,
 		CreatedAt:      cropType.CreatedAt,
 		UpdatedAt:      cropType.UpdatedAt,
@@ -37,6 +38,7 @@ func toDB(cropType *connected_roots.CropTypes, id string) *CropTypes {
 		PlantingSeason: cropType.PlantingSeason,
 		HarvestSeason:  cropType.HarvestSeason,
 		Irrigation:     cropType.Irrigation,
+		ImageURL:       cropType.ImageURL,
 		Description:    cropType.Description,
 	}
 }

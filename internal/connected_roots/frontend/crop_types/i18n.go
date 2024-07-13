@@ -5,6 +5,22 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonCropTypeViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                 translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                      translator.T(c, translator.PagesAdminCropTypesViewTitle),
+		"active":                     "crop-types-management",
+		"breadcrumb_crop_types":      translator.T(c, translator.BreadcrumbCropTypes),
+		"breadcrumb_view_crop_types": translator.T(c, translator.BreadcrumbViewCropTypes),
+		"view_name_label":            translator.T(c, translator.PagesAdminCropTypesViewNameLabel),
+		"view_scientific_name_label": translator.T(c, translator.PagesAdminCropTypesViewScientificNameLabel),
+		"view_life_cycle_label":      translator.T(c, translator.PagesAdminCropTypesViewLifeCycleLabel),
+		"view_planting_season_label": translator.T(c, translator.PagesAdminCropTypesViewPlantingSeasonLabel),
+		"view_harvest_season_label":  translator.T(c, translator.PagesAdminCropTypesViewHarvestSeasonLabel),
+		"view_irrigation_label":      translator.T(c, translator.PagesAdminCropTypesViewIrrigationLabel),
+	}
+}
+
 func CommonCropTypeListPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                   translator.T(c, translator.PagesCommonSiteTitle),
@@ -15,10 +31,6 @@ func CommonCropTypeListPageI18N(c echo.Context) map[string]interface{} {
 		"list_button_create_crop_type": translator.T(c, translator.PagesAdminCropTypesListButtonCreateCropType),
 		"list_name_label":              translator.T(c, translator.PagesAdminCropTypesListNameLabel),
 		"list_scientific_name_label":   translator.T(c, translator.PagesAdminCropTypesListScientificNameLabel),
-		"list_life_cycle_label":        translator.T(c, translator.PagesAdminCropTypesListLifeCycleLabel),
-		"list_planting_season_label":   translator.T(c, translator.PagesAdminCropTypesListPlantingSeasonLabel),
-		"list_harvest_season_label":    translator.T(c, translator.PagesAdminCropTypesListHarvestSeasonLabel),
-		"list_irrigation_label":        translator.T(c, translator.PagesAdminCropTypesListIrrigationLabel),
 		"list_actions_label":           translator.T(c, translator.PagesAdminCropTypesListActionsLabel),
 		"list_actions_view_label":      translator.T(c, translator.PagesAdminCropTypesListActionsViewLabel),
 		"list_actions_edit_label":      translator.T(c, translator.PagesAdminCropTypesListActionsEditLabel),

@@ -5,6 +5,7 @@ import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/bars"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
 	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
 	"github.com/Kortivex/connected_roots/pkg/logger"
@@ -51,6 +52,37 @@ func NewCropTypesHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetCropTypeViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeViewPageI18N(c)), map[string]interface{}{
+			"crop_type": cropType,
+		}))
 }
 
 func (h *Handlers) GetCropTypesListHandler(c echo.Context) error {

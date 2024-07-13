@@ -33,6 +33,7 @@ CREATE TABLE crop_types
     "planting_season" varchar(100),
     "harvest_season"  varchar(100),
     "irrigation"      varchar(100),
+    "image_url"       text,
     "description"     text,
     "created_at"      timestamp with time zone,
     "updated_at"      timestamp with time zone,
