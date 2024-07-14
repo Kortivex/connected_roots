@@ -5,6 +5,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonCropTypeCreatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminCropTypesCreateTitle),
+		"active":                         "crop-types-management",
+		"breadcrumb_crop_types":          translator.T(c, translator.BreadcrumbCropTypes),
+		"breadcrumb_create_crop_types":   translator.T(c, translator.BreadcrumbCreateCropTypes),
+		"create_name_label":              translator.T(c, translator.PagesAdminCropTypesCreateNameLabel),
+		"create_scientific_name_label":   translator.T(c, translator.PagesAdminCropTypesCreateScientificNameLabel),
+		"create_life_cycle_label":        translator.T(c, translator.PagesAdminCropTypesCreateLifeCycleLabel),
+		"create_planting_season_label":   translator.T(c, translator.PagesAdminCropTypesCreatePlantingSeasonLabel),
+		"create_harvest_season_label":    translator.T(c, translator.PagesAdminCropTypesCreateHarvestSeasonLabel),
+		"create_irrigation_label":        translator.T(c, translator.PagesAdminCropTypesCreateIrrigationLabel),
+		"create_description_label":       translator.T(c, translator.PagesAdminCropTypesCreateDescriptionLabel),
+		"create_upload_image_label":      translator.T(c, translator.PagesAdminCropTypesCreateUploadImageLabel),
+		"create_button_submit_crop_type": translator.T(c, translator.PagesAdminCropTypesCreateButtonSubmitCropType),
+	}
+}
+
 func CommonCropTypeViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                 translator.T(c, translator.PagesCommonSiteTitle),

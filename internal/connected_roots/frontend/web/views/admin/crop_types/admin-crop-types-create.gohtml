@@ -1,0 +1,78 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_crop_types}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_create_crop_types}}</li>
+        </ol>
+    </nav>
+    <form id="create-crop-types-form" method="POST" action="/admin/crop-types/new" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="name">{{.create_name_label}}</label>
+                <input class="form-control" id="name" name="name" type="text" placeholder="{{.create_name_label}}"
+                       required="" value="{{ if .crop_type }}{{ .crop_type.Name }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="scientific-name">{{.create_scientific_name_label}}</label>
+                <input class="form-control" id="scientific-name" name="scientific-name" type="text"
+                       placeholder="{{.create_scientific_name_label}}" required=""
+                       value="{{ if .crop_type }}{{ .crop_type.ScientificName }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="life-cycle">{{.create_life_cycle_label}}</label>
+                <input class="form-control" id="life-cycle" name="life-cycle" type="text"
+                       placeholder="{{.create_life_cycle_label}}" required=""
+                       value="{{ if .crop_type }}{{ .crop_type.LifeCycle }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="planting-season">{{.create_planting_season_label}}</label>
+                <input class="form-control" id="planting-season" name="planting-season" type="text"
+                       placeholder="{{.create_planting_season_label}}" required=""
+                       value="{{ if .crop_type }}{{ .crop_type.PlantingSeason }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="harvest-season">{{.create_harvest_season_label}}</label>
+                <input class="form-control" id="harvest-season" name="harvest-season" type="text"
+                       placeholder="{{.create_harvest_season_label}}" required=""
+                       value="{{ if .crop_type }}{{ .crop_type.HarvestSeason }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="irrigation">{{.create_irrigation_label}}</label>
+                <input class="form-control" id="irrigation" name="irrigation" type="text"
+                       placeholder="{{.create_irrigation_label}}" required=""
+                       value="{{ if .crop_type }}{{ .crop_type.Irrigation }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="description">{{.create_description_label}}</label>
+                <textarea class="form-control resize-none" id="description" name="description"
+                          rows="3">{{ if .crop_type }}{{ .crop_type.Description }}{{ end }}</textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">{{.create_upload_image_label}}</label>
+                <input class="form-control" type="file" id="file" name="file" accept="image/jpeg, image/png, image/gif"
+                       required=""/>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary" type="submit">{{.create_button_submit_crop_type}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

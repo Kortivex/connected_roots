@@ -8,9 +8,12 @@ import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
 	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
+	"github.com/Kortivex/connected_roots/pkg/hashing"
 	"github.com/Kortivex/connected_roots/pkg/logger"
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 	"github.com/Kortivex/connected_roots/pkg/sdk"
+	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
+	"github.com/Kortivex/connected_roots/pkg/uploads"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
@@ -52,6 +55,79 @@ func NewCropTypesHandlers(appCtx *connected_roots.Context) *Handlers {
 		sdk:        appCtx.SDK,
 		sessionSvc: sessionServ.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
+}
+
+func (h *Handlers) GetCropTypeCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getCreateCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getCreateCropTypeHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeCreatePageI18N(c)), map[string]interface{}{}))
+}
+
+func (h *Handlers) PostCropTypeCreateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postCreateCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postCreateCropTypeHandlerName)
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	fileName, err := hashing.GenUniqueFileName(file.Filename)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	pathImage := "images/crop_types/" + fileName
+	if err = uploads.SaveUploadedImage(file, pathImage, 800, 800); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropType := &sdk_models.CropTypesBody{
+		Name:           c.FormValue("name"),
+		ScientificName: c.FormValue("scientific-name"),
+		LifeCycle:      c.FormValue("life-cycle"),
+		PlantingSeason: c.FormValue("planting-season"),
+		HarvestSeason:  c.FormValue("harvest-season"),
+		Irrigation:     c.FormValue("irrigation"),
+		Description:    c.FormValue("description"),
+		ImageURL:       pathImage,
+	}
+
+	log.Debug(fmt.Sprintf("crop_type: %+v", cropType))
+
+	_, err = h.sdk.ConnectedRootsService.SDK.SaveCropType(ctx, cropType)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-create.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeCreatePageI18N(c)), map[string]interface{}{
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminCropTypesCreateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminCropTypesCreateSuccessMessage),
+		}))
 }
 
 func (h *Handlers) GetCropTypeViewHandler(c echo.Context) error {
@@ -182,11 +258,20 @@ func (h *Handlers) PostCropTypeDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	if err := h.sdk.ConnectedRootsService.SDK.DeleteCropType(ctx, cropTypeId); err != nil {
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	if err := h.sessionSvc.SaveMessage(c.Request().Context(), c, "message", "success"); err != nil {
+	if err = h.sdk.ConnectedRootsService.SDK.DeleteCropType(ctx, cropTypeId); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err = uploads.DeleteUploadedImage(cropType.ImageURL); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if err = h.sessionSvc.SaveMessage(ctx, c, "message", "success"); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 

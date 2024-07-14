@@ -48,7 +48,7 @@ func (s *Service) Save(ctx context.Context, cropType *connected_roots.CropTypes)
 		return nil, fmt.Errorf("%s: %w", tracingCropTypeSave, err)
 	}
 
-	cropTypeRes, err = s.cropTypeRep.GetByID(ctx, cropType.ID)
+	cropTypeRes, err = s.cropTypeRep.GetByID(ctx, cropTypeRes.ID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingCropTypeSave, err)
 	}
