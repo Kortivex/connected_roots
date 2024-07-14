@@ -24,6 +24,25 @@ func CommonCropTypeCreatePageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonCropTypeUpdatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminCropTypesUpdateTitle),
+		"active":                         "crop-types-management",
+		"breadcrumb_crop_types":          translator.T(c, translator.BreadcrumbCropTypes),
+		"breadcrumb_update_crop_types":   translator.T(c, translator.BreadcrumbUpdateCropTypes),
+		"update_name_label":              translator.T(c, translator.PagesAdminCropTypesUpdateNameLabel),
+		"update_scientific_name_label":   translator.T(c, translator.PagesAdminCropTypesUpdateScientificNameLabel),
+		"update_life_cycle_label":        translator.T(c, translator.PagesAdminCropTypesUpdateLifeCycleLabel),
+		"update_planting_season_label":   translator.T(c, translator.PagesAdminCropTypesUpdatePlantingSeasonLabel),
+		"update_harvest_season_label":    translator.T(c, translator.PagesAdminCropTypesUpdateHarvestSeasonLabel),
+		"update_irrigation_label":        translator.T(c, translator.PagesAdminCropTypesUpdateIrrigationLabel),
+		"update_description_label":       translator.T(c, translator.PagesAdminCropTypesUpdateDescriptionLabel),
+		"update_upload_image_label":      translator.T(c, translator.PagesAdminCropTypesUpdateUploadImageLabel),
+		"update_button_submit_crop_type": translator.T(c, translator.PagesAdminCropTypesUpdateButtonSubmitCropType),
+	}
+}
+
 func CommonCropTypeViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                 translator.T(c, translator.PagesCommonSiteTitle),

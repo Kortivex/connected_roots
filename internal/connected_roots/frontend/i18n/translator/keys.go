@@ -87,6 +87,17 @@ const (
 	PagesAdminCropTypesCreateUploadImageLabel     = "pages.admin.crop_types.create_upload_image_label"
 	PagesAdminCropTypesCreateButtonSubmitCropType = "pages.admin.crop_types.create_button_submit_crop_type"
 
+	PagesAdminCropTypesUpdateTitle                = "pages.admin.crop_types.update_title"
+	PagesAdminCropTypesUpdateNameLabel            = "pages.admin.crop_types.update_name_label"
+	PagesAdminCropTypesUpdateScientificNameLabel  = "pages.admin.crop_types.update_scientific_name_label"
+	PagesAdminCropTypesUpdateLifeCycleLabel       = "pages.admin.crop_types.update_life_cycle_label"
+	PagesAdminCropTypesUpdatePlantingSeasonLabel  = "pages.admin.crop_types.update_planting_season_label"
+	PagesAdminCropTypesUpdateHarvestSeasonLabel   = "pages.admin.crop_types.update_harvest_season_label"
+	PagesAdminCropTypesUpdateIrrigationLabel      = "pages.admin.crop_types.update_irrigation_label"
+	PagesAdminCropTypesUpdateDescriptionLabel     = "pages.admin.crop_types.update_description_label"
+	PagesAdminCropTypesUpdateUploadImageLabel     = "pages.admin.crop_types.update_upload_image_label"
+	PagesAdminCropTypesUpdateButtonSubmitCropType = "pages.admin.crop_types.update_button_submit_crop_type"
+
 	PagesAdminCropTypesViewTitle               = "pages.admin.crop_types.view_title"
 	PagesAdminCropTypesViewNameLabel           = "pages.admin.crop_types.view_name_label"
 	PagesAdminCropTypesViewScientificNameLabel = "pages.admin.crop_types.view_scientific_name_label"

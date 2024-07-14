@@ -306,7 +306,7 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 		log.Debug(fmt.Sprintf("previous_cursor: %s", prevCursor))
 	}
 
-	sess, err := h.sessionSvc.Obtain(c.Request().Context(), c)
+	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}

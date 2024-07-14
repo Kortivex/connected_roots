@@ -1,6 +1,7 @@
 package crop_types
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
@@ -127,6 +128,117 @@ func (h *Handlers) PostCropTypeCreateHandler(c echo.Context) error {
 			"notification_type":    "success",
 			"notification_title":   translator.T(c, translator.NotificationsAdminCropTypesCreateSuccessTitle),
 			"notification_message": translator.T(c, translator.NotificationsAdminCropTypesCreateSuccessMessage),
+		}))
+}
+
+func (h *Handlers) GetCropTypeUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUpdateCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getUpdateCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeUpdatePageI18N(c)), map[string]interface{}{
+			"crop_type": cropType,
+		}))
+}
+
+func (h *Handlers) PostCropTypeUpdateHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postUpdateCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(postUpdateCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		if !errors.Is(err, http.ErrMissingFile) {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
+	pathImage := ""
+	if file != nil {
+		fileName, err := hashing.GenUniqueFileName(file.Filename)
+		if err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+		pathImage = "images/crop_types/" + fileName
+	}
+
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	oldPathImage := cropType.ImageURL
+
+	cropType.ID = cropTypeId
+	cropType.Name = c.FormValue("name")
+	cropType.ScientificName = c.FormValue("scientific-name")
+	cropType.LifeCycle = c.FormValue("life-cycle")
+	cropType.PlantingSeason = c.FormValue("planting-season")
+	cropType.HarvestSeason = c.FormValue("harvest-season")
+	cropType.Irrigation = c.FormValue("irrigation")
+	cropType.Description = c.FormValue("description")
+	if pathImage != "" {
+		cropType.ImageURL = pathImage
+	}
+
+	log.Debug(fmt.Sprintf("crop_type: %+v", cropType))
+
+	if _, err = h.sdk.ConnectedRootsService.SDK.UpdateCropType(ctx, cropType.ToCropTypeBody()); err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	if file != nil {
+		if err = uploads.SaveUploadedImage(file, pathImage, 800, 800); err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+
+		if err = uploads.DeleteUploadedImage(oldPathImage); err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
+	return c.Render(http.StatusOK, "admin-crop-types-update.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonCropTypeUpdatePageI18N(c)), map[string]interface{}{
+			"crop_type":            cropType,
+			"notification_type":    "success",
+			"notification_title":   translator.T(c, translator.NotificationsAdminCropTypesUpdateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminCropTypesUpdateSuccessMessage),
 		}))
 }
 
