@@ -26,6 +26,12 @@ update_crop_types = "Editar"
 list_crop_types = "Listar"
 view_crop_types = "Ver"
 delete_crop_types = "Borrar"
+sensors = "Sensores"
+create_sensors = "Crear"
+update_sensors = "Editar"
+list_sensors = "Listar"
+view_sensors = "Ver"
+delete_sensors = "Borrar"
 
 [navbar.labels]
 admin_nav_label = "Admin"
@@ -37,6 +43,8 @@ orchard_nav_label = "Huertos"
 orchard_nav_management_label = "Administrar"
 crop_type_nav_label = "Cultivos"
 crop_type_nav_management_label = "Administrar"
+sensor_nav_label = "Sensores"
+sensor_nav_management_label = "Administrar"
 collapsed_view_label = "Contraer Vista"
 
 [notifications.admin.crop_types]

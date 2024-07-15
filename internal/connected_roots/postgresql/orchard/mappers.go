@@ -17,6 +17,7 @@ func toDomain(orchard *Orchards) *connected_roots.Orchards {
 		Soil:       orchard.Soil,
 		Fertilizer: orchard.Fertilizer,
 		Composting: orchard.Composting,
+		ImageURL:   orchard.ImageURL,
 		UserID:     orchard.UserID,
 		User:       toUserDomain(orchard.User),
 		CropTypeID: orchard.CropTypeID,
@@ -94,6 +95,7 @@ func toDB(orchard *connected_roots.Orchards, id string) *Orchards {
 		Soil:       orchard.Soil,
 		Fertilizer: orchard.Fertilizer,
 		Composting: orchard.Composting,
+		ImageURL:   orchard.ImageURL,
 		UserID:     orchard.UserID,
 		CropTypeID: orchard.CropTypeID,
 	}

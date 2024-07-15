@@ -18,15 +18,17 @@
         <div class="col-auto">
             <h2 class="mb-0">{{.title}}</h2>
         </div>
-        <div class="col-auto">
-            <div class="row g-2 g-sm-3">
-                <div class="col-auto">
-                    <a class="btn btn-phoenix-secondary bg-success-lighter" href="/admin/orchards/new">
-                        <span class="fas fa-plus me-2"></span>{{.list_button_create_orchard}}
-                    </a>
+        {{ if .admin_role}}
+            <div class="col-auto">
+                <div class="row g-2 g-sm-3">
+                    <div class="col-auto">
+                        <a class="btn btn-phoenix-secondary bg-success-lighter" href="/admin/orchards/new">
+                            <span class="fas fa-plus me-2"></span>{{.list_button_create_orchard}}
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {{end}}
     </div>
     <div id="list-orchards"
          data-list='{"valueNames":["id","name","location","user-id","crop-type"],"page":20,"pagination":false}'>
@@ -47,6 +49,7 @@
                 {{$view_label := .list_actions_view_label}}
                 {{$edit_label := .list_actions_edit_label}}
                 {{$remove_label := .list_actions_remove_label}}
+                {{$admin_rol := .admin_role}}
                 {{range $orchard :=.orchards}}
                     <tr>
                         <td class="align-middle ps-3 id">{{ $orchard.ID }}</td>
@@ -70,11 +73,13 @@
                                 <div class="dropdown-menu dropdown-menu-end py-2" style="">
                                     <a class="dropdown-item"
                                        href="/admin/orchards/view/{{$orchard.ID}}">{{$view_label}}</a>
-                                    <a class="dropdown-item"
-                                       href="/admin/orchards/edit/{{$orchard.ID}}">{{$edit_label}}</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger"
-                                       href="/admin/orchards/delete/{{$orchard.ID}}">{{$remove_label}}</a>
+                                    {{ if $admin_rol}}
+                                        <a class="dropdown-item"
+                                           href="/admin/orchards/edit/{{$orchard.ID}}">{{$edit_label}}</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger"
+                                           href="/admin/orchards/delete/{{$orchard.ID}}">{{$remove_label}}</a>
+                                    {{end}}
                                 </div>
                             </div>
                         </td>

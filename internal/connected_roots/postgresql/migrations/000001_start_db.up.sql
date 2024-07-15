@@ -49,6 +49,7 @@ CREATE TABLE orchards
     "soil"         varchar(255),
     "fertilizer"   varchar(255),
     "composting"   varchar(255),
+    "image_url"    text,
     "user_id"      varchar(100),
     "crop_type_id" varchar(26),
     "created_at"   timestamp with time zone,

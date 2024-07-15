@@ -71,13 +71,21 @@ func (h *Handlers) GetUserCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	roles, _, err := h.sdk.ConnectedRootsService.SDK.ObtainRoles(ctx, "10000", "", "", nil)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-users-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserCreatePageI18N(c)), map[string]interface{}{
 			"roles": roles,
@@ -94,6 +102,14 @@ func (h *Handlers) PostUserCreateHandler(c echo.Context) error {
 	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	user := &sdk_models.UsersBody{
@@ -131,7 +147,7 @@ func (h *Handlers) PostUserCreateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-users-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserCreatePageI18N(c)),
 			notifications), map[string]interface{}{
@@ -158,6 +174,14 @@ func (h *Handlers) GetUserUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
@@ -171,7 +195,7 @@ func (h *Handlers) GetUserUpdateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-users-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserUpdatePageI18N(c)), map[string]interface{}{
 			"user":  user,
@@ -195,6 +219,14 @@ func (h *Handlers) PostUserUpdateHandler(c echo.Context) error {
 	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
@@ -230,7 +262,7 @@ func (h *Handlers) PostUserUpdateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-users-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserUpdatePageI18N(c)), map[string]interface{}{
 			"user":                 user,
@@ -259,13 +291,21 @@ func (h *Handlers) GetUserViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-users-view.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserViewPageI18N(c)), map[string]interface{}{
 			"user": user,
@@ -278,6 +318,14 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListUsersHandlerName)
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
 
 	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
@@ -317,7 +365,7 @@ func (h *Handlers) GetUsersListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-users-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserListPageI18N(c)), map[string]interface{}{
 			"users":           users,
@@ -344,13 +392,21 @@ func (h *Handlers) GetUserDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, userID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-users-delete.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserDeletePageI18N(c)), map[string]interface{}{
 			"user": user,
@@ -368,6 +424,14 @@ func (h *Handlers) PostUserDeleteHandler(c echo.Context) error {
 	if userID == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	if err := h.sdk.ConnectedRootsService.SDK.DeleteUser(ctx, userID); err != nil {
@@ -393,6 +457,14 @@ func (h *Handlers) GetUserProfileHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAuth, err := h.sessionSvc.IsAdminTechnicalUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAuth {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, sess.Email)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
@@ -400,7 +472,7 @@ func (h *Handlers) GetUserProfileHandler(c echo.Context) error {
 	y, m, d := user.CreatedAt.Date()
 
 	return c.Render(http.StatusOK, "profile.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserProfilePageI18N(c)), map[string]interface{}{
 			"user_name":       user.Name,
@@ -423,13 +495,21 @@ func (h *Handlers) GetEditUserProfileHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAuth, err := h.sessionSvc.IsAdminTechnicalUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAuth {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, sess.Email)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "edit-profile.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonEditUserProfilePageI18N(c)), map[string]interface{}{
 			"user_name":      user.Name,
@@ -451,6 +531,14 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAuth, err := h.sessionSvc.IsAdminTechnicalUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAuth {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	user, err := h.sdk.ConnectedRootsService.SDK.ObtainUser(ctx, sess.Email)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
@@ -458,7 +546,7 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 
 	if err = c.Request().ParseForm(); err != nil {
 		return c.Render(http.StatusOK, "edit-profile.gohtml",
-			translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 				bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 				CommonEditUserProfilePageI18N(c)), map[string]interface{}{
 				"user_name":            user.Name,
@@ -477,7 +565,7 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 
 	if name == "" || surname == "" || phone == "" {
 		return c.Render(http.StatusOK, "edit-profile.gohtml",
-			translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+			translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 				bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 				CommonEditUserProfilePageI18N(c)), map[string]interface{}{
 				"user_name":            user.Name,
@@ -512,7 +600,7 @@ func (h *Handlers) PostEditUserProfileHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "edit-profile.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonEditUserProfilePageI18N(c)), map[string]interface{}{
 			"user_name":            user.Name,

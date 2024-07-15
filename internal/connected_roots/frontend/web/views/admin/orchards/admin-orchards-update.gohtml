@@ -16,7 +16,7 @@
     </nav>
     <form id="update-orchard-form" method="POST"
           action="/admin/orchards/edit/{{ if .orchard }}{{ .orchard.ID }}{{ end }}"
-          enctype="application/x-www-form-urlencoded">
+          enctype="multipart/form-data">
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label" for="name">{{.update_name_label}}</label>
@@ -77,6 +77,10 @@
                 </select>
             </div>
             <div class="col-md-6">
+                <label class="form-label">{{.update_upload_image_label}}</label>
+                <input class="form-control" type="file" id="file" name="file" accept="image/jpeg, image/png, image/gif"/>
+            </div>
+            <div class="col-md-12">
                 <button class="btn btn-primary" type="submit">{{.update_button_submit_orchard}}</button>
             </div>
         </div>

@@ -14,6 +14,7 @@ type Orchards struct {
 	Soil       string               `gorm:"column:soil;type:varchar(255)"`
 	Fertilizer string               `gorm:"column:fertilizer;type:varchar(255)"`
 	Composting string               `gorm:"column:composting;type:varchar(255)"`
+	ImageURL   string               `gorm:"column:image_url;type:text"`
 	UserID     string               `gorm:"column:user_id;type:varchar(100)"`
 	User       *user.Users          `gorm:"foreignKey:UserID;references:ID"`
 	CropTypeID string               `gorm:"column:crop_type_id;type:varchar(26)"`

@@ -10,6 +10,8 @@ import (
 var (
 	// ErrSomethingWentWrong is returned when an undetermined error occurred.
 	ErrSomethingWentWrong = errors.New("something went wrong")
+	// ErrUnauthorized is returned when a user is not authorized.
+	ErrUnauthorized = errors.New("unauthorized")
 	// ErrBodyBadRequestWrongBody is returned when a request body has an incorrect format.
 	ErrBodyBadRequestWrongBody = errors.New("malformed body")
 	// ErrInvalidPayload is returned when a request body failed json schema validation.
@@ -23,6 +25,7 @@ var (
 var errorAPIMap = map[string]commons.ErrorS{
 	// General Errors
 	ErrBodyBadRequestWrongBody.Error(): {Status: http.StatusBadRequest, Message: ErrBodyBadRequestWrongBody.Error()},
+	ErrUnauthorized.Error():            {Status: http.StatusUnauthorized, Message: ErrUnauthorized.Error()},
 	ErrInvalidPayload.Error():          {Status: http.StatusBadRequest, Message: ErrInvalidPayload.Error()},
 	ErrQueryParamInvalidValue.Error():  {Status: http.StatusBadRequest, Message: ErrQueryParamInvalidValue.Error()},
 	ErrPathParamInvalidValue.Error():   {Status: http.StatusBadRequest, Message: ErrPathParamInvalidValue.Error()},

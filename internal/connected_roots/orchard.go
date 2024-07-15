@@ -13,6 +13,7 @@ type Orchards struct {
 	Soil       string     `json:"soil"`
 	Fertilizer string     `json:"fertilizer"`
 	Composting string     `json:"composting"`
+	ImageURL   string     `json:"image_url"`
 	UserID     string     `json:"user_id"`
 	User       *Users     `json:"user"`
 	CropTypeID string     `json:"crop_type_id"`

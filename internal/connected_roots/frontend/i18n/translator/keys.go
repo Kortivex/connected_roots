@@ -28,6 +28,12 @@ const (
 	BreadcrumbViewCropTypes   = "breadcrumb.view_crop_types"
 	BreadcrumbListCropTypes   = "breadcrumb.list_crop_types"
 	BreadcrumbDeleteCropTypes = "breadcrumb.delete_crop_types"
+	BreadcrumbSensors         = "breadcrumb.sensors"
+	BreadcrumbCreateSensors   = "breadcrumb.create_sensors"
+	BreadcrumbUpdateSensors   = "breadcrumb.update_sensors"
+	BreadcrumbViewSensors     = "breadcrumb.view_sensors"
+	BreadcrumbListSensors     = "breadcrumb.list_sensors"
+	BreadcrumbDeleteSensors   = "breadcrumb.delete_sensors"
 
 	NavbarLabelsAdminNavLabel              = "navbar.labels.admin_nav_label"
 	NavbarLabelsRoleNavLabel               = "navbar.labels.role_nav_label"
@@ -38,6 +44,8 @@ const (
 	NavbarLabelsOrchardNavManagementLabel  = "navbar.labels.orchard_nav_management_label"
 	NavbarLabelsCropTypeNavLabel           = "navbar.labels.crop_type_nav_label"
 	NavbarLabelsCropTypeNavManagementLabel = "navbar.labels.crop_type_nav_management_label"
+	NavbarLabelsSensorNavLabel             = "navbar.labels.sensor_nav_label"
+	NavbarLabelsSensorNavManagementLabel   = "navbar.labels.sensor_nav_management_label"
 	NavbarLabelsCollapsedViewLabel         = "navbar.labels.collapsed_view_label"
 
 	TopBarLabelsProfileLabel = "topbar.labels.profile_label"

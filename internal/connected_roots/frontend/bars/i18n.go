@@ -1,13 +1,19 @@
 package bars
 
 import (
+	"context"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/session"
 	"github.com/labstack/echo/v4"
 )
 
-func CommonNavBarI18N(c echo.Context) map[string]interface{} {
+func CommonNavBarI18N(ctx context.Context, c echo.Context, sessionSvc *session.Service) map[string]interface{} {
+	isAdmin, _ := sessionSvc.IsAdmin(ctx, c)
+	isTech, _ := sessionSvc.IsTechnical(ctx, c)
+
 	return map[string]interface{}{
-		"admin_nav_label":                translator.T(c, translator.NavbarLabelsAdminNavLabel),
+		"admin_role":                     isAdmin,
+		"tech_role":                      isTech,
 		"role_nav_label":                 translator.T(c, translator.NavbarLabelsRoleNavLabel),
 		"role_nav_management_label":      translator.T(c, translator.NavbarLabelsRoleNavManagementLabel),
 		"user_nav_label":                 translator.T(c, translator.NavbarLabelsUserNavLabel),
@@ -16,6 +22,8 @@ func CommonNavBarI18N(c echo.Context) map[string]interface{} {
 		"orchard_nav_management_label":   translator.T(c, translator.NavbarLabelsOrchardNavManagementLabel),
 		"crop_type_nav_label":            translator.T(c, translator.NavbarLabelsCropTypeNavLabel),
 		"crop_type_nav_management_label": translator.T(c, translator.NavbarLabelsCropTypeNavManagementLabel),
+		"sensor_nav_label":               translator.T(c, translator.NavbarLabelsSensorNavLabel),
+		"sensor_nav_management_label":    translator.T(c, translator.NavbarLabelsSensorNavManagementLabel),
 		"collapsed_view_label":           translator.T(c, translator.NavbarLabelsCollapsedViewLabel),
 	}
 }

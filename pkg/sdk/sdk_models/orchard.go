@@ -10,6 +10,7 @@ type OrchardsBody struct {
 	Soil       string         `json:"soil"`
 	Fertilizer string         `json:"fertilizer"`
 	Composting string         `json:"composting"`
+	ImageURL   string         `json:"image_url"`
 	UserID     string         `json:"user_id"`
 	User       *UsersBody     `json:"user,omitempty"`
 	CropTypeID string         `json:"crop_type_id"`
@@ -26,6 +27,7 @@ type OrchardsResponse struct {
 	Soil       string             `json:"soil"`
 	Fertilizer string             `json:"fertilizer"`
 	Composting string             `json:"composting"`
+	ImageURL   string             `json:"image_url"`
 	UserID     string             `json:"user_id"`
 	User       *UsersResponse     `json:"user,omitempty"`
 	CropTypeID string             `json:"crop_type_id"`
@@ -43,6 +45,7 @@ func (or *OrchardsResponse) ToOrchardBody() *OrchardsBody {
 		Soil:       or.Soil,
 		Fertilizer: or.Fertilizer,
 		Composting: or.Composting,
+		ImageURL:   or.ImageURL,
 		UserID:     or.UserID,
 		User:       or.User.ToUsersBody(),
 		CropTypeID: or.CropTypeID,

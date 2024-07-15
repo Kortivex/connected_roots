@@ -1,6 +1,7 @@
 package orchard
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
@@ -8,10 +9,12 @@ import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/ferrors"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/i18n/translator"
 	sessionServ "github.com/Kortivex/connected_roots/internal/connected_roots/session"
+	"github.com/Kortivex/connected_roots/pkg/hashing"
 	"github.com/Kortivex/connected_roots/pkg/logger"
 	"github.com/Kortivex/connected_roots/pkg/logger/commons"
 	"github.com/Kortivex/connected_roots/pkg/sdk"
 	"github.com/Kortivex/connected_roots/pkg/sdk/sdk_models"
+	"github.com/Kortivex/connected_roots/pkg/uploads"
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
@@ -68,6 +71,14 @@ func (h *Handlers) GetOrchardCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
@@ -79,7 +90,7 @@ func (h *Handlers) GetOrchardCreateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardCreatePageI18N(c)), map[string]interface{}{
 			"users":      users,
@@ -99,8 +110,31 @@ func (h *Handlers) PostOrchardCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	size, err := strconv.ParseFloat(c.FormValue("size"), 64)
 	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	fileName, err := hashing.GenUniqueFileName(file.Filename)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	pathImage := "images/orchards/" + fileName
+	if err = uploads.SaveUploadedImage(file, pathImage, 800, 800); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -111,6 +145,7 @@ func (h *Handlers) PostOrchardCreateHandler(c echo.Context) error {
 		Soil:       c.FormValue("soil"),
 		Fertilizer: c.FormValue("fertilizer"),
 		Composting: c.FormValue("composting"),
+		ImageURL:   pathImage,
 		UserID:     c.FormValue("user-id"),
 		CropTypeID: c.FormValue("crop-type-id"),
 	}
@@ -123,7 +158,7 @@ func (h *Handlers) PostOrchardCreateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardCreatePageI18N(c)), map[string]interface{}{
 			"notification_type":    "success",
@@ -150,6 +185,14 @@ func (h *Handlers) GetOrchardUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
@@ -166,7 +209,7 @@ func (h *Handlers) GetOrchardUpdateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
 			"users":      users,
@@ -193,10 +236,36 @@ func (h *Handlers) PostOrchardUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		if !errors.Is(err, http.ErrMissingFile) {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
+	pathImage := ""
+	if file != nil {
+		fileName, err := hashing.GenUniqueFileName(file.Filename)
+		if err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+		pathImage = "images/orchards/" + fileName
+	}
+
 	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
+
+	oldPathImage := orchard.ImageURL
 
 	size, err := strconv.ParseFloat(c.FormValue("size"), 64)
 	if err != nil {
@@ -211,6 +280,9 @@ func (h *Handlers) PostOrchardUpdateHandler(c echo.Context) error {
 	orchard.Composting = c.FormValue("composting")
 	orchard.UserID = c.FormValue("user-id")
 	orchard.CropTypeID = c.FormValue("crop-type-id")
+	if pathImage != "" {
+		orchard.ImageURL = pathImage
+	}
 
 	log.Debug(fmt.Sprintf("orchard: %+v", orchard))
 
@@ -229,8 +301,18 @@ func (h *Handlers) PostOrchardUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	if file != nil {
+		if err = uploads.SaveUploadedImage(file, pathImage, 800, 800); err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+
+		if err = uploads.DeleteUploadedImage(oldPathImage); err != nil {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+	}
+
 	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
 			"users":                users,
@@ -260,13 +342,21 @@ func (h *Handlers) GetOrchardViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdminTech {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-view.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardViewPageI18N(c)), map[string]interface{}{
 			"orchard": orchard,
@@ -279,6 +369,14 @@ func (h *Handlers) GetOrchardsListHandler(c echo.Context) error {
 
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListOrchardHandlerName)
+
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdminTech {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
 
 	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
@@ -318,7 +416,7 @@ func (h *Handlers) GetOrchardsListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardListPageI18N(c)), map[string]interface{}{
 			"orchards":   orchards,
@@ -344,13 +442,21 @@ func (h *Handlers) GetOrchardDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-orchards-delete.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonOrchardDeletePageI18N(c)), map[string]interface{}{
 			"orchard": orchard,
@@ -368,6 +474,14 @@ func (h *Handlers) PostOrchardDeleteHandler(c echo.Context) error {
 	if orchardId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	if err := h.sdk.ConnectedRootsService.SDK.DeleteOrchard(ctx, orchardId); err != nil {

@@ -123,12 +123,17 @@ func (s *Service) setSetup() {
 	s.Echo.Static("/admin/orchards/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/orchards/edit/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/orchards/view/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/view/images", "images")
 	s.Echo.Static("/admin/orchards/delete/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/crop-types/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/crop-types/edit/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/crop-types/view/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/crop-types/view/images", "images")
 	s.Echo.Static("/admin/crop-types/delete/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/edit/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/view/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/delete/assets", s.conf.Frontend.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{
 		Templates: template.Must(templates.ParseTemplates(s.conf.Frontend.Templates)),
 	}

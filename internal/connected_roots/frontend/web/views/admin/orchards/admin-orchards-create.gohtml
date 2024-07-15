@@ -14,8 +14,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_create_orchards}}</li>
         </ol>
     </nav>
-    <form id="create-orchard-form" method="POST" action="/admin/orchards/new"
-          enctype="application/x-www-form-urlencoded">
+    <form id="create-orchard-form" method="POST" action="/admin/orchards/new" enctype="multipart/form-data">
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label" for="name">{{.create_name_label}}</label>
@@ -70,6 +69,11 @@
                 </select>
             </div>
             <div class="col-md-6">
+                <label class="form-label">{{.create_upload_image_label}}</label>
+                <input class="form-control" type="file" id="file" name="file" accept="image/jpeg, image/png, image/gif"
+                       required=""/>
+            </div>
+            <div class="col-md-12">
                 <button class="btn btn-primary" type="submit">{{.create_button_submit_orchard}}</button>
             </div>
         </div>

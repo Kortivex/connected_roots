@@ -67,8 +67,16 @@ func (h *Handlers) GetRoleCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	return c.Render(http.StatusOK, "admin-roles-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleCreatePageI18N(c)), map[string]interface{}{}))
 }
@@ -85,6 +93,14 @@ func (h *Handlers) PostRoleCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	role := &sdk_models.RolesBody{
 		Name:        c.FormValue("name"),
 		Description: c.FormValue("description"),
@@ -99,7 +115,7 @@ func (h *Handlers) PostRoleCreateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleCreatePageI18N(c)), map[string]interface{}{
 			"notification_type":    "success",
@@ -126,13 +142,21 @@ func (h *Handlers) GetRoleUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	role, err := h.sdk.ConnectedRootsService.SDK.ObtainRole(ctx, roleID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleUpdatePageI18N(c)), map[string]interface{}{
 			"role": role,
@@ -157,6 +181,14 @@ func (h *Handlers) PostRoleUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	role := &sdk_models.RolesBody{
 		ID:          roleID,
 		Name:        c.FormValue("name"),
@@ -172,7 +204,7 @@ func (h *Handlers) PostRoleUpdateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleUpdatePageI18N(c)), map[string]interface{}{
 			"role":                 roleResp,
@@ -200,13 +232,21 @@ func (h *Handlers) GetRoleViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	role, err := h.sdk.ConnectedRootsService.SDK.ObtainRole(ctx, roleID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-view.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleViewPageI18N(c)), map[string]interface{}{
 			"role": role,
@@ -219,6 +259,14 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 
 	loggerNew := h.logger.New()
 	log := loggerNew.WithTag(getListRoleHandlerName)
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
 
 	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
@@ -258,7 +306,7 @@ func (h *Handlers) GetRolesListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleListPageI18N(c)), map[string]interface{}{
 			"roles":           roles,
@@ -285,13 +333,21 @@ func (h *Handlers) GetRoleDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	role, err := h.sdk.ConnectedRootsService.SDK.ObtainRole(ctx, roleID)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-roles-delete.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonRoleDeletePageI18N(c)), map[string]interface{}{
 			"role": role,
@@ -309,6 +365,14 @@ func (h *Handlers) PostRoleDeleteHandler(c echo.Context) error {
 	if roleID == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	if err := h.sdk.ConnectedRootsService.SDK.DeleteRole(ctx, roleID); err != nil {

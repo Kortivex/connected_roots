@@ -15,45 +15,61 @@
         </ol>
     </nav>
     <div class="row g-3">
-        <div class="col-md-6">
-            <label class="form-label" for="name">{{.view_name_label}}</label>
-            <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
-                   required="" value="{{.orchard.Name}}" readonly>
+        <div class="col-12 col-xl-6 order-xl-1 mb-4 mb-xl-0">
+            <div class="card text-black overflow-hidden">
+                <img class="card-img-top" src="{{.orchard.ImageURL}}" alt="{{.orchard.Name}}"/>
+                <div class="card-body">
+                    <h5 class="card-title">{{.orchard.Name}}</h5>
+                    <p class="card-text">{{.orchard.Location}}</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <label class="form-label" for="location">{{.view_location_label}}</label>
-            <input class="form-control" id="location" name="location" type="text"
-                   placeholder="{{.view_location_label}}" required="" value="{{.orchard.Location}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="size">{{.view_size_label}}</label>
-            <input class="form-control" id="size" name="size" type="text"
-                   placeholder="{{.view_size_label}}" required="" value="{{.orchard.Size}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="soil">{{.view_soil_label}}</label>
-            <input class="form-control" id="soil" name="soil" type="text"
-                   placeholder="{{.view_soil_label}}" required="" value="{{.orchard.Soil}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="fertilizer">{{.view_fertilizer_label}}</label>
-            <input class="form-control" id="fertilizer" name="fertilizer" type="text"
-                   placeholder="{{.view_fertilizer_label}}" required="" value="{{.orchard.Fertilizer}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="composting">{{.view_composting_label}}</label>
-            <input class="form-control" id="composting" name="composting" type="text"
-                   placeholder="{{.view_composting_label}}" required="" value="{{.orchard.Composting}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="user">{{.view_user_label}}</label>
-            <input class="form-control" id="user" name="user" type="text"
-                   placeholder="{{.view_user_label}}" required="" value="{{.orchard.User.Name}}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="crop_type">{{.view_crop_type_label}}</label>
-            <input class="form-control" id="crop_type" name="crop_type" type="text"
-                   placeholder="{{.view_crop_type_label}}" required="" value="{{.orchard.CropType.Name}}" readonly>
+        <div class="col-12 col-xl-6 order-xl-2">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="name">{{.view_name_label}}</label>
+                    <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
+                           required="" value="{{.orchard.Name}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="location">{{.view_location_label}}</label>
+                    <input class="form-control" id="location" name="location" type="text"
+                           placeholder="{{.view_location_label}}" required="" value="{{.orchard.Location}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="size">{{.view_size_label}}</label>
+                    <input class="form-control" id="size" name="size" type="text"
+                           placeholder="{{.view_size_label}}" required="" value="{{.orchard.Size}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="soil">{{.view_soil_label}}</label>
+                    <input class="form-control" id="soil" name="soil" type="text"
+                           placeholder="{{.view_soil_label}}" required="" value="{{.orchard.Soil}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="fertilizer">{{.view_fertilizer_label}}</label>
+                    <input class="form-control" id="fertilizer" name="fertilizer" type="text"
+                           placeholder="{{.view_fertilizer_label}}" required="" value="{{.orchard.Fertilizer}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="composting">{{.view_composting_label}}</label>
+                    <input class="form-control" id="composting" name="composting" type="text"
+                           placeholder="{{.view_composting_label}}" required="" value="{{.orchard.Composting}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="user">{{.view_user_label}}</label>
+                    <input class="form-control" id="user" name="user" type="text"
+                           placeholder="{{.view_user_label}}" required="" value="{{.orchard.User.Name}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="crop_type">{{.view_crop_type_label}}</label>
+                    <input class="form-control" id="crop_type" name="crop_type" type="text"
+                           placeholder="{{.view_crop_type_label}}" required="" value="{{.orchard.CropType.Name}}"
+                           readonly>
+                </div>
+            </div>
         </div>
     </div>
 </div>

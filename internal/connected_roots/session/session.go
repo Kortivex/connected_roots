@@ -14,13 +14,18 @@ import (
 )
 
 const (
-	tracingSession              = "service.session"
-	tracingSessionSave          = "service.session.save"
-	tracingSessionObtain        = "service.session.obtain"
-	tracingSessionClose         = "service.session.close"
-	tracingSessionIsValid       = "service.session.is-valid"
-	tracingSessionSaveMessage   = "service.session.save-message"
-	tracingSessionObtainMessage = "service.session.obtain-message"
+	tracingSession                     = "service.session"
+	tracingSessionSave                 = "service.session.save"
+	tracingSessionObtain               = "service.session.obtain"
+	tracingSessionClose                = "service.session.close"
+	tracingSessionIsValid              = "service.session.is-valid"
+	tracingSessionSaveMessage          = "service.session.save-message"
+	tracingSessionObtainMessage        = "service.session.obtain-message"
+	tracingSessionIsAdmin              = "service.session.is-admin"
+	tracingSessionIsTechnical          = "service.session.is-technical"
+	tracingSessionIsUser               = "service.session.is-user"
+	tracingSessionIsAdminTechnical     = "service.session.is-admin-technical"
+	tracingSessionIsAdminTechnicalUser = "service.session.is-admin-technical-user"
 )
 
 type Service struct {
@@ -139,4 +144,49 @@ func (s *Service) ObtainMessage(ctx context.Context, c echo.Context, name string
 	log.Debug(fmt.Sprintf("flashes: %+v", fm))
 
 	return fm, nil
+}
+
+func (s *Service) IsAdmin(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsAdmin, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[0], nil
+}
+
+func (s *Service) IsTechnical(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsTechnical, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[1], nil
+}
+
+func (s *Service) IsUser(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsUser, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[2], nil
+}
+
+func (s *Service) IsAdminTechnical(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsAdminTechnical, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[0] || sn.RoleID == s.conf.Roles.Protected[1], nil
+}
+
+func (s *Service) IsAdminTechnicalUser(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsAdminTechnicalUser, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[0] || sn.RoleID == s.conf.Roles.Protected[1] || sn.RoleID == s.conf.Roles.Protected[2], nil
 }

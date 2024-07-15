@@ -70,8 +70,16 @@ func (h *Handlers) GetCropTypeCreateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	return c.Render(http.StatusOK, "admin-crop-types-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeCreatePageI18N(c)), map[string]interface{}{}))
 }
@@ -86,6 +94,14 @@ func (h *Handlers) PostCropTypeCreateHandler(c echo.Context) error {
 	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	file, err := c.FormFile("file")
@@ -122,7 +138,7 @@ func (h *Handlers) PostCropTypeCreateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-create.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeCreatePageI18N(c)), map[string]interface{}{
 			"notification_type":    "success",
@@ -149,13 +165,21 @@ func (h *Handlers) GetCropTypeUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeUpdatePageI18N(c)), map[string]interface{}{
 			"crop_type": cropType,
@@ -178,6 +202,14 @@ func (h *Handlers) PostCropTypeUpdateHandler(c echo.Context) error {
 	sess, err := h.sessionSvc.Obtain(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	file, err := c.FormFile("file")
@@ -232,7 +264,7 @@ func (h *Handlers) PostCropTypeUpdateHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-update.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeUpdatePageI18N(c)), map[string]interface{}{
 			"crop_type":            cropType,
@@ -260,13 +292,21 @@ func (h *Handlers) GetCropTypeViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-view.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeViewPageI18N(c)), map[string]interface{}{
 			"crop_type": cropType,
@@ -283,6 +323,14 @@ func (h *Handlers) GetCropTypesListHandler(c echo.Context) error {
 	message, err := h.sessionSvc.ObtainMessage(ctx, c, "message")
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	log.Debug(fmt.Sprintf("message: %s", message))
@@ -318,7 +366,7 @@ func (h *Handlers) GetCropTypesListHandler(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-list.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeListPageI18N(c)), map[string]interface{}{
 			"crop_types": cropTypes,
@@ -344,13 +392,21 @@ func (h *Handlers) GetCropTypeDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
 	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
 	return c.Render(http.StatusOK, "admin-crop-types-delete.gohtml",
-		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(c),
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonCropTypeDeletePageI18N(c)), map[string]interface{}{
 			"crop_type": cropType,
@@ -373,6 +429,14 @@ func (h *Handlers) PostCropTypeDeleteHandler(c echo.Context) error {
 	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdmin {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
 	if err = h.sdk.ConnectedRootsService.SDK.DeleteCropType(ctx, cropTypeId); err != nil {

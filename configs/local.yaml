@@ -34,9 +34,9 @@ frontend:
     es: "locale.es.toml"
   roles:
     protected:
-      - "01J1G1BE7D2KNDKMHJE9W9TGN1"
-      - "01J1WQQ7RASGG8M6ASYPGAW0RX"
-      - "01J1WQQZM01ZVWPQWDZ0AAMYB6"
+      - "01J1G1BE7D2KNDKMHJE9W9TGN1" # Admin
+      - "01J1WQQZM01ZVWPQWDZ0AAMYB6" # Technical
+      - "01J1WQQ7RASGG8M6ASYPGAW0RX" # User
   debug: true
   recover: true
   body: "1M"
