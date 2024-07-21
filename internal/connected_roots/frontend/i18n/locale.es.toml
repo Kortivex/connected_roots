@@ -71,6 +71,14 @@ update_success_message = "El rol ha sido actualizado exitosamente"
 delete_success_title = "Rol borrado con éxito"
 delete_success_message = "El rol ha sido borrado exitosamente"
 
+[notifications.admin.sensors]
+create_success_title = "Sensor creado con éxito"
+create_success_message = "El sensor ha sido creado exitosamente"
+update_success_title = "Sensor actualizado con éxito"
+update_success_message = "El sensor ha sido actualizado exitosamente"
+delete_success_title = "Sensor borrado con éxito"
+delete_success_message = "El sensor ha sido borrado exitosamente"
+
 [notifications.admin.users]
 create_success_title = "Usuario creado con éxito"
 create_success_message = "El usuario ha sido creado exitosamente"
@@ -212,6 +220,22 @@ delete_title = "Borrar Roles"
 delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
 delete_warning_message = "Esta acción es irreversible."
 delete_button_submit_role = "Borrar"
+
+[pages.admin.sensors]
+list_title = "Listar Sensores"
+list_button_create_sensor = "Crear Sensor"
+list_name_label = "Nombre"
+list_model_number_label = "Número de Modelo"
+list_battery_level_label = "Batería (%)"
+list_status_label = "Estado"
+list_firmware_version_label = "Firmware (V.)"
+list_orchard_id_label = "Huerto"
+list_actions_label = "ACCIONES"
+list_actions_view_label = "Ver"
+list_actions_edit_label = "Editar"
+list_actions_remove_label = "Eliminar"
+list_next_label = "Siguiente"
+list_previous_label = "Anterior"
 
 [pages.admin.users]
 create_title = "Crear Usuarios"

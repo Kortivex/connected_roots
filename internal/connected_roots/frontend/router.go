@@ -3,6 +3,7 @@ package frontend
 import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/orchard"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/sensor"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/user"
 	"net/http"
 
@@ -96,6 +97,19 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminCropTypesGrp.GET("/view/:crop_type_id", cropTypesHandler.GetCropTypeViewHandler, s.SessionMiddleware).Name = "get-view-crop-type"
 	adminCropTypesGrp.GET("/delete/:crop_type_id", cropTypesHandler.GetCropTypeDeleteHandler, s.SessionMiddleware).Name = "get-delete-crop-type"
 	adminCropTypesGrp.POST("/delete/:crop_type_id", cropTypesHandler.PostCropTypeDeleteHandler, s.SessionMiddleware).Name = "post-delete-crop-type"
+	// |
+	// |
+	// + --- Sensors endpoints:
+	sensorsHandler := sensor.NewSensorsHandlers(ctx)
+	adminSensorsGrp := adminGrp.Group("/sensors")
+	adminSensorsGrp.GET("/list", sensorsHandler.GetSensorsListHandler, s.SessionMiddleware).Name = "get-list-sensors"
+	/*adminSensorsGrp.GET("/new", sensorsHandler.GetSensorCreateHandler, s.SessionMiddleware).Name = "get-new-sensor"
+	adminSensorsGrp.POST("/new", sensorsHandler.PostSensorCreateHandler, s.SessionMiddleware).Name = "post-new-sensor"
+	adminSensorsGrp.GET("/edit/:sensor_id", sensorsHandler.GetSensorUpdateHandler, s.SessionMiddleware).Name = "get-edit-sensor"
+	adminSensorsGrp.POST("/edit/:sensor_id", sensorsHandler.PostSensorUpdateHandler, s.SessionMiddleware).Name = "post-edit-sensor"
+	adminSensorsGrp.GET("/view/:sensor_id", sensorsHandler.GetSensorViewHandler, s.SessionMiddleware).Name = "get-view-sensor"
+	adminSensorsGrp.GET("/delete/:sensor_id", sensorsHandler.GetSensorDeleteHandler, s.SessionMiddleware).Name = "get-delete-sensor"
+	adminSensorsGrp.POST("/delete/:sensor_id", sensorsHandler.PostSensorDeleteHandler, s.SessionMiddleware).Name = "post-delete-sensor"*/
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

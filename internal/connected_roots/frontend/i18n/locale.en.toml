@@ -71,6 +71,14 @@ update_success_message = "Role has been updated successfully"
 delete_success_title = "Delete role success"
 delete_success_message = "Role has been deleted successfully"
 
+[notifications.admin.sensors]
+create_success_title = "Creation sensor success"
+create_success_message = "Sensor has been created successfully"
+update_success_title = "Update sensor success"
+update_success_message = "Sensor has been updated successfully"
+delete_success_title = "Delete sensor success"
+delete_success_message = "Sensor has been deleted successfully"
+
 [notifications.admin.users]
 create_success_title = "Creation user success"
 create_success_message = "User has been created successfully"
@@ -212,6 +220,22 @@ delete_title = "Delete Roles"
 delete_warning_title = "Are you sure you want to delete it?"
 delete_warning_message = "This action is irreversible."
 delete_button_submit_role = "Delete"
+
+[pages.admin.sensors]
+list_title = "List Sensors"
+list_button_create_sensor = "Create Sensor"
+list_name_label = "Name"
+list_model_number_label = "Model Number"
+list_battery_level_label = "Battery (%)"
+list_status_label = "Status"
+list_firmware_version_label = "Firmware (V.)"
+list_orchard_id_label = "Orchard"
+list_actions_label = "ACTIONS"
+list_actions_view_label = "View"
+list_actions_edit_label = "Edit"
+list_actions_remove_label = "Remove"
+list_next_label = "Next"
+list_previous_label = "Previous"
 
 [pages.admin.users]
 create_title = "Create Users"
