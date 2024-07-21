@@ -4,6 +4,7 @@ import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/sensor"
 	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/user"
@@ -56,6 +57,15 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	cropTypesGrp.GET("/:crop_type_id", cropTypesHandler.GetCropTypeHandler).Name = "get-crop-type"
 	cropTypesGrp.GET("", cropTypesHandler.ListCropTypesHandler).Name = "list-crop-types"
 	cropTypesGrp.DELETE("/:crop_type_id", cropTypesHandler.DeleteCropTypeHandler).Name = "delete-crop-type"
+
+	// Sensors endpoints.
+	sensorsHandler := sensor.NewSensorsHandlers(ctx)
+	sensorsGrp := s.Echo.Group("/sensors")
+	sensorsGrp.POST("", sensorsHandler.PostSensorHandler).Name = "post-sensor"
+	sensorsGrp.PUT("/:sensor_id", sensorsHandler.PutSensorHandler).Name = "put-sensor"
+	sensorsGrp.GET("/:sensor_id", sensorsHandler.GetSensorHandler).Name = "get-sensor"
+	sensorsGrp.GET("", sensorsHandler.ListSensorsHandler).Name = "list-sensors"
+	sensorsGrp.DELETE("/:sensor_id", sensorsHandler.DeleteSensorHandler).Name = "delete-sensor"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

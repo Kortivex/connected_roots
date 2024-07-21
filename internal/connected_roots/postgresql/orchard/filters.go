@@ -9,7 +9,7 @@ import (
 const TableOrchardsName = "orchards."
 
 var (
-	TableOrchardsFields  = []string{"id", "name", "location", "size", "size", "soil", "fertilizer", "composting", "created_at", "updated_at", "deleted_at"}
+	TableOrchardsFields  = []string{"id", "name", "location", "size", "soil", "fertilizer", "composting", "created_at", "updated_at", "deleted_at"}
 	TableOrchardsSortMap = map[string]string{
 		"id":         "ID",
 		"name":       "Name",

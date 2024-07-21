@@ -39,7 +39,7 @@ func NewRepository(conf *config.Config, db *gorm.DB, logr *logger.Logger) *Repos
 }
 
 func (r *Repository) Create(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error) {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardCreate)
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardCreate)
 	defer span.End()
 
 	loggerNew := r.logger.New()
@@ -70,7 +70,7 @@ func (r *Repository) Create(ctx context.Context, orchard *connected_roots.Orchar
 }
 
 func (r *Repository) Update(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error) {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardUpdate)
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardUpdate)
 	defer span.End()
 
 	loggerNew := r.logger.New()
@@ -98,7 +98,7 @@ func (r *Repository) Update(ctx context.Context, orchard *connected_roots.Orchar
 }
 
 func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.Orchards, error) {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardGetByID)
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardGetByID)
 	defer span.End()
 
 	loggerNew := r.logger.New()
@@ -121,13 +121,13 @@ func (r *Repository) GetByID(ctx context.Context, id string) (*connected_roots.O
 		return nil, fmt.Errorf("%s: %w", tracingOrchardGetByID, gorm.ErrRecordNotFound)
 	}
 
-	log.Debug(fmt.Sprintf("role: %+v", orchardDB))
+	log.Debug(fmt.Sprintf("orchard: %+v", orchardDB))
 
 	return toDomain(orchardDB), nil
 }
 
 func (r *Repository) ListAllBy(ctx context.Context, orchardFilters *connected_roots.OrchardPaginationFilters, preloads ...string) (*pagination.Pagination, error) {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardListAllBy)
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardListAllBy)
 	defer span.End()
 
 	loggerNew := r.logger.New()
@@ -192,7 +192,7 @@ func (r *Repository) ListAllBy(ctx context.Context, orchardFilters *connected_ro
 }
 
 func (r *Repository) DeleteByID(ctx context.Context, id string) error {
-	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardDeleteByID)
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardDeleteByID)
 	defer span.End()
 
 	loggerNew := r.logger.New()

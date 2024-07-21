@@ -40,6 +40,12 @@ const (
 	tracingConnectedRootsServiceObtainUserOrchard  = "connected-roots.obtain-user-orchard"
 	tracingConnectedRootsServiceObtainUserOrchards = "connected-roots.obtain-user-orchards"
 
+	tracingConnectedRootsServiceSaveSensor    = "connected-roots.save-sensor"
+	tracingConnectedRootsServiceUpdateSensor  = "connected-roots.update-sensor"
+	tracingConnectedRootsServiceObtainSensor  = "connected-roots.obtain-sensor"
+	tracingConnectedRootsServiceObtainSensors = "connected-roots.obtain-sensors"
+	tracingConnectedRootsServiceDeleteSensor  = "connected-roots.delete-sensor"
+
 	ErrMsgConnectedRootsServiceSaveRoleErr    = "saving role failure"
 	ErrMsgConnectedRootsServiceUpdateRoleErr  = "updating role failure"
 	ErrMsgConnectedRootsServiceObtainRoleErr  = "obtain role failure"
@@ -64,6 +70,11 @@ const (
 
 	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain user orchard failure"
 	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain user orchards failure"
+
+	ErrMsgConnectedRootsServiceSaveSensorErr    = "saving sensor failure"
+	ErrMsgConnectedRootsServiceUpdateSensorErr  = "updating sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorErr  = "obtain sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorsErr = "obtain sensors failure"
 )
 
 type ConnectedRootsServiceSDK struct {
@@ -109,6 +120,14 @@ type IConnectedRootsServiceSDK interface {
 	ObtainCropType(ctx context.Context, id string) (*sdk_models.CropTypesResponse, error)
 	ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error)
 	DeleteCropType(ctx context.Context, id string) error
+
+	////////////// SENSORS //////////////
+
+	SaveSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*sdk_models.SensorsResponse, error)
+	UpdateSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*sdk_models.SensorsResponse, error)
+	ObtainSensor(ctx context.Context, id string) (*sdk_models.SensorsResponse, error)
+	ObtainSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error)
+	DeleteSensor(ctx context.Context, id string) error
 }
 
 ////////////// USERS //////////////
@@ -621,6 +640,112 @@ func (c *ConnectedRootsServiceSDK) DeleteCropType(ctx context.Context, id string
 	}
 	if resp.IsError() {
 		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteCropType, resp.Error().(*APIError))
+	}
+
+	return nil
+}
+
+////////////// SENSORS //////////////
+
+func (c *ConnectedRootsServiceSDK) SaveSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*sdk_models.SensorsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveSensor)
+	defer sp.End()
+
+	resp, err := c.api.POSTSensor(ctx, sensor)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveSensor, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveSensor, resp.Error().(*APIError))
+	}
+
+	respSensor, ok := resp.Result().(*sdk_models.SensorsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveSensor, errors.New(ErrMsgConnectedRootsServiceSaveSensorErr))
+	}
+
+	return respSensor, nil
+}
+
+func (c *ConnectedRootsServiceSDK) UpdateSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*sdk_models.SensorsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceUpdateSensor)
+	defer sp.End()
+
+	resp, err := c.api.PUTSensor(ctx, sensor)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateSensor, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateSensor, resp.Error().(*APIError))
+	}
+
+	respSensor, ok := resp.Result().(*sdk_models.SensorsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateSensor, errors.New(ErrMsgConnectedRootsServiceUpdateSensorErr))
+	}
+
+	return respSensor, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainSensor(ctx context.Context, id string) (*sdk_models.SensorsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainSensor)
+	defer sp.End()
+
+	resp, err := c.api.GETSensor(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensor, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensor, resp.Error().(*APIError))
+	}
+
+	respSensor, ok := resp.Result().(*sdk_models.SensorsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensor, errors.New(ErrMsgConnectedRootsServiceObtainSensorErr))
+	}
+
+	return respSensor, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainSensors)
+	defer sp.End()
+
+	resp, err := c.api.GETSensors(ctx, limit, nexCursor, prevCursor, names, firmwareVersions, manufacturers, batteryLifes, statuses)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensors, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensors, resp.Error().(*APIError))
+	}
+
+	respSensors, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensors, errors.New(ErrMsgConnectedRootsServiceObtainSensorsErr))
+	}
+
+	sensors := []*sdk_models.SensorsResponse{}
+	sensorsByte, err := json.Marshal(respSensors.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensors, err)
+	}
+	if err = json.Unmarshal(sensorsByte, &sensors); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainSensors, err)
+	}
+
+	return sensors, &respSensors.Paging, nil
+}
+
+func (c *ConnectedRootsServiceSDK) DeleteSensor(ctx context.Context, id string) error {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceDeleteSensor)
+	defer sp.End()
+
+	resp, err := c.api.DELETESensor(ctx, id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteSensor, err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteSensor, resp.Error().(*APIError))
 	}
 
 	return nil

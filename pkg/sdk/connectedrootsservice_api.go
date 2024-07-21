@@ -39,6 +39,12 @@ const (
 	tracingConnectedRootsGetCropTypeAPI    = "connected-roots-service.http-client: get /crop-types/:crop_type_id"
 	tracingConnectedRootsGetCropTypesAPI   = "connected-roots-service.http-client: get /crop-types"
 	tracingConnectedRootsDeleteCropTypeAPI = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
+
+	tracingConnectedRootsPostSensorAPI   = "connected-roots-service.http-client: post /sensors"
+	tracingConnectedRootsPutSensorAPI    = "connected-roots-service.http-client: put /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorAPI    = "connected-roots-service.http-client: get /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorsAPI   = "connected-roots-service.http-client: get /sensors"
+	tracingConnectedRootsDeleteSensorAPI = "connected-roots-service.http-client: delete /sensors/:sensor_id"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -83,6 +89,14 @@ type IConnectedRootsServiceAPI interface {
 	GETCropType(ctx context.Context, id string) (*resty.Response, error)
 	GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error)
 	DELETECropType(ctx context.Context, id string) (*resty.Response, error)
+
+	////////////// SENSORS //////////////
+
+	POSTSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*resty.Response, error)
+	PUTSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*resty.Response, error)
+	GETSensor(ctx context.Context, id string) (*resty.Response, error)
+	GETSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error)
+	DELETESensor(ctx context.Context, id string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -739,6 +753,149 @@ func (c *ConnectedRootsServiceAPI) DELETECropType(ctx context.Context, id string
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/crop-types/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// SENSORS //////////////
+
+func (c *ConnectedRootsServiceAPI) POSTSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPostSensorAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPostSensorAPI)
+
+	log.Debug("request [POST] /sensors")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(sensor).
+		SetResult(&sdk_models.SensorsResponse{}).
+		SetError(&APIError{}).
+		Post("/sensors")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPutSensorAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPutSensorAPI)
+
+	log.Debug("request [PUT] /sensors/:sensor_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(sensor).
+		SetResult(&sdk_models.SensorsResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/sensors/%s", sensor.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETSensor(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetSensorAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetSensorAPI)
+
+	log.Debug("request [GET] /sensors/:sensor_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.SensorsResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/sensors/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetSensorsAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetSensorsAPI)
+
+	log.Debug("request [GET] /sensors")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, firmwareVersion := range firmwareVersions {
+		request.SetQueryParam("firmware_version[]", firmwareVersion)
+	}
+
+	for _, manufacturer := range manufacturers {
+		request.SetQueryParam("manufacturer[]", manufacturer)
+	}
+
+	for _, batteryLife := range batteryLifes {
+		request.SetQueryParam("battery_life[]", batteryLife)
+	}
+
+	for _, status := range statuses {
+		request.SetQueryParam("status[]", status)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get("/sensors")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETESensor(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteSensorAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteSensorAPI)
+
+	log.Debug("request [DELETE] /sensors/:sensor_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/sensors/%s", id))
 	if err != nil {
 		return nil, err
 	}

@@ -59,24 +59,25 @@ CREATE TABLE orchards
 
 CREATE TABLE sensors
 (
-    "id"                     varchar(26) primary key,
-    "name"                   varchar(255),
-    "type"                   varchar(255),
-    "location"               varchar(255),
-    "model_number"           varchar(255),
-    "manufacturer"           varchar(255),
-    "measurement_range"      varchar(255),
-    "calibration_date"       timestamp with time zone,
-    "battery_life"           decimal,
-    "communication_protocol" varchar(255),
-    "status"                 int,
-    "firmware_version"       decimal,
-    "high_threshold"         decimal,
-    "low_threshold"          decimal,
-    "orchard_id"             varchar(26),
-    "created_at"             timestamp with time zone,
-    "updated_at"             timestamp with time zone,
-    "deleted_at"             timestamp with time zone
+    "id"               varchar(26) primary key,
+    "name"             varchar(255),
+    "location"         varchar(255),
+    "model_number"     varchar(255),
+    "manufacturer"     varchar(255),
+    "calibration_date" timestamp with time zone,
+    "battery_life"     decimal,
+    "ssid"             varchar(255),
+    "channel"          varchar(255),
+    "dns"              varchar(255),
+    "ip"               varchar(255),
+    "subnet"           varchar(255),
+    "mac"              varchar(255),
+    "status"           int,
+    "firmware_version" decimal,
+    "orchard_id"       varchar(26),
+    "created_at"       timestamp with time zone,
+    "updated_at"       timestamp with time zone,
+    "deleted_at"       timestamp with time zone
 );
 
 CREATE TABLE sensor_data
