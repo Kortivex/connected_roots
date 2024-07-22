@@ -1,0 +1,123 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_sensors}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_view_sensors}}</li>
+        </ol>
+    </nav>
+    <div class="row g-3">
+        <div class="col-12 col-xl-12 order-xl-2">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="name">{{.view_name_label}}</label>
+                    <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
+                           required="" value="{{.sensor.Name}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="location">{{.view_location_label}}</label>
+                    <input class="form-control" id="location" name="location" type="text"
+                           placeholder="{{.view_location_label}}" required="" value="{{.sensor.Location}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="model-number">{{.view_model_number_label}}</label>
+                    <input class="form-control" id="model-number" name="model-number" type="text"
+                           placeholder="{{.view_model_number_label}}" required="" value="{{.sensor.ModelNumber}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="manufacturer">{{.view_manufacturer_label}}</label>
+                    <input class="form-control" id="manufacturer" name="manufacturer" type="text"
+                           placeholder="{{.view_manufacturer_label}}" required="" value="{{.sensor.Manufacturer}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="calibration-date">{{.view_calibration_date_label}}</label>
+                    <input class="form-control" id="calibration-date" name="calibration-date" type="text"
+                           placeholder="{{.view_calibration_date_label}}" required=""
+                           value="{{.sensor.CalibrationDate}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="battery-life">{{.view_battery_life_label}}</label>
+                    <input class="form-control" id="battery-life" name="battery-life" type="text"
+                           placeholder="{{.view_battery_life_label}}" required="" value="{{.sensor.BatteryLife}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="ssid">{{.view_ssid_label}}</label>
+                    <input class="form-control" id="ssid" name="ssid" type="text"
+                           placeholder="{{.view_ssid_label}}" required="" value="{{.sensor.SSID}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="channel">{{.view_channel_label}}</label>
+                    <input class="form-control" id="channel" name="channel" type="text"
+                           placeholder="{{.view_crop_type_label}}" required="" value="{{.sensor.Channel}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="dns">{{.view_dns_label}}</label>
+                    <input class="form-control" id="dns" name="dns" type="text"
+                           placeholder="{{.view_dns_label}}" required="" value="{{.sensor.DNS}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="ip">{{.view_ip_label}}</label>
+                    <input class="form-control" id="ip" name="ip" type="text"
+                           placeholder="{{.view_ip_label}}" required="" value="{{.sensor.IP}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="subnet">{{.view_subnet_label}}</label>
+                    <input class="form-control" id="subnet" name="subnet" type="text"
+                           placeholder="{{.view_subnet_label}}" required="" value="{{.sensor.Subnet}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="mac">{{.view_mac_label}}</label>
+                    <input class="form-control" id="mac" name="mac" type="text"
+                           placeholder="{{.view_mac_label}}" required="" value="{{.sensor.MAC}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="status">{{.view_status_label}}</label>
+                    <input class="form-control" id="status" name="status" type="text"
+                           placeholder="{{.view_status_label}}" required=""
+                           value="{{ if eq .sensor.Status 1 }}{{.view_online_label}}{{ else }}{{.view_offline_label}}{{ end }}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="firmware-version">{{.view_firmware_version_label}}</label>
+                    <input class="form-control" id="firmware-version" name="firmware-version" type="text"
+                           placeholder="{{.view_firmware_version_label}}" required=""
+                           value="{{.sensor.FirmwareVersion}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="orchard-name">{{.view_orchard_name_label}}</label>
+                    <div class="form-control" id="orchard-name">
+                        <a class="contains-anchor"
+                           href="/admin/orchards/view/{{.sensor.Orchard.ID}}">{{.sensor.Orchard.Name}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}
