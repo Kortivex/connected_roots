@@ -3,6 +3,7 @@ package sensor
 import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/orchard"
+	"time"
 )
 
 type Sensors struct {
@@ -11,7 +12,7 @@ type Sensors struct {
 	Location        string            `gorm:"column:location;type:varchar(255)"`
 	ModelNumber     string            `gorm:"column:model_number;type:varchar(255)"`
 	Manufacturer    string            `gorm:"column:manufacturer;type:varchar(255)"`
-	CalibrationDate string            `gorm:"column:calibration_date;type:timestamp"`
+	CalibrationDate time.Time         `gorm:"column:calibration_date;type:timestamp"`
 	BatteryLife     float64           `gorm:"column:battery_life;type:decimal"`
 	SSID            string            `gorm:"column:ssid;type:varchar(255)"`
 	Channel         string            `gorm:"column:channel;type:varchar(255)"`

@@ -11,7 +11,7 @@ type Sensors struct {
 	Location        string    `json:"location"`
 	ModelNumber     string    `json:"model_number"`
 	Manufacturer    string    `json:"manufacturer"`
-	CalibrationDate string    `json:"calibration_date"`
+	CalibrationDate time.Time `json:"calibration_date"`
 	BatteryLife     float64   `json:"battery_life"`
 	SSID            string    `json:"ssid"`
 	Channel         string    `json:"channel"`

@@ -318,16 +318,17 @@ func (h *Handlers) PostSensorUpdateHandler(c echo.Context) error {
 			"notification_message": translator.T(c, translator.NotificationsAdminOrchardsUpdateSuccessMessage),
 		}))
 }
+*/
 
 func (h *Handlers) GetSensorViewHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewOrchardHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewSensorHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	_ = loggerNew.WithTag(getViewOrchardHandlerName)
+	_ = loggerNew.WithTag(getViewSensorHandlerName)
 
-	orchardId := c.Param(orchardIDParam)
-	if orchardId == "" {
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -345,18 +346,18 @@ func (h *Handlers) GetSensorViewHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
-	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardId)
+	sensor, err := h.sdk.ConnectedRootsService.SDK.ObtainSensor(ctx, sensorId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	return c.Render(http.StatusOK, "admin-orchards-view.gohtml",
+	return c.Render(http.StatusOK, "admin-sensors-view.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardViewPageI18N(c)), map[string]interface{}{
-			"orchard": orchard,
+			CommonSensorViewPageI18N(c)), map[string]interface{}{
+			"sensor": sensor,
 		}))
-}*/
+}
 
 func (h *Handlers) GetSensorsListHandler(c echo.Context) error {
 	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListSensorHandlerName)
@@ -450,7 +451,7 @@ func (h *Handlers) GetSensorDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	return c.Render(http.StatusOK, "admin-orchards-delete.gohtml",
+	return c.Render(http.StatusOK, "admin-sensors-delete.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonSensorDeletePageI18N(c)), map[string]interface{}{

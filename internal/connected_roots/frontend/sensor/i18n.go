@@ -5,6 +5,33 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonSensorViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                  translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                       translator.T(c, translator.PagesAdminSensorsViewTitle),
+		"active":                      "sensors-management",
+		"breadcrumb_sensors":          translator.T(c, translator.BreadcrumbSensors),
+		"breadcrumb_view_sensors":     translator.T(c, translator.BreadcrumbViewSensors),
+		"view_name_label":             translator.T(c, translator.PagesAdminSensorsViewNameLabel),
+		"view_location_label":         translator.T(c, translator.PagesAdminSensorsViewLocationLabel),
+		"view_model_number_label":     translator.T(c, translator.PagesAdminSensorsViewModelNumberLabel),
+		"view_manufacturer_label":     translator.T(c, translator.PagesAdminSensorsViewManufacturerLabel),
+		"view_calibration_date_label": translator.T(c, translator.PagesAdminSensorsViewCalibrationDateLabel),
+		"view_battery_life_label":     translator.T(c, translator.PagesAdminSensorsViewBatteryLifeLabel),
+		"view_ssid_label":             translator.T(c, translator.PagesAdminSensorsViewSSIDLabel),
+		"view_channel_label":          translator.T(c, translator.PagesAdminSensorsViewChannelLabel),
+		"view_dns_label":              translator.T(c, translator.PagesAdminSensorsViewDNSLabel),
+		"view_ip_label":               translator.T(c, translator.PagesAdminSensorsViewIPLabel),
+		"view_subnet_label":           translator.T(c, translator.PagesAdminSensorsViewSubnetLabel),
+		"view_mac_label":              translator.T(c, translator.PagesAdminSensorsViewMACLabel),
+		"view_status_label":           translator.T(c, translator.PagesAdminSensorsViewStatusLabel),
+		"view_online_label":           translator.T(c, translator.PagesAdminSensorsViewOnlineLabel),
+		"view_offline_label":          translator.T(c, translator.PagesAdminSensorsViewOfflineLabel),
+		"view_firmware_version_label": translator.T(c, translator.PagesAdminSensorsViewFirmwareVersionLabel),
+		"view_orchard_name_label":     translator.T(c, translator.PagesAdminSensorsViewOrchardNameLabel),
+	}
+}
+
 func CommonSensorListPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                    translator.T(c, translator.PagesCommonSiteTitle),
