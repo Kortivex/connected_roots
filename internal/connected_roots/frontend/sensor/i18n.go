@@ -5,6 +5,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CommonSensorCreatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminSensorsCreateTitle),
+		"active":                         "sensors-management",
+		"breadcrumb_sensors":             translator.T(c, translator.BreadcrumbSensors),
+		"breadcrumb_create_sensors":      translator.T(c, translator.BreadcrumbCreateSensors),
+		"create_name_label":              translator.T(c, translator.PagesAdminSensorsCreateNameLabel),
+		"create_location_label":          translator.T(c, translator.PagesAdminSensorsCreateLocationLabel),
+		"create_orchard_label":           translator.T(c, translator.PagesAdminSensorsCreateOrchardLabel),
+		"create_orchard_selection_label": translator.T(c, translator.PagesAdminSensorsCreateOrchardSelectionLabel),
+		"create_button_submit_sensor":    translator.T(c, translator.PagesAdminSensorsCreateButtonSubmitSensor),
+	}
+}
+
 func CommonSensorViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                  translator.T(c, translator.PagesCommonSiteTitle),

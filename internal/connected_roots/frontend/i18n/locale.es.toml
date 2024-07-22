@@ -222,6 +222,12 @@ delete_warning_message = "Esta acción es irreversible."
 delete_button_submit_role = "Borrar"
 
 [pages.admin.sensors]
+create_title = "Crear Sensores"
+create_name_label = "Nombre"
+create_location_label = "Ubicación"
+create_orchard_label = "Huerto"
+create_orchard_selection_label = "Selecciona el huerto"
+create_button_submit_sensor = "Enviar"
 list_title = "Listar Sensores"
 list_button_create_sensor = "Crear Sensor"
 list_name_label = "Nombre"

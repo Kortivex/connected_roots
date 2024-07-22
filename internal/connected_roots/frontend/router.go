@@ -103,9 +103,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	sensorsHandler := sensor.NewSensorsHandlers(ctx)
 	adminSensorsGrp := adminGrp.Group("/sensors")
 	adminSensorsGrp.GET("/list", sensorsHandler.GetSensorsListHandler, s.SessionMiddleware).Name = "get-list-sensors"
-	/*adminSensorsGrp.GET("/new", sensorsHandler.GetSensorCreateHandler, s.SessionMiddleware).Name = "get-new-sensor"
+	adminSensorsGrp.GET("/new", sensorsHandler.GetSensorCreateHandler, s.SessionMiddleware).Name = "get-new-sensor"
 	adminSensorsGrp.POST("/new", sensorsHandler.PostSensorCreateHandler, s.SessionMiddleware).Name = "post-new-sensor"
-	adminSensorsGrp.GET("/edit/:sensor_id", sensorsHandler.GetSensorUpdateHandler, s.SessionMiddleware).Name = "get-edit-sensor"
+	/*adminSensorsGrp.GET("/edit/:sensor_id", sensorsHandler.GetSensorUpdateHandler, s.SessionMiddleware).Name = "get-edit-sensor"
 	adminSensorsGrp.POST("/edit/:sensor_id", sensorsHandler.PostSensorUpdateHandler, s.SessionMiddleware).Name = "post-edit-sensor"*/
 	adminSensorsGrp.GET("/view/:sensor_id", sensorsHandler.GetSensorViewHandler, s.SessionMiddleware).Name = "get-view-sensor"
 	adminSensorsGrp.GET("/delete/:sensor_id", sensorsHandler.GetSensorDeleteHandler, s.SessionMiddleware).Name = "get-delete-sensor"

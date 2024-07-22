@@ -224,6 +224,13 @@ const (
 	PagesAdminRolesViewDescriptionLabel = "pages.admin.roles.view_description_label"
 	PagesAdminRolesViewProtectedLabel   = "pages.admin.roles.view_protected_label"
 
+	PagesAdminSensorsCreateTitle                 = "pages.admin.sensors.create_title"
+	PagesAdminSensorsCreateNameLabel             = "pages.admin.sensors.create_name_label"
+	PagesAdminSensorsCreateLocationLabel         = "pages.admin.sensors.create_location_label"
+	PagesAdminSensorsCreateOrchardLabel          = "pages.admin.sensors.create_orchard_label"
+	PagesAdminSensorsCreateOrchardSelectionLabel = "pages.admin.sensors.create_orchard_selection_label"
+	PagesAdminSensorsCreateButtonSubmitSensor    = "pages.admin.sensors.create_button_submit_sensor"
+
 	PagesAdminSensorsViewTitle                = "pages.admin.sensors.view_title"
 	PagesAdminSensorsViewNameLabel            = "pages.admin.sensors.view_name_label"
 	PagesAdminSensorsViewLocationLabel        = "pages.admin.sensors.view_location_label"
