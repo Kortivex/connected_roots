@@ -419,16 +419,15 @@ func (h *Handlers) GetSensorsListHandler(c echo.Context) error {
 		}), notifications))
 }
 
-/*
 func (h *Handlers) GetSensorDeleteHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteOrchardHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getDeleteSensorHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	_ = loggerNew.WithTag(getDeleteOrchardHandlerName)
+	_ = loggerNew.WithTag(getDeleteSensorHandlerName)
 
-	orchardId := c.Param(orchardIDParam)
-	if orchardId == "" {
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -438,15 +437,15 @@ func (h *Handlers) GetSensorDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
-	if !isAdmin {
+	if !isAdminTech {
 		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
-	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardId)
+	sensor, err := h.sdk.ConnectedRootsService.SDK.ObtainSensor(ctx, sensorId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -454,33 +453,33 @@ func (h *Handlers) GetSensorDeleteHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "admin-orchards-delete.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardDeletePageI18N(c)), map[string]interface{}{
-			"orchard": orchard,
+			CommonSensorDeletePageI18N(c)), map[string]interface{}{
+			"sensor": sensor,
 		}))
 }
 
 func (h *Handlers) PostSensorDeleteHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteOrchardHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postDeleteSensorHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	_ = loggerNew.WithTag(postDeleteOrchardHandlerName)
+	_ = loggerNew.WithTag(postDeleteSensorHandlerName)
 
-	orchardId := c.Param(orchardIDParam)
-	if orchardId == "" {
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
-	if !isAdmin {
+	if !isAdminTech {
 		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
-	if err := h.sdk.ConnectedRootsService.SDK.DeleteOrchard(ctx, orchardId); err != nil {
+	if err := h.sdk.ConnectedRootsService.SDK.DeleteSensor(ctx, sensorId); err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
@@ -488,5 +487,5 @@ func (h *Handlers) PostSensorDeleteHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	return c.Redirect(http.StatusFound, "/admin/orchards/list")
-}*/
+	return c.Redirect(http.StatusFound, "/admin/sensors/list")
+}

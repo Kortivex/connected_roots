@@ -27,3 +27,16 @@ func CommonSensorListPageI18N(c echo.Context) map[string]interface{} {
 		"list_previous_label":           translator.T(c, translator.PagesAdminSensorsListPreviousLabel),
 	}
 }
+
+func CommonSensorDeletePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                  translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                       translator.T(c, translator.PagesAdminSensorsDeleteTitle),
+		"active":                      "sensors-management",
+		"breadcrumb_sensors":          translator.T(c, translator.BreadcrumbSensors),
+		"breadcrumb_delete_sensors":   translator.T(c, translator.BreadcrumbDeleteSensors),
+		"delete_warning_title":        translator.T(c, translator.PagesAdminSensorsDeleteWarningTitle),
+		"delete_warning_message":      translator.T(c, translator.PagesAdminSensorsDeleteWarningMessage),
+		"delete_button_submit_sensor": translator.T(c, translator.PagesAdminSensorsDeleteButtonSubmitSensor),
+	}
+}

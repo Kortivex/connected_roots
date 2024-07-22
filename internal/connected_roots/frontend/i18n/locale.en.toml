@@ -236,6 +236,10 @@ list_actions_edit_label = "Edit"
 list_actions_remove_label = "Remove"
 list_next_label = "Next"
 list_previous_label = "Previous"
+delete_title = "Delete Users"
+delete_warning_title = "Are you sure you want to delete it?"
+delete_warning_message = "This action is irreversible."
+delete_button_submit_sensor = "Delete"
 
 [pages.admin.users]
 create_title = "Create Users"

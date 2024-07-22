@@ -239,6 +239,11 @@ const (
 	PagesAdminSensorsListNextLabel            = "pages.admin.sensors.list_next_label"
 	PagesAdminSensorsListPreviousLabel        = "pages.admin.sensors.list_previous_label"
 
+	PagesAdminSensorsDeleteTitle              = "pages.admin.sensors.delete_title"
+	PagesAdminSensorsDeleteWarningTitle       = "pages.admin.sensors.delete_warning_title"
+	PagesAdminSensorsDeleteWarningMessage     = "pages.admin.sensors.delete_warning_message"
+	PagesAdminSensorsDeleteButtonSubmitSensor = "pages.admin.sensors.delete_button_submit_sensor"
+
 	PagesAdminUsersCreateTitle                  = "pages.admin.users.create_title"
 	PagesAdminUsersCreateNameLabel              = "pages.admin.users.create_name_label"
 	PagesAdminUsersCreateSurnameLabel           = "pages.admin.users.create_surname_label"
