@@ -17,11 +17,13 @@ import (
 const (
 	tracingSensorHandlers = "http-handler.sensor"
 
-	tracingPostSensorHandlers   = "http-handler.sensor.post-sensor"
-	tracingPutSensorHandlers    = "http-handler.sensor.put-sensor"
-	tracingGetSensorHandlers    = "http-handler.sensor.get-sensor"
-	tracingListSensorHandlers   = "http-handler.sensor.list-sensors"
-	tracingDeleteSensorHandlers = "http-handler.sensor.delete-sensor"
+	tracingPostSensorHandlers      = "http-handler.sensor.post-sensor"
+	tracingPutSensorHandlers       = "http-handler.sensor.put-sensor"
+	tracingGetSensorHandlers       = "http-handler.sensor.get-sensor"
+	tracingListSensorHandlers      = "http-handler.sensor.list-sensors"
+	tracingDeleteSensorHandlers    = "http-handler.sensor.delete-sensor"
+	tracingPostSensorDataHandlers  = "http-handler.sensor.post-sensor-data"
+	tracingListSensorsDataHandlers = "http-handler.sensor.list-sensors-data"
 
 	sensorIDParam = "sensor_id"
 )
@@ -142,4 +144,56 @@ func (h *SensorsHandlers) DeleteSensorHandler(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (h *SensorsHandlers) PostSensorDataHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingPostSensorDataHandlers)
+	defer span.End()
+
+	sensorID := c.Param(sensorIDParam)
+	if sensorID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	sensorDataBody := connected_roots.SensorsData{}
+	if err := c.Bind(&sensorDataBody); err != nil {
+		err = fmt.Errorf("%s: %w", tracingPostSensorDataHandlers, errors.ErrInvalidPayload)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	sensorDataBody.SensorID = sensorID
+
+	sensorDataRes, err := h.sensorSvc.SaveData(ctx, &sensorDataBody)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingPostSensorDataHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	sensorBody := &connected_roots.Sensors{ID: sensorID, Status: 1}
+	sensorBody, err = h.sensorSvc.Update(ctx, sensorBody)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingPostSensorDataHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusCreated, sensorDataRes)
+}
+
+func (h *SensorsHandlers) ListSensorsDataHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingListSensorsDataHandlers)
+	defer span.End()
+
+	filters := connected_roots.SensorDataPaginationFilters{}
+	if err := (&echo.DefaultBinder{}).BindQueryParams(c, &filters); err != nil {
+		err = fmt.Errorf("%s: %w", tracingListSensorsDataHandlers, errors.ErrQueryParamInvalidValue)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	sensorsDataRes, err := h.sensorSvc.ObtainAllData(ctx, &filters)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingListSensorsDataHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, sensorsDataRes)
 }

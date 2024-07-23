@@ -66,6 +66,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	sensorsGrp.GET("/:sensor_id", sensorsHandler.GetSensorHandler).Name = "get-sensor"
 	sensorsGrp.GET("", sensorsHandler.ListSensorsHandler).Name = "list-sensors"
 	sensorsGrp.DELETE("/:sensor_id", sensorsHandler.DeleteSensorHandler).Name = "delete-sensor"
+	// Sensors Data endpoints.
+	sensorsGrp.POST("/:sensor_id/data", sensorsHandler.PostSensorDataHandler).Name = "post-sensor-data"
+	sensorsGrp.GET("/:sensor_id/data", sensorsHandler.ListSensorsDataHandler).Name = "list-sensors-data"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

@@ -30,3 +30,25 @@ type Sensors struct {
 func (s *Sensors) TableName() string {
 	return "sensors"
 }
+
+type SensorsData struct {
+	ID             string   `gorm:"column:id;type:varchar(26);primaryKey;not null"`
+	Voltage        float64  `gorm:"column:voltage;type:double precision"`
+	Battery        float64  `gorm:"column:battery;type:double precision"`
+	Soil           int      `gorm:"column:soil;type:int"`
+	Salt           int      `gorm:"column:salt;type:int"`
+	Light          float64  `gorm:"column:light;type:double precision"`
+	TemperatureIn  float64  `gorm:"column:temperature_in;type:double precision"`
+	TemperatureOut float64  `gorm:"column:temperature_out;type:double precision"`
+	HumidityIn     float64  `gorm:"column:humidity_in;type:double precision"`
+	HumidityOut    float64  `gorm:"column:humidity_out;type:double precision"`
+	Pressure       float64  `gorm:"column:pressure;type:double precision"`
+	Altitude       float64  `gorm:"column:altitude;type:double precision"`
+	SensorID       string   `gorm:"column:sensor_id;type:varchar(26)"`
+	Sensor         *Sensors `gorm:"foreignKey:SensorID;references:ID"`
+	postgresql.BaseModel
+}
+
+func (sd *SensorsData) TableName() string {
+	return "sensor_data"
+}

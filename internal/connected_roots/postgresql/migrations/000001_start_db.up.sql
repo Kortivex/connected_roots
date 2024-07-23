@@ -82,13 +82,22 @@ CREATE TABLE sensors
 
 CREATE TABLE sensor_data
 (
-    "id"         varchar(26) primary key,
-    "sensor_id"  varchar(26),
-    "value"      decimal(10, 2),
-    "timestamp"  timestamp with time zone,
-    "created_at" timestamp with time zone,
-    "updated_at" timestamp with time zone,
-    "deleted_at" timestamp with time zone
+    "id"              varchar(26) primary key,
+    "voltage"         double precision,
+    "battery"         double precision,
+    "soil"            int,
+    "salt"            int,
+    "light"           double precision,
+    "temperature_in"  double precision,
+    "temperature_out" double precision,
+    "humidity_in"     double precision,
+    "humidity_out"    double precision,
+    "pressure"        double precision,
+    "altitude"        double precision,
+    "sensor_id"       varchar(26),
+    "created_at"      timestamp with time zone,
+    "updated_at"      timestamp with time zone,
+    "deleted_at"      timestamp with time zone
 );
 
 CREATE TABLE agricultural_activities

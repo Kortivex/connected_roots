@@ -10,6 +10,9 @@ import (
 )
 
 func toDomain(sensor *Sensors) *connected_roots.Sensors {
+	if sensor == nil {
+		return nil
+	}
 	return &connected_roots.Sensors{
 		ID:              sensor.ID,
 		Name:            sensor.Name,
@@ -133,5 +136,52 @@ func toDB(sensor *connected_roots.Sensors, id string) *Sensors {
 		Status:          sensor.Status,
 		FirmwareVersion: sensor.FirmwareVersion,
 		OrchardID:       sensor.OrchardID,
+	}
+}
+
+func toDomainData(sensorData *SensorsData) *connected_roots.SensorsData {
+	return &connected_roots.SensorsData{
+		ID:             sensorData.ID,
+		Voltage:        sensorData.Voltage,
+		Battery:        sensorData.Battery,
+		Soil:           sensorData.Soil,
+		Salt:           sensorData.Salt,
+		Light:          sensorData.Light,
+		TemperatureIn:  sensorData.TemperatureIn,
+		TemperatureOut: sensorData.TemperatureOut,
+		HumidityIn:     sensorData.HumidityIn,
+		HumidityOut:    sensorData.HumidityOut,
+		Pressure:       sensorData.Pressure,
+		Altitude:       sensorData.Altitude,
+		SensorID:       sensorData.SensorID,
+		Sensor:         toDomain(sensorData.Sensor),
+		CreatedAt:      sensorData.CreatedAt,
+	}
+}
+
+func toDomainDataSlice(sensorsData []*SensorsData) []*connected_roots.SensorsData {
+	sensorsDataDomain := []*connected_roots.SensorsData{}
+	for _, sensorData := range sensorsData {
+		sensorDataDomain := toDomainData(sensorData)
+		sensorsDataDomain = append(sensorsDataDomain, sensorDataDomain)
+	}
+	return sensorsDataDomain
+}
+
+func toDBData(sensorData *connected_roots.SensorsData, id string) *SensorsData {
+	return &SensorsData{
+		ID:             id,
+		Voltage:        sensorData.Voltage,
+		Battery:        sensorData.Battery,
+		Soil:           sensorData.Soil,
+		Salt:           sensorData.Salt,
+		Light:          sensorData.Light,
+		TemperatureIn:  sensorData.TemperatureIn,
+		TemperatureOut: sensorData.TemperatureOut,
+		HumidityIn:     sensorData.HumidityIn,
+		HumidityOut:    sensorData.HumidityOut,
+		Pressure:       sensorData.Pressure,
+		Altitude:       sensorData.Altitude,
+		SensorID:       sensorData.SensorID,
 	}
 }

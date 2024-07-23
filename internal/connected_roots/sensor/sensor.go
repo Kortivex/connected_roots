@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	tracingSensor          = "service.sensor"
-	tracingSensorSave      = "service.sensor.save"
-	tracingSensorUpdate    = "service.sensor.update"
-	tracingSensorObtain    = "service.sensor.obtain"
-	tracingSensorObtainAll = "service.sensor.obtain-all"
-	tracingSensorRemove    = "service.sensor.remove"
+	tracingSensor              = "service.sensor"
+	tracingSensorSave          = "service.sensor.save"
+	tracingSensorUpdate        = "service.sensor.update"
+	tracingSensorObtain        = "service.sensor.obtain"
+	tracingSensorObtainAll     = "service.sensor.obtain-all"
+	tracingSensorRemove        = "service.sensor.remove"
+	tracingSensorSaveData      = "service.sensor.save-data"
+	tracingSensorObtainAllData = "service.sensor.obtain-all-data"
 )
 
 type Service struct {
@@ -88,6 +90,7 @@ func (s *Service) Obtain(ctx context.Context, id string) (*connected_roots.Senso
 func (s *Service) ObtainAll(ctx context.Context, filters *connected_roots.SensorPaginationFilters) (*pagination.Pagination, error) {
 	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorObtainAll)
 	defer span.End()
+
 	sensorsRes, err := s.sensorRep.ListAllBy(ctx, filters, []string{"Orchard", "Orchard.User", "Orchard.CropType"}...)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingSensorObtainAll, err)
@@ -105,4 +108,33 @@ func (s *Service) Remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) SaveData(ctx context.Context, sensorData *connected_roots.SensorsData) (*connected_roots.SensorsData, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorSaveData)
+	defer span.End()
+
+	sensorDataRes, err := s.sensorRep.CreateData(ctx, sensorData)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorSaveData, err)
+	}
+
+	sensorDataRes, err = s.sensorRep.GetDataByID(ctx, sensorDataRes.ID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorSaveData, err)
+	}
+
+	return sensorDataRes, nil
+}
+
+func (s *Service) ObtainAllData(ctx context.Context, filters *connected_roots.SensorDataPaginationFilters) (*pagination.Pagination, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorObtainAllData)
+	defer span.End()
+
+	sensorsDataRes, err := s.sensorRep.ListAllDataBy(ctx, filters, []string{"Sensor"}...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorObtainAllData, err)
+	}
+
+	return sensorsDataRes, nil
 }
