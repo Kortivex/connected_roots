@@ -231,6 +231,13 @@ const (
 	PagesAdminSensorsCreateOrchardSelectionLabel = "pages.admin.sensors.create_orchard_selection_label"
 	PagesAdminSensorsCreateButtonSubmitSensor    = "pages.admin.sensors.create_button_submit_sensor"
 
+	PagesAdminSensorsUpdateTitle                 = "pages.admin.sensors.update_title"
+	PagesAdminSensorsUpdateNameLabel             = "pages.admin.sensors.update_name_label"
+	PagesAdminSensorsUpdateLocationLabel         = "pages.admin.sensors.update_location_label"
+	PagesAdminSensorsUpdateOrchardLabel          = "pages.admin.sensors.update_orchard_label"
+	PagesAdminSensorsUpdateOrchardSelectionLabel = "pages.admin.sensors.update_orchard_selection_label"
+	PagesAdminSensorsUpdateButtonSubmitSensor    = "pages.admin.sensors.update_button_submit_sensor"
+
 	PagesAdminSensorsViewTitle                = "pages.admin.sensors.view_title"
 	PagesAdminSensorsViewNameLabel            = "pages.admin.sensors.view_name_label"
 	PagesAdminSensorsViewLocationLabel        = "pages.admin.sensors.view_location_label"

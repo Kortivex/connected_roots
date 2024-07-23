@@ -20,6 +20,21 @@ func CommonSensorCreatePageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonSensorUpdatePageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminSensorsUpdateTitle),
+		"active":                         "sensors-management",
+		"breadcrumb_sensors":             translator.T(c, translator.BreadcrumbSensors),
+		"breadcrumb_update_sensors":      translator.T(c, translator.BreadcrumbUpdateSensors),
+		"update_name_label":              translator.T(c, translator.PagesAdminSensorsUpdateNameLabel),
+		"update_location_label":          translator.T(c, translator.PagesAdminSensorsUpdateLocationLabel),
+		"update_orchard_label":           translator.T(c, translator.PagesAdminSensorsUpdateOrchardLabel),
+		"update_orchard_selection_label": translator.T(c, translator.PagesAdminSensorsUpdateOrchardSelectionLabel),
+		"update_button_submit_sensor":    translator.T(c, translator.PagesAdminSensorsUpdateButtonSubmitSensor),
+	}
+}
+
 func CommonSensorViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                  translator.T(c, translator.PagesCommonSiteTitle),

@@ -1,0 +1,58 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_sensors}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_update_sensors}}</li>
+        </ol>
+    </nav>
+    <form id="update-sensor-form" method="POST"
+          action="/admin/sensors/edit/{{ if .sensor }}{{ .sensor.ID }}{{ end }}"
+          enctype="application/x-www-form-urlencoded">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="name">{{.update_name_label}}</label>
+                <input class="form-control" id="name" name="name" type="text" placeholder="{{.update_name_label}}"
+                       required="" value="{{ if .sensor }}{{ .sensor.Name }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="location">{{.update_location_label}}</label>
+                <input class="form-control" id="location" name="location" type="text"
+                       placeholder="{{.update_location_label}}" required=""
+                       value="{{ if .sensor }}{{ .sensor.Location }}{{ end }}">
+            </div>
+            {{ $sensor := .sensor }}
+            <div class="col-md-6">
+                <label class="form-label" for="orchard-id">{{.update_orchard_label}}</label>
+                <select class="form-select" id="orchard-id" name="orchard-id" data-choices="data-choices"
+                        data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
+                        required>
+                    <option value="">{{.update_orchard_selection_label}}...</option>
+                    {{range $orchard :=.orchards }}
+                        <option value="{{ $orchard.ID }}" {{ if and $sensor (eq $sensor.OrchardID $orchard.ID) }} selected {{ end }}>{{ $orchard.Name }}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary" type="submit">{{.update_button_submit_sensor}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

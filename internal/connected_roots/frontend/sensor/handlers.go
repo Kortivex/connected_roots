@@ -16,6 +16,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 const (
@@ -131,16 +132,15 @@ func (h *Handlers) PostSensorCreateHandler(c echo.Context) error {
 		}))
 }
 
-/*
 func (h *Handlers) GetSensorUpdateHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUpdateOrchardHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUpdateSensorHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	_ = loggerNew.WithTag(getUpdateOrchardHandlerName)
+	_ = loggerNew.WithTag(getUpdateSensorHandlerName)
 
-	orchardID := c.Param(orchardIDParam)
-	if orchardID == "" {
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -150,48 +150,42 @@ func (h *Handlers) GetSensorUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
-	if !isAdmin {
+	if !isAdminTech {
 		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
-	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
+	orchards, _, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchards(ctx, "10000", "", "", nil, nil, nil)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	cropTypes, _, err := h.sdk.ConnectedRootsService.SDK.ObtainCropTypes(ctx, "10000", "", "", nil, nil, nil, nil)
+	sensor, err := h.sdk.ConnectedRootsService.SDK.ObtainSensor(ctx, sensorId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardID)
-	if err != nil {
-		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-	}
-
-	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
+	return c.Render(http.StatusOK, "admin-sensors-update.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
-			"users":      users,
-			"crop_types": cropTypes,
-			"orchard":    orchard,
+			CommonSensorUpdatePageI18N(c)), map[string]interface{}{
+			"orchards": orchards,
+			"sensor":   sensor,
 		}))
 }
 
 func (h *Handlers) PostSensorUpdateHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postUpdateOrchardHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), postUpdateSensorHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	log := loggerNew.WithTag(postUpdateOrchardHandlerName)
+	log := loggerNew.WithTag(postUpdateSensorHandlerName)
 
-	orchardID := c.Param(orchardIDParam)
-	if orchardID == "" {
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
 		err := ferrors.ErrPathParamInvalidValue
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
@@ -201,94 +195,47 @@ func (h *Handlers) PostSensorUpdateHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	isAdmin, err := h.sessionSvc.IsAdmin(ctx, c)
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
-	if !isAdmin {
+	if !isAdminTech {
 		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
 	}
 
-	file, err := c.FormFile("file")
-	if err != nil {
-		if !errors.Is(err, http.ErrMissingFile) {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-		}
-	}
-
-	pathImage := ""
-	if file != nil {
-		fileName, err := hashing.GenUniqueFileName(file.Filename)
-		if err != nil {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-		}
-		pathImage = "images/orchards/" + fileName
-	}
-
-	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchard(ctx, orchardID)
+	sensor, err := h.sdk.ConnectedRootsService.SDK.ObtainSensor(ctx, sensorId)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	oldPathImage := orchard.ImageURL
+	sensor.Name = c.FormValue("name")
+	sensor.Location = c.FormValue("location")
+	sensor.CalibrationDate = time.Now()
+	sensor.OrchardID = c.FormValue("orchard-id")
 
-	size, err := strconv.ParseFloat(c.FormValue("size"), 64)
+	log.Debug(fmt.Sprintf("sensor: %+v", sensor))
+
+	orchards, _, err := h.sdk.ConnectedRootsService.SDK.ObtainOrchards(ctx, "10000", "", "", nil, nil, nil)
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	orchard.Name = c.FormValue("name")
-	orchard.Location = c.FormValue("location")
-	orchard.Size = size
-	orchard.Soil = c.FormValue("soil")
-	orchard.Fertilizer = c.FormValue("fertilizer")
-	orchard.Composting = c.FormValue("composting")
-	orchard.UserID = c.FormValue("user-id")
-	orchard.CropTypeID = c.FormValue("crop-type-id")
-	if pathImage != "" {
-		orchard.ImageURL = pathImage
-	}
-
-	log.Debug(fmt.Sprintf("orchard: %+v", orchard))
-
-	users, _, err := h.sdk.ConnectedRootsService.SDK.ObtainUsers(ctx, "10000", "", "", nil, nil, nil)
+	_, err = h.sdk.ConnectedRootsService.SDK.UpdateSensor(ctx, sensor.ToSensorBody())
 	if err != nil {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
-	cropTypes, _, err := h.sdk.ConnectedRootsService.SDK.ObtainCropTypes(ctx, "10000", "", "", nil, nil, nil, nil)
-	if err != nil {
-		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-	}
-
-	_, err = h.sdk.ConnectedRootsService.SDK.UpdateOrchard(ctx, orchard.ToOrchardBody())
-	if err != nil {
-		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-	}
-
-	if file != nil {
-		if err = uploads.SaveUploadedImage(file, pathImage, 800, 800); err != nil {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-		}
-
-		if err = uploads.DeleteUploadedImage(oldPathImage); err != nil {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
-		}
-	}
-
-	return c.Render(http.StatusOK, "admin-orchards-update.gohtml",
+	return c.Render(http.StatusOK, "admin-sensors-update.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardUpdatePageI18N(c)), map[string]interface{}{
-			"users":                users,
-			"crop_types":           cropTypes,
-			"orchard":              orchard,
+			CommonSensorUpdatePageI18N(c)), map[string]interface{}{
+			"orchards":             orchards,
+			"sensor":               sensor,
 			"notification_type":    "success",
-			"notification_title":   translator.T(c, translator.NotificationsAdminOrchardsUpdateSuccessTitle),
-			"notification_message": translator.T(c, translator.NotificationsAdminOrchardsUpdateSuccessMessage),
+			"notification_title":   translator.T(c, translator.NotificationsAdminSensorsUpdateSuccessTitle),
+			"notification_message": translator.T(c, translator.NotificationsAdminSensorsUpdateSuccessMessage),
 		}))
 }
-*/
 
 func (h *Handlers) GetSensorViewHandler(c echo.Context) error {
 	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewSensorHandlerName)
