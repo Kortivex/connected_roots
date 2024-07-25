@@ -46,6 +46,12 @@ const (
 	tracingConnectedRootsServiceObtainSensors = "connected-roots.obtain-sensors"
 	tracingConnectedRootsServiceDeleteSensor  = "connected-roots.delete-sensor"
 
+	tracingConnectedRootsServiceSaveActivity     = "connected-roots.save-activity"
+	tracingConnectedRootsServiceUpdateActivity   = "connected-roots.update-activity"
+	tracingConnectedRootsServiceObtainActivity   = "connected-roots.obtain-activity"
+	tracingConnectedRootsServiceObtainActivities = "connected-roots.obtain-activity"
+	tracingConnectedRootsServiceDeleteActivity   = "connected-roots.delete-activity"
+
 	ErrMsgConnectedRootsServiceSaveRoleErr    = "saving role failure"
 	ErrMsgConnectedRootsServiceUpdateRoleErr  = "updating role failure"
 	ErrMsgConnectedRootsServiceObtainRoleErr  = "obtain role failure"
@@ -75,6 +81,11 @@ const (
 	ErrMsgConnectedRootsServiceUpdateSensorErr  = "updating sensor failure"
 	ErrMsgConnectedRootsServiceObtainSensorErr  = "obtain sensor failure"
 	ErrMsgConnectedRootsServiceObtainSensorsErr = "obtain sensors failure"
+
+	ErrMsgConnectedRootsServiceSaveActivityErr     = "saving activity failure"
+	ErrMsgConnectedRootsServiceUpdateActivityErr   = "updating activity failure"
+	ErrMsgConnectedRootsServiceObtainActivityErr   = "obtain activity failure"
+	ErrMsgConnectedRootsServiceObtainActivitiesErr = "obtain activities failure"
 )
 
 type ConnectedRootsServiceSDK struct {
@@ -128,6 +139,14 @@ type IConnectedRootsServiceSDK interface {
 	ObtainSensor(ctx context.Context, id string) (*sdk_models.SensorsResponse, error)
 	ObtainSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error)
 	DeleteSensor(ctx context.Context, id string) error
+
+	////////////// ACTIVITIES //////////////
+
+	SaveActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*sdk_models.ActivitiesResponse, error)
+	UpdateActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*sdk_models.ActivitiesResponse, error)
+	ObtainActivity(ctx context.Context, userID, id string) (*sdk_models.ActivitiesResponse, error)
+	ObtainActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) ([]*sdk_models.ActivitiesResponse, *pagination.Paging, error)
+	DeleteActivity(ctx context.Context, userID, id string) error
 }
 
 ////////////// USERS //////////////
@@ -746,6 +765,112 @@ func (c *ConnectedRootsServiceSDK) DeleteSensor(ctx context.Context, id string) 
 	}
 	if resp.IsError() {
 		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteSensor, resp.Error().(*APIError))
+	}
+
+	return nil
+}
+
+////////////// ACTIVITIES //////////////
+
+func (c *ConnectedRootsServiceSDK) SaveActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*sdk_models.ActivitiesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceSaveActivity)
+	defer sp.End()
+
+	resp, err := c.api.POSTActivity(ctx, userID, activity)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveActivity, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveActivity, resp.Error().(*APIError))
+	}
+
+	respActivity, ok := resp.Result().(*sdk_models.ActivitiesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceSaveActivity, errors.New(ErrMsgConnectedRootsServiceSaveActivityErr))
+	}
+
+	return respActivity, nil
+}
+
+func (c *ConnectedRootsServiceSDK) UpdateActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*sdk_models.ActivitiesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceUpdateActivity)
+	defer sp.End()
+
+	resp, err := c.api.PUTActivity(ctx, userID, activity)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateActivity, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateActivity, resp.Error().(*APIError))
+	}
+
+	respActivity, ok := resp.Result().(*sdk_models.ActivitiesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceUpdateActivity, errors.New(ErrMsgConnectedRootsServiceUpdateActivityErr))
+	}
+
+	return respActivity, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainActivity(ctx context.Context, userID, id string) (*sdk_models.ActivitiesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainActivity)
+	defer sp.End()
+
+	resp, err := c.api.GETActivity(ctx, userID, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivity, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivity, resp.Error().(*APIError))
+	}
+
+	respActivity, ok := resp.Result().(*sdk_models.ActivitiesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivity, errors.New(ErrMsgConnectedRootsServiceObtainActivityErr))
+	}
+
+	return respActivity, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) ([]*sdk_models.ActivitiesResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainActivities)
+	defer sp.End()
+
+	resp, err := c.api.GETActivities(ctx, userID, limit, nexCursor, prevCursor, names, orchardIDs)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivities, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivities, resp.Error().(*APIError))
+	}
+
+	respActivities, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivities, errors.New(ErrMsgConnectedRootsServiceObtainActivitiesErr))
+	}
+
+	activities := []*sdk_models.ActivitiesResponse{}
+	activitiesByte, err := json.Marshal(respActivities.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivities, err)
+	}
+	if err = json.Unmarshal(activitiesByte, &activities); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainActivities, err)
+	}
+
+	return activities, &respActivities.Paging, nil
+}
+
+func (c *ConnectedRootsServiceSDK) DeleteActivity(ctx context.Context, userID, id string) error {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceDeleteActivity)
+	defer sp.End()
+
+	resp, err := c.api.DELETEActivity(ctx, userID, id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteActivity, err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("%s: %w", tracingConnectedRootsServiceDeleteActivity, resp.Error().(*APIError))
 	}
 
 	return nil

@@ -45,6 +45,12 @@ const (
 	tracingConnectedRootsGetSensorAPI    = "connected-roots-service.http-client: get /sensors/:sensor_id"
 	tracingConnectedRootsGetSensorsAPI   = "connected-roots-service.http-client: get /sensors"
 	tracingConnectedRootsDeleteSensorAPI = "connected-roots-service.http-client: delete /sensors/:sensor_id"
+
+	tracingConnectedRootsPostActivityAPI   = "connected-roots-service.http-client: post /users/:user_id/activities"
+	tracingConnectedRootsPutActivityAPI    = "connected-roots-service.http-client: put /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsGetActivityAPI    = "connected-roots-service.http-client: get /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsGetActivitiesAPI  = "connected-roots-service.http-client: get /users/:user_id/activities"
+	tracingConnectedRootsDeleteActivityAPI = "connected-roots-service.http-client: delete /users/:user_id/activities/:activity_id"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -97,6 +103,14 @@ type IConnectedRootsServiceAPI interface {
 	GETSensor(ctx context.Context, id string) (*resty.Response, error)
 	GETSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error)
 	DELETESensor(ctx context.Context, id string) (*resty.Response, error)
+
+	////////////// ACTIVITIES //////////////
+
+	POSTActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*resty.Response, error)
+	PUTActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*resty.Response, error)
+	GETActivity(ctx context.Context, userID, id string) (*resty.Response, error)
+	GETActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) (*resty.Response, error)
+	DELETEActivity(ctx context.Context, userID, id string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -896,6 +910,137 @@ func (c *ConnectedRootsServiceAPI) DELETESensor(ctx context.Context, id string) 
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/sensors/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// ACTIVITIES //////////////
+
+func (c *ConnectedRootsServiceAPI) POSTActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPostActivityAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPostActivityAPI)
+
+	log.Debug("request [POST] /users/:user_id/activities")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(activity).
+		SetResult(&sdk_models.ActivitiesResponse{}).
+		SetError(&APIError{}).
+		Post(fmt.Sprintf("/users/%s/activities", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) PUTActivity(ctx context.Context, userID string, activity *sdk_models.ActivitiesBody) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsPutActivityAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsPutActivityAPI)
+
+	log.Debug("request [PUT] /users/:user_id/activities/:activity_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetHeader(HeaderContentType, ContentTypeApplicationJSON).
+		SetBody(activity).
+		SetResult(&sdk_models.ActivitiesResponse{}).
+		SetError(&APIError{}).
+		Put(fmt.Sprintf("/users/%s/activities/%s", userID, activity.ID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETActivity(ctx context.Context, userID, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetActivityAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetActivityAPI)
+
+	log.Debug("request [GET] /users/:user_id/activities/:activity_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.ActivitiesResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/activities/%s", userID, id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetActivitiesAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetActivitiesAPI)
+
+	log.Debug("request [GET] /users/:user_id/activities")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, orchardID := range orchardIDs {
+		request.SetQueryParam("orchard_id[]", orchardID)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/activities", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) DELETEActivity(ctx context.Context, userID, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsDeleteActivityAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsDeleteActivityAPI)
+
+	log.Debug("request [DELETE] /users/:user_id/activities/:activity_id")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetError(&APIError{}).
+		Delete(fmt.Sprintf("/users/%s/activities/%s", userID, id))
 	if err != nil {
 		return nil, err
 	}

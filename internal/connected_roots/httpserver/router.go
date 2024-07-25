@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/activity"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
@@ -69,6 +70,15 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// Sensors Data endpoints.
 	sensorsGrp.POST("/:sensor_id/data", sensorsHandler.PostSensorDataHandler).Name = "post-sensor-data"
 	sensorsGrp.GET("/:sensor_id/data", sensorsHandler.ListSensorsDataHandler).Name = "list-sensors-data"
+
+	// Activities endpoints.
+	activitiesHandler := activity.NewActivitiesHandlers(ctx)
+	activitiesGrp := usersGrp.Group("/:user_id/activities")
+	activitiesGrp.POST("", activitiesHandler.PostActivityHandler).Name = "post-activity"
+	activitiesGrp.PUT("/:activity_id", activitiesHandler.PutActivityHandler).Name = "put-activity"
+	activitiesGrp.GET("/:activity_id", activitiesHandler.GetActivityHandler).Name = "get-activity"
+	activitiesGrp.GET("", activitiesHandler.ListActivitiesHandler).Name = "list-activities"
+	activitiesGrp.DELETE("/:activity_id", activitiesHandler.DeleteActivityHandler).Name = "delete-activity"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")
