@@ -46,6 +46,13 @@ crop_type_nav_management_label = "Management"
 sensor_nav_label = "Sensors"
 sensor_nav_management_label = "Management"
 collapsed_view_label = "Collapsed View"
+users_nav_label = "Users"
+users_sensor_nav_label = "Sensors"
+users_sensor_nav_list_label = "List"
+users_orchard_nav_label = "Orchards"
+users_orchard_nav_list_label = "List"
+users_activities_nav_label = "Activities"
+users_activities_nav_list_label = "List"
 
 [notifications.admin.crop_types]
 create_success_title = "Creation crop type success"

@@ -46,6 +46,13 @@ crop_type_nav_management_label = "Administrar"
 sensor_nav_label = "Sensores"
 sensor_nav_management_label = "Administrar"
 collapsed_view_label = "Contraer Vista"
+users_nav_label = "Usuarios"
+users_sensor_nav_label = "Sensores"
+users_sensor_nav_list_label = "Listado"
+users_orchard_nav_label = "Huertos"
+users_orchard_nav_list_label = "Listado"
+users_activities_nav_label = "Actividades"
+users_activities_nav_list_label = "Listado"
 
 [notifications.admin.crop_types]
 create_success_title = "Cultivo creado con éxito"

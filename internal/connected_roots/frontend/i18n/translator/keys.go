@@ -46,6 +46,13 @@ const (
 	NavbarLabelsCropTypeNavManagementLabel = "navbar.labels.crop_type_nav_management_label"
 	NavbarLabelsSensorNavLabel             = "navbar.labels.sensor_nav_label"
 	NavbarLabelsSensorNavManagementLabel   = "navbar.labels.sensor_nav_management_label"
+	NavbarLabelsUsersNavLabel              = "navbar.labels.users_nav_label"
+	NavbarLabelsUserSensorNavLabel         = "navbar.labels.users_sensor_nav_label"
+	NavbarLabelsUserSensorNavListLabel     = "navbar.labels.users_sensor_nav_list_label"
+	NavbarLabelsUserOrchardNavLabel        = "navbar.labels.users_orchard_nav_label"
+	NavbarLabelsUserOrchardNavListLabel    = "navbar.labels.users_orchard_nav_list_label"
+	NavbarLabelsUserActivitiesNavLabel     = "navbar.labels.users_activities_nav_label"
+	NavbarLabelsUserActivitiesNavListLabel = "navbar.labels.users_activities_nav_list_label"
 	NavbarLabelsCollapsedViewLabel         = "navbar.labels.collapsed_view_label"
 
 	TopBarLabelsProfileLabel = "topbar.labels.profile_label"
