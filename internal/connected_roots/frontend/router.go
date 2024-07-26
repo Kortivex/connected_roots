@@ -1,6 +1,7 @@
 package frontend
 
 import (
+	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/activity"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/crop_types"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/frontend/sensor"
@@ -41,6 +42,19 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	usersGrp.GET("/profile", usersHandler.GetUserProfileHandler, s.SessionMiddleware).Name = "get-user-profile"
 	usersGrp.GET("/profile/edit", usersHandler.GetEditUserProfileHandler, s.SessionMiddleware).Name = "get-edit-user-profile"
 	usersGrp.POST("/profile/edit", usersHandler.PostEditUserProfileHandler, s.SessionMiddleware).Name = "post-edit-user-profile"
+	// |
+	// |
+	// + --- Activity endpoints:
+	activitiesHandler := activity.NewActivitiesHandlers(ctx)
+	userActivitiesGrp := usersGrp.Group("/activities")
+	userActivitiesGrp.GET("/list", activitiesHandler.GetActivitiesListHandler, s.SessionMiddleware).Name = "get-list-activities"
+	userActivitiesGrp.GET("/new", activitiesHandler.GetActivityCreateHandler, s.SessionMiddleware).Name = "get-new-activity"
+	userActivitiesGrp.POST("/new", activitiesHandler.PostActivityCreateHandler, s.SessionMiddleware).Name = "post-new-activity"
+	userActivitiesGrp.GET("/edit/:activity_id", activitiesHandler.GetActivityUpdateHandler, s.SessionMiddleware).Name = "get-edit-activity"
+	userActivitiesGrp.POST("/edit/:activity_id", activitiesHandler.PostActivityUpdateHandler, s.SessionMiddleware).Name = "post-edit-activity"
+	userActivitiesGrp.GET("/view/:activity_id", activitiesHandler.GetActivityViewHandler, s.SessionMiddleware).Name = "get-view-activity"
+	userActivitiesGrp.GET("/delete/:activity_id", activitiesHandler.GetActivityDeleteHandler, s.SessionMiddleware).Name = "get-delete-activity"
+	userActivitiesGrp.POST("/delete/:activity_id", activitiesHandler.PostActivityDeleteHandler, s.SessionMiddleware).Name = "post-delete-activity"
 
 	// Admin endpoints:
 	// |

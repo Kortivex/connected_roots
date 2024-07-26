@@ -1,0 +1,58 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_activities}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_update_activities}}</li>
+        </ol>
+    </nav>
+    <form id="update-orchard-form" method="POST"
+          action="/users/activities/edit/{{ if .activity }}{{ .activity.ID }}{{ end }}"
+          enctype="application/x-www-form-urlencoded">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="name">{{.update_name_label}}</label>
+                <input class="form-control" id="name" name="name" type="text" placeholder="{{.update_name_label}}"
+                       required="" value="{{ if .activity }}{{ .activity.Name }}{{ end }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="description">{{.update_description_label}}</label>
+                <input class="form-control" id="description" name="description" type="text"
+                       placeholder="{{.update_location_label}}" required=""
+                       value="{{ if .activity }}{{ .activity.Description }}{{ end }}">
+            </div>
+            {{ $activity := .activity }}
+            <div class="col-md-6">
+                <label class="form-label" for="orchard-id">{{.update_orchard_label}}</label>
+                <select class="form-select" id="orchard-id" name="orchard-id" data-choices="data-choices"
+                        data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
+                        required>
+                    <option value="">{{.update_orchard_selection_label}}...</option>
+                    {{range $orchard := .orchards }}
+                        <option value="{{ $orchard.ID }}" {{ if and $activity (eq $activity.OrchardID $orchard.ID) }} selected {{ end }}>{{ $orchard.Name }}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary" type="submit">{{.update_button_submit_activity}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

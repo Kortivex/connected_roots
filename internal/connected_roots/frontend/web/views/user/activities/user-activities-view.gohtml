@@ -1,0 +1,48 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_activities}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_view_activities}}</li>
+        </ol>
+    </nav>
+    <div class="row g-3">
+        <div class="col-12 col-xl-6 order-xl-2">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="name">{{.view_name_label}}</label>
+                    <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
+                           required="" value="{{.activity.Name}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="location">{{.view_description_label}}</label>
+                    <input class="form-control" id="location" name="location" type="text"
+                           placeholder="{{.view_description_label}}" required="" value="{{.activity.Description}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="crop_type">{{.view_orchard_label}}</label>
+                    <input class="form-control" id="crop_type" name="crop_type" type="text"
+                           placeholder="{{.view_orchard_label}}" required="" value="{{.activity.Orchard.Name}}"
+                           readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}
