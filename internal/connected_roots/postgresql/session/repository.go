@@ -20,6 +20,7 @@ const (
 	tracingSessionDelete     = "repository-db.session.delete"
 	tracingSessionGetMessage = "repository-db.session.get-message"
 	tracingSessionSetMessage = "repository-db.session.set-message"
+	tracingSessionCount      = "repository-db.session.count"
 )
 
 type Repository struct {
@@ -182,4 +183,24 @@ func (r *Repository) GetMessage(ctx context.Context, c echo.Context, name string
 	}
 
 	return []string{}, nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSessionCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSessionCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Sessions{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingSessionCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }

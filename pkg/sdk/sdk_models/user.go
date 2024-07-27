@@ -56,3 +56,7 @@ type UsersAuthenticationBody struct {
 type UsersAuthenticationResponse struct {
 	Valid bool `json:"valid"`
 }
+
+type TotalUsersResponse struct {
+	Total int64 `json:"total"`
+}

@@ -18,40 +18,49 @@ const (
 	tracingConnectedRootsGetUsersAPI                  = "connected-roots-service.http-client: get /users"
 	tracingConnectedRootsDeleteUserAPI                = "connected-roots-service.http-client: delete /users/:user_id"
 	traciConnectedRootsPostUserAuthAPI                = "connected-roots-service.http-client: post /users/:user_id/auth"
+	tracingConnectedRootsServiceGetUserCountAPI       = "connected-roots-service.http-client: get /users/count"
 
-	tracingConnectedRootsPostRoleAPI   = "connected-roots-service.http-client: post /roles"
-	tracingConnectedRootsPutRoleAPI    = "connected-roots-service.http-client: put /roles/:role_id"
-	tracingConnectedRootsGetRoleAPI    = "connected-roots-service.http-client: get /roles/:role_id"
-	tracingConnectedRootsGetRolesAPI   = "connected-roots-service.http-client: get /roles"
-	tracingConnectedRootsDeleteRoleAPI = "connected-roots-service.http-client: delete /roles/:role_id"
+	tracingConnectedRootsPostRoleAPI     = "connected-roots-service.http-client: post /roles"
+	tracingConnectedRootsPutRoleAPI      = "connected-roots-service.http-client: put /roles/:role_id"
+	tracingConnectedRootsGetRoleAPI      = "connected-roots-service.http-client: get /roles/:role_id"
+	tracingConnectedRootsGetRolesAPI     = "connected-roots-service.http-client: get /roles"
+	tracingConnectedRootsDeleteRoleAPI   = "connected-roots-service.http-client: delete /roles/:role_id"
+	tracingConnectedRootsGetRoleCountAPI = "connected-roots-service.http-client: get /roles/count"
 
-	tracingConnectedRootsPostOrchardAPI   = "connected-roots-service.http-client: post /orchards"
-	tracingConnectedRootsPutOrchardAPI    = "connected-roots-service.http-client: put /orchards/:orchard_id"
-	tracingConnectedRootsGetOrchardAPI    = "connected-roots-service.http-client: get /orchards/:orchard_id"
-	tracingConnectedRootsGetOrchardsAPI   = "connected-roots-service.http-client: get /orchards"
-	tracingConnectedRootsDeleteOrchardAPI = "connected-roots-service.http-client: delete /orchards/:orchard_id"
+	tracingConnectedRootsPostOrchardAPI         = "connected-roots-service.http-client: post /orchards"
+	tracingConnectedRootsPutOrchardAPI          = "connected-roots-service.http-client: put /orchards/:orchard_id"
+	tracingConnectedRootsGetOrchardAPI          = "connected-roots-service.http-client: get /orchards/:orchard_id"
+	tracingConnectedRootsGetOrchardsAPI         = "connected-roots-service.http-client: get /orchards"
+	tracingConnectedRootsDeleteOrchardAPI       = "connected-roots-service.http-client: delete /orchards/:orchard_id"
+	tracingConnectedRootsGetOrchardCountAPI     = "connected-roots-service.http-client: get /orchards/count"
+	tracingConnectedRootsGetUserOrchardCountAPI = "connected-roots-service.http-client: get /users/:user_id/orchards/count"
 
 	tracingConnectedRootsGetUserOrchardAPI  = "connected-roots-service.http-client: get /users/:user_id/orchards/:orchard_id"
 	tracingConnectedRootsGetUserOrchardsAPI = "connected-roots-service.http-client: get /users/:user_id/orchards"
 
-	tracingConnectedRootsPostCropTypeAPI   = "connected-roots-service.http-client: post /crop-types"
-	tracingConnectedRootsPutCropTypeAPI    = "connected-roots-service.http-client: put /crop-types/:crop_type_id"
-	tracingConnectedRootsGetCropTypeAPI    = "connected-roots-service.http-client: get /crop-types/:crop_type_id"
-	tracingConnectedRootsGetCropTypesAPI   = "connected-roots-service.http-client: get /crop-types"
-	tracingConnectedRootsDeleteCropTypeAPI = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
+	tracingConnectedRootsPostCropTypeAPI     = "connected-roots-service.http-client: post /crop-types"
+	tracingConnectedRootsPutCropTypeAPI      = "connected-roots-service.http-client: put /crop-types/:crop_type_id"
+	tracingConnectedRootsGetCropTypeAPI      = "connected-roots-service.http-client: get /crop-types/:crop_type_id"
+	tracingConnectedRootsGetCropTypesAPI     = "connected-roots-service.http-client: get /crop-types"
+	tracingConnectedRootsDeleteCropTypeAPI   = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
+	tracingConnectedRootsGetCropTypeCountAPI = "connected-roots-service.http-client: get /crop-types/count"
 
-	tracingConnectedRootsPostSensorAPI     = "connected-roots-service.http-client: post /sensors"
-	tracingConnectedRootsPutSensorAPI      = "connected-roots-service.http-client: put /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorAPI      = "connected-roots-service.http-client: get /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorsAPI     = "connected-roots-service.http-client: get /sensors"
-	tracingConnectedRootsDeleteSensorAPI   = "connected-roots-service.http-client: delete /sensors/:sensor_id"
-	tracingConnectedRootsGetUserSensorsAPI = "connected-roots-service.http-client: get /users/:user_id/sensors"
+	tracingConnectedRootsPostSensorAPI         = "connected-roots-service.http-client: post /sensors"
+	tracingConnectedRootsPutSensorAPI          = "connected-roots-service.http-client: put /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorAPI          = "connected-roots-service.http-client: get /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorsAPI         = "connected-roots-service.http-client: get /sensors"
+	tracingConnectedRootsDeleteSensorAPI       = "connected-roots-service.http-client: delete /sensors/:sensor_id"
+	tracingConnectedRootsGetUserSensorsAPI     = "connected-roots-service.http-client: get /users/:user_id/sensors"
+	tracingConnectedRootsGetSensorCountAPI     = "connected-roots-service.http-client: get /sensors/count"
+	tracingConnectedRootsGetUserSensorCountAPI = "connected-roots-service.http-client: get /users/:user_id/sensors/count"
 
-	tracingConnectedRootsPostActivityAPI   = "connected-roots-service.http-client: post /users/:user_id/activities"
-	tracingConnectedRootsPutActivityAPI    = "connected-roots-service.http-client: put /users/:user_id/activities/:activity_id"
-	tracingConnectedRootsGetActivityAPI    = "connected-roots-service.http-client: get /users/:user_id/activities/:activity_id"
-	tracingConnectedRootsGetActivitiesAPI  = "connected-roots-service.http-client: get /users/:user_id/activities"
-	tracingConnectedRootsDeleteActivityAPI = "connected-roots-service.http-client: delete /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsPostActivityAPI         = "connected-roots-service.http-client: post /users/:user_id/activities"
+	tracingConnectedRootsPutActivityAPI          = "connected-roots-service.http-client: put /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsGetActivityAPI          = "connected-roots-service.http-client: get /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsGetActivitiesAPI        = "connected-roots-service.http-client: get /users/:user_id/activities"
+	tracingConnectedRootsDeleteActivityAPI       = "connected-roots-service.http-client: delete /users/:user_id/activities/:activity_id"
+	tracingConnectedRootsGetActivityCountAPI     = "connected-roots-service.http-client: get /activities/count"
+	tracingConnectedRootsGetUserActivityCountAPI = "connected-roots-service.http-client: get /users/:user_id/activities/count"
 )
 
 type ConnectedRootsServiceAPI struct {
@@ -69,6 +78,8 @@ type IConnectedRootsServiceAPI interface {
 	PATCHUserPartially(ctx context.Context, user *sdk_models.UsersBody) (*resty.Response, error)
 	DELETEUser(ctx context.Context, id string) (*resty.Response, error)
 	POSTUserAuthentication(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*resty.Response, error)
+	GETUserCount(ctx context.Context) (*resty.Response, error)
+
 	////////////// ROLES //////////////
 
 	POSTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error)
@@ -76,6 +87,7 @@ type IConnectedRootsServiceAPI interface {
 	GETRole(ctx context.Context, id string) (*resty.Response, error)
 	GETRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) (*resty.Response, error)
 	DELETERole(ctx context.Context, id string) (*resty.Response, error)
+	GETRoleCount(ctx context.Context) (*resty.Response, error)
 
 	////////////// ORCHARDS //////////////
 
@@ -83,6 +95,8 @@ type IConnectedRootsServiceAPI interface {
 	PUTOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*resty.Response, error)
 	GETOrchard(ctx context.Context, id string) (*resty.Response, error)
 	DELETEOrchard(ctx context.Context, id string) (*resty.Response, error)
+	GETOrchardCount(ctx context.Context) (*resty.Response, error)
+	GETUserOrchardCount(ctx context.Context, userID string) (*resty.Response, error)
 
 	////////////// USERS - ORCHARDS //////////////
 
@@ -96,6 +110,7 @@ type IConnectedRootsServiceAPI interface {
 	GETCropType(ctx context.Context, id string) (*resty.Response, error)
 	GETCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) (*resty.Response, error)
 	DELETECropType(ctx context.Context, id string) (*resty.Response, error)
+	GETCropTypeCount(ctx context.Context) (*resty.Response, error)
 
 	////////////// SENSORS //////////////
 
@@ -104,6 +119,8 @@ type IConnectedRootsServiceAPI interface {
 	GETSensor(ctx context.Context, id string) (*resty.Response, error)
 	GETSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error)
 	DELETESensor(ctx context.Context, id string) (*resty.Response, error)
+	GETSensorCount(ctx context.Context) (*resty.Response, error)
+	GETUserSensorCount(ctx context.Context, userID string) (*resty.Response, error)
 
 	////////////// USERS - SENSORS //////////////
 
@@ -116,6 +133,8 @@ type IConnectedRootsServiceAPI interface {
 	GETActivity(ctx context.Context, userID, id string) (*resty.Response, error)
 	GETActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) (*resty.Response, error)
 	DELETEActivity(ctx context.Context, userID, id string) (*resty.Response, error)
+	GETActivityCount(ctx context.Context) (*resty.Response, error)
+	GETUserActivityCount(ctx context.Context, userID string) (*resty.Response, error)
 }
 
 func NewConnectedRootsClient(host string, client *resty.Client, logr *logger.Logger) *ConnectedRootsService {
@@ -312,6 +331,27 @@ func (c *ConnectedRootsServiceAPI) POSTUserAuthentication(ctx context.Context, u
 	return response, nil
 }
 
+func (c *ConnectedRootsServiceAPI) GETUserCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceGetUserCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsServiceGetUserCountAPI)
+
+	log.Debug("request [GET] /users/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalUsersResponse{}).
+		SetError(&APIError{}).
+		Get("/users/count")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 ////////////// ROLES //////////////
 
 func (c *ConnectedRootsServiceAPI) POSTRole(ctx context.Context, role *sdk_models.RolesBody) (*resty.Response, error) {
@@ -433,6 +473,27 @@ func (c *ConnectedRootsServiceAPI) DELETERole(ctx context.Context, id string) (*
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/roles/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETRoleCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetRoleCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetRoleCountAPI)
+
+	log.Debug("request [GET] /roles/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalRolesResponse{}).
+		SetError(&APIError{}).
+		Get("/roles/count")
 	if err != nil {
 		return nil, err
 	}
@@ -568,6 +629,48 @@ func (c *ConnectedRootsServiceAPI) DELETEOrchard(ctx context.Context, id string)
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/orchards/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETOrchardCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetOrchardCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetOrchardCountAPI)
+
+	log.Debug("request [GET] /orchards/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalOrchardsResponse{}).
+		SetError(&APIError{}).
+		Get("/orchards/count")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETUserOrchardCount(ctx context.Context, userID string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserOrchardCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserOrchardCountAPI)
+
+	log.Debug("request [GET] /users/:user_id/orchards/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalOrchardsResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/orchards/count", userID))
 	if err != nil {
 		return nil, err
 	}
@@ -778,6 +881,27 @@ func (c *ConnectedRootsServiceAPI) DELETECropType(ctx context.Context, id string
 	return response, nil
 }
 
+func (c *ConnectedRootsServiceAPI) GETCropTypeCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetCropTypeCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetCropTypeCountAPI)
+
+	log.Debug("request [GET] /crop-types/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalCropTypesResponse{}).
+		SetError(&APIError{}).
+		Get("/crop-types/count")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 ////////////// SENSORS //////////////
 
 func (c *ConnectedRootsServiceAPI) POSTSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*resty.Response, error) {
@@ -915,6 +1039,48 @@ func (c *ConnectedRootsServiceAPI) DELETESensor(ctx context.Context, id string) 
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/sensors/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETSensorCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetSensorCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetSensorCountAPI)
+
+	log.Debug("request [GET] /sensors/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalSensorsResponse{}).
+		SetError(&APIError{}).
+		Get("/sensors/count")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETUserSensorCount(ctx context.Context, userID string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserSensorCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserSensorCountAPI)
+
+	log.Debug("request [GET] /users/:user_id/sensors/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalSensorsResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/sensors/count", userID))
 	if err != nil {
 		return nil, err
 	}
@@ -1102,6 +1268,48 @@ func (c *ConnectedRootsServiceAPI) DELETEActivity(ctx context.Context, userID, i
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/users/%s/activities/%s", userID, id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETActivityCount(ctx context.Context) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetActivityCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetActivityCountAPI)
+
+	log.Debug("request [GET] /activities/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalActivitiesResponse{}).
+		SetError(&APIError{}).
+		Get("/activities/count")
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETUserActivityCount(ctx context.Context, userID string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserActivityCountAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserActivityCountAPI)
+
+	log.Debug("request [GET] /users/:user_id/activities/count")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.TotalActivitiesResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/activities/count", userID))
 	if err != nil {
 		return nil, err
 	}

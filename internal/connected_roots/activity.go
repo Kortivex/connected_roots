@@ -24,3 +24,7 @@ type ActivityPaginationFilters struct {
 	pagination.PaginatorParams
 	ActivityFilters
 }
+
+type TotalActivities struct {
+	Total int64 `json:"total"`
+}

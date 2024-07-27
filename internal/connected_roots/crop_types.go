@@ -30,3 +30,7 @@ type CropTypePaginationFilters struct {
 	pagination.PaginatorParams
 	CropTypeFilters
 }
+
+type TotalCropTypes struct {
+	Total int64 `json:"total"`
+}

@@ -19,14 +19,16 @@ import (
 const (
 	tracingSensorHandlers = "http-handler.sensor"
 
-	tracingPostSensorHandlers      = "http-handler.sensor.post-sensor"
-	tracingPutSensorHandlers       = "http-handler.sensor.put-sensor"
-	tracingGetSensorHandlers       = "http-handler.sensor.get-sensor"
-	tracingListSensorHandlers      = "http-handler.sensor.list-sensors"
-	tracingDeleteSensorHandlers    = "http-handler.sensor.delete-sensor"
-	tracingPostSensorDataHandlers  = "http-handler.sensor.post-sensor-data"
-	tracingListSensorsDataHandlers = "http-handler.sensor.list-sensors-data"
-	tracingListUserSensorHandlers  = "http-handler.sensor.list-user-sensors"
+	tracingPostSensorHandlers          = "http-handler.sensor.post-sensor"
+	tracingPutSensorHandlers           = "http-handler.sensor.put-sensor"
+	tracingGetSensorHandlers           = "http-handler.sensor.get-sensor"
+	tracingListSensorHandlers          = "http-handler.sensor.list-sensors"
+	tracingDeleteSensorHandlers        = "http-handler.sensor.delete-sensor"
+	tracingPostSensorDataHandlers      = "http-handler.sensor.post-sensor-data"
+	tracingListSensorsDataHandlers     = "http-handler.sensor.list-sensors-data"
+	tracingListUserSensorHandlers      = "http-handler.sensor.list-user-sensors"
+	tracingGetCountSensorsHandlers     = "http-handler.sensor.get-count-sensors"
+	tracingGetCountUserSensorsHandlers = "http-handler.sensor.get-count-user-sensors"
 
 	sensorIDParam = "sensor_id"
 	userIDParam   = "user_id"
@@ -242,4 +244,33 @@ func (h *SensorsHandlers) ListUserSensorsHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, sensorsRes)
+}
+
+func (h *SensorsHandlers) GetCountSensorsHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountSensorsHandlers)
+	defer span.End()
+
+	total, err := h.sensorSvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
+}
+
+func (h *SensorsHandlers) GetCountUserSensorsHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountUserSensorsHandlers)
+	defer span.End()
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	total, err := h.sensorSvc.CountAllByUserID(ctx, userID)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

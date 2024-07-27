@@ -78,3 +78,7 @@ type SensorDataPaginationFilters struct {
 	pagination.PaginatorParams
 	SensorDataFilters
 }
+
+type TotalSensors struct {
+	Total int64 `json:"total"`
+}

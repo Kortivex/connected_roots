@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	tracingOrchard          = "service.orchard"
-	tracingOrchardSave      = "service.orchard.save"
-	tracingOrchardUpdate    = "service.orchard.update"
-	tracingOrchardObtain    = "service.orchard.obtain"
-	tracingOrchardObtainAll = "service.orchard.obtain-all"
-	tracingOrchardRemove    = "service.orchard.remove"
+	tracingOrchard               = "service.orchard"
+	tracingOrchardSave           = "service.orchard.save"
+	tracingOrchardUpdate         = "service.orchard.update"
+	tracingOrchardObtain         = "service.orchard.obtain"
+	tracingOrchardObtainAll      = "service.orchard.obtain-all"
+	tracingOrchardRemove         = "service.orchard.remove"
+	tracingOrchardCountAll       = "service.orchard.count-all"
+	tracingOrchardCountAllByUser = "service.orchard.count-all-by-user"
 )
 
 type Service struct {
@@ -106,4 +108,38 @@ func (s *Service) Remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalOrchards, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingOrchardCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingOrchardCountAll)
+
+	total, err := s.orchardRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingOrchardCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalOrchards{Total: total}, nil
+}
+
+func (s *Service) CountAllByUser(ctx context.Context, userID string) (*connected_roots.TotalOrchards, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingOrchardCountAllByUser)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingOrchardCountAllByUser)
+
+	total, err := s.orchardRep.CountAllByUser(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingOrchardCountAllByUser, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalOrchards{Total: total}, nil
 }

@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	tracingActivity           = "repository-db.activity"
-	tracingActivityCreate     = "repository-db.activity.create"
-	tracingActivityUpdate     = "repository-db.activity.update"
-	tracingActivityGetByID    = "repository-db.activity.get-by-id"
-	tracingActivityListAllBy  = "repository-db.activity.list-all-by"
-	tracingActivityDeleteByID = "repository-db.activity.delete-by-id"
+	tracingActivity               = "repository-db.activity"
+	tracingActivityCreate         = "repository-db.activity.create"
+	tracingActivityUpdate         = "repository-db.activity.update"
+	tracingActivityGetByID        = "repository-db.activity.get-by-id"
+	tracingActivityListAllBy      = "repository-db.activity.list-all-by"
+	tracingActivityDeleteByID     = "repository-db.activity.delete-by-id"
+	tracingActivityCount          = "repository-db.activity.count"
+	tracingActivityCountAllByUser = "repository-db.activity.count-all-by-user"
 )
 
 type Repository struct {
@@ -216,4 +218,46 @@ func (r *Repository) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingActivityCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingActivityCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Activities{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingActivityCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
+}
+
+func (r *Repository) CountAllByUser(ctx context.Context, userID string) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingActivityCountAllByUser)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingActivityCountAllByUser)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Activities{}).
+		Joins("JOIN orchards ON orchards.id = agricultural_activities.orchard_id").
+		Where("orchards.user_id = ?", userID).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingActivityCountAllByUser, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }

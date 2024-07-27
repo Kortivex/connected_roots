@@ -163,6 +163,15 @@ delete_warning_title = "¿Estás seguro de que quieres eliminarlo?"
 delete_warning_message = "Esta acción es irreversible."
 delete_button_submit_crop_type = "Borrar"
 
+[pages.admin.home]
+title = "Panel de Resumen"
+home_total_active_sessions_label = "Total Sesiones Activas"
+home_total_users_label = "Total Usuarios"
+home_total_orchards_label = "Total Huertos"
+home_total_sensors_label = "Total Sensores"
+home_total_crops_label = "Total Cultivos"
+home_total_activities_label = "Total Actividades"
+
 [pages.admin.orchards]
 create_title = "Crear Huertos"
 create_name_label = "Nombre"

@@ -26,6 +26,7 @@ const (
 	tracingSessionIsUser               = "service.session.is-user"
 	tracingSessionIsAdminTechnical     = "service.session.is-admin-technical"
 	tracingSessionIsAdminTechnicalUser = "service.session.is-admin-technical-user"
+	tracingSessionCountAll             = "service.session.count-all"
 )
 
 type Service struct {
@@ -189,4 +190,21 @@ func (s *Service) IsAdminTechnicalUser(ctx context.Context, c echo.Context) (boo
 	}
 
 	return sn.RoleID == s.conf.Roles.Protected[0] || sn.RoleID == s.conf.Roles.Protected[1] || sn.RoleID == s.conf.Roles.Protected[2], nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalSessions, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSessionCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSessionCountAll)
+
+	total, err := s.sessionRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSessionCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalSessions{Total: total}, nil
 }

@@ -19,6 +19,7 @@ const (
 	tracingCropTypesGetByID    = "repository-db.crop-types.get-by-id"
 	tracingCropTypesListAllBy  = "repository-db.crop-types.list-all-by"
 	tracingCropTypesDeleteByID = "repository-db.crop-types.delete-by-id"
+	tracingCropTypesCount      = "repository-db.crop-types.count"
 )
 
 type Repository struct {
@@ -213,4 +214,24 @@ func (r *Repository) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingCropTypesCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingCropTypesCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&CropTypes{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingCropTypesCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }

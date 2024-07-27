@@ -16,6 +16,7 @@ const (
 	tracingConnectedRootsServiceObtainCropType  = "connected-roots.obtain-crop-type"
 	tracingConnectedRootsServiceObtainCropTypes = "connected-roots.obtain-crop-types"
 	tracingConnectedRootsServiceDeleteCropType  = "connected-roots.delete-crop-type"
+	tracingConnectedRootsServiceCountCropType   = "connected-roots.count-crop-type"
 
 	tracingConnectedRootsServiceSaveUser            = "connected-roots.save-user"
 	tracingConnectedRootsServiceUpdateUser          = "connected-roots.update-user"
@@ -24,18 +25,22 @@ const (
 	tracingConnectedRootsServiceObtainUsers         = "connected-roots.obtain-users"
 	tracingConnectedRootsServiceDeleteUser          = "connected-roots.delete-user"
 	tracingConnectedRootsServiceAuthenticateUser    = "connected-roots.authenticate-user"
+	tracingConnectedRootsServiceCountUser           = "connected-roots.count-user"
 
 	tracingConnectedRootsServiceSaveRole    = "connected-roots.save-role"
 	tracingConnectedRootsServiceUpdateRole  = "connected-roots.update-role"
 	tracingConnectedRootsServiceObtainRole  = "connected-roots.obtain-role"
 	tracingConnectedRootsServiceObtainRoles = "connected-roots.obtain-roles"
 	tracingConnectedRootsServiceDeleteRole  = "connected-roots.delete-role"
+	tracingConnectedRootsServiceCountRole   = "connected-roots.count-role"
 
-	tracingConnectedRootsServiceSaveOrchard    = "connected-roots.save-orchard"
-	tracingConnectedRootsServiceUpdateOrchard  = "connected-roots.update-orchard"
-	tracingConnectedRootsServiceObtainOrchard  = "connected-roots.obtain-orchard"
-	tracingConnectedRootsServiceObtainOrchards = "connected-roots.obtain-orchards"
-	tracingConnectedRootsServiceDeleteOrchard  = "connected-roots.delete-orchard"
+	tracingConnectedRootsServiceSaveOrchard      = "connected-roots.save-orchard"
+	tracingConnectedRootsServiceUpdateOrchard    = "connected-roots.update-orchard"
+	tracingConnectedRootsServiceObtainOrchard    = "connected-roots.obtain-orchard"
+	tracingConnectedRootsServiceObtainOrchards   = "connected-roots.obtain-orchards"
+	tracingConnectedRootsServiceDeleteOrchard    = "connected-roots.delete-orchard"
+	tracingConnectedRootsServiceCountOrchard     = "connected-roots.count-orchard"
+	tracingConnectedRootsServiceCountUserOrchard = "connected-roots.count-user-orchard"
 
 	tracingConnectedRootsServiceObtainUserOrchard  = "connected-roots.obtain-user-orchard"
 	tracingConnectedRootsServiceObtainUserOrchards = "connected-roots.obtain-user-orchards"
@@ -46,12 +51,16 @@ const (
 	tracingConnectedRootsServiceObtainSensors     = "connected-roots.obtain-sensors"
 	tracingConnectedRootsServiceDeleteSensor      = "connected-roots.delete-sensor"
 	tracingConnectedRootsServiceObtainUserSensors = "connected-roots.obtain-user-sensors"
+	tracingConnectedRootsServiceCountSensors      = "connected-roots.count-sensors"
+	tracingConnectedRootsServiceCountUserSensors  = "connected-roots.count-user-sensors"
 
-	tracingConnectedRootsServiceSaveActivity     = "connected-roots.save-activity"
-	tracingConnectedRootsServiceUpdateActivity   = "connected-roots.update-activity"
-	tracingConnectedRootsServiceObtainActivity   = "connected-roots.obtain-activity"
-	tracingConnectedRootsServiceObtainActivities = "connected-roots.obtain-activity"
-	tracingConnectedRootsServiceDeleteActivity   = "connected-roots.delete-activity"
+	tracingConnectedRootsServiceSaveActivity      = "connected-roots.save-activity"
+	tracingConnectedRootsServiceUpdateActivity    = "connected-roots.update-activity"
+	tracingConnectedRootsServiceObtainActivity    = "connected-roots.obtain-activity"
+	tracingConnectedRootsServiceObtainActivities  = "connected-roots.obtain-activity"
+	tracingConnectedRootsServiceDeleteActivity    = "connected-roots.delete-activity"
+	tracingConnectedRootsServiceCountActivity     = "connected-roots.count-activity"
+	tracingConnectedRootsServiceCountUserActivity = "connected-roots.count-user-activity"
 
 	ErrMsgConnectedRootsServiceSaveRoleErr    = "saving role failure"
 	ErrMsgConnectedRootsServiceUpdateRoleErr  = "updating role failure"
@@ -88,6 +97,8 @@ const (
 	ErrMsgConnectedRootsServiceUpdateActivityErr   = "updating activity failure"
 	ErrMsgConnectedRootsServiceObtainActivityErr   = "obtain activity failure"
 	ErrMsgConnectedRootsServiceObtainActivitiesErr = "obtain activities failure"
+
+	ErrMsgConnectedRootsTotalCountErr = "total count failure"
 )
 
 type ConnectedRootsServiceSDK struct {
@@ -104,6 +115,7 @@ type IConnectedRootsServiceSDK interface {
 	ObtainUsers(ctx context.Context, limit, nexCursor, prevCursor string, names, surnames, emails []string) ([]*sdk_models.UsersResponse, *pagination.Paging, error)
 	DeleteUser(ctx context.Context, id string) error
 	AuthenticateUser(ctx context.Context, userID string, authn *sdk_models.UsersAuthenticationBody) (*sdk_models.UsersAuthenticationResponse, error)
+	CountUsers(ctx context.Context) (*sdk_models.TotalUsersResponse, error)
 
 	////////////// ROLES //////////////
 
@@ -112,6 +124,7 @@ type IConnectedRootsServiceSDK interface {
 	ObtainRole(ctx context.Context, id string) (*sdk_models.RolesResponse, error)
 	ObtainRoles(ctx context.Context, limit, nexCursor, prevCursor string, names []string) ([]*sdk_models.RolesResponse, *pagination.Paging, error)
 	DeleteRole(ctx context.Context, id string) error
+	CountRoles(ctx context.Context) (*sdk_models.TotalRolesResponse, error)
 
 	////////////// ORCHARDS //////////////
 
@@ -120,6 +133,8 @@ type IConnectedRootsServiceSDK interface {
 	ObtainOrchard(ctx context.Context, id string) (*sdk_models.OrchardsResponse, error)
 	ObtainOrchards(ctx context.Context, limit, nexCursor, prevCursor string, names, locations, userIDs []string) ([]*sdk_models.OrchardsResponse, *pagination.Paging, error)
 	DeleteOrchard(ctx context.Context, id string) error
+	CountOrchards(ctx context.Context) (*sdk_models.TotalOrchardsResponse, error)
+	CountUserOrchards(ctx context.Context, userID string) (*sdk_models.TotalOrchardsResponse, error)
 
 	////////////// USERS - ORCHARDS //////////////
 
@@ -133,6 +148,7 @@ type IConnectedRootsServiceSDK interface {
 	ObtainCropType(ctx context.Context, id string) (*sdk_models.CropTypesResponse, error)
 	ObtainCropTypes(ctx context.Context, limit, nexCursor, prevCursor string, names, scientificNames, plantingSeasons, harvestSeasons []string) ([]*sdk_models.CropTypesResponse, *pagination.Paging, error)
 	DeleteCropType(ctx context.Context, id string) error
+	CountCropTypes(ctx context.Context) (*sdk_models.TotalCropTypesResponse, error)
 
 	////////////// SENSORS //////////////
 
@@ -141,6 +157,8 @@ type IConnectedRootsServiceSDK interface {
 	ObtainSensor(ctx context.Context, id string) (*sdk_models.SensorsResponse, error)
 	ObtainSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error)
 	DeleteSensor(ctx context.Context, id string) error
+	CountSensors(ctx context.Context) (*sdk_models.TotalSensorsResponse, error)
+	CountUserSensors(ctx context.Context, userID string) (*sdk_models.TotalSensorsResponse, error)
 
 	////////////// USERS - SENSORS //////////////
 
@@ -153,6 +171,8 @@ type IConnectedRootsServiceSDK interface {
 	ObtainActivity(ctx context.Context, userID, id string) (*sdk_models.ActivitiesResponse, error)
 	ObtainActivities(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, orchardIDs []string) ([]*sdk_models.ActivitiesResponse, *pagination.Paging, error)
 	DeleteActivity(ctx context.Context, userID, id string) error
+	CountActivities(ctx context.Context) (*sdk_models.TotalActivitiesResponse, error)
+	CountUserActivities(ctx context.Context, userID string) (*sdk_models.TotalActivitiesResponse, error)
 }
 
 ////////////// USERS //////////////
@@ -301,6 +321,26 @@ func (c *ConnectedRootsServiceSDK) AuthenticateUser(ctx context.Context, userID 
 	return respAuthn, nil
 }
 
+func (c *ConnectedRootsServiceSDK) CountUsers(ctx context.Context) (*sdk_models.TotalUsersResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountUser)
+	defer sp.End()
+
+	resp, err := c.api.GETUserCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUser, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUser, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalUsersResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUser, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
 ////////////// ROLES //////////////
 
 func (c *ConnectedRootsServiceSDK) SaveRole(ctx context.Context, role *sdk_models.RolesBody) (*sdk_models.RolesResponse, error) {
@@ -407,6 +447,26 @@ func (c *ConnectedRootsServiceSDK) DeleteRole(ctx context.Context, id string) er
 	return nil
 }
 
+func (c *ConnectedRootsServiceSDK) CountRoles(ctx context.Context) (*sdk_models.TotalRolesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountRole)
+	defer sp.End()
+
+	resp, err := c.api.GETRoleCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountRole, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountRole, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalRolesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountRole, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
 ////////////// ORCHARDS //////////////
 
 func (c *ConnectedRootsServiceSDK) SaveOrchard(ctx context.Context, orchard *sdk_models.OrchardsBody) (*sdk_models.OrchardsResponse, error) {
@@ -511,6 +571,46 @@ func (c *ConnectedRootsServiceSDK) DeleteOrchard(ctx context.Context, id string)
 	}
 
 	return nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountOrchards(ctx context.Context) (*sdk_models.TotalOrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountOrchard)
+	defer sp.End()
+
+	resp, err := c.api.GETOrchardCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountOrchard, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalOrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountOrchard, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountUserOrchards(ctx context.Context, userID string) (*sdk_models.TotalOrchardsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountUserOrchard)
+	defer sp.End()
+
+	resp, err := c.api.GETUserOrchardCount(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserOrchard, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserOrchard, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalOrchardsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserOrchard, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
 }
 
 ////////////// USERS - ORCHARDS //////////////
@@ -670,6 +770,26 @@ func (c *ConnectedRootsServiceSDK) DeleteCropType(ctx context.Context, id string
 	return nil
 }
 
+func (c *ConnectedRootsServiceSDK) CountCropTypes(ctx context.Context) (*sdk_models.TotalCropTypesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountCropType)
+	defer sp.End()
+
+	resp, err := c.api.GETCropTypeCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountCropType, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountCropType, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalCropTypesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountCropType, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
 ////////////// SENSORS //////////////
 
 func (c *ConnectedRootsServiceSDK) SaveSensor(ctx context.Context, sensor *sdk_models.SensorsBody) (*sdk_models.SensorsResponse, error) {
@@ -774,6 +894,46 @@ func (c *ConnectedRootsServiceSDK) DeleteSensor(ctx context.Context, id string) 
 	}
 
 	return nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountSensors(ctx context.Context) (*sdk_models.TotalSensorsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountSensors)
+	defer sp.End()
+
+	resp, err := c.api.GETSensorCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountSensors, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountSensors, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalSensorsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountSensors, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountUserSensors(ctx context.Context, userID string) (*sdk_models.TotalSensorsResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountUserSensors)
+	defer sp.End()
+
+	resp, err := c.api.GETUserSensorCount(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserSensors, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserSensors, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalSensorsResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserSensors, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
 }
 
 ////////////// USERS - SENSORS //////////////
@@ -911,4 +1071,44 @@ func (c *ConnectedRootsServiceSDK) DeleteActivity(ctx context.Context, userID, i
 	}
 
 	return nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountActivities(ctx context.Context) (*sdk_models.TotalActivitiesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountActivity)
+	defer sp.End()
+
+	resp, err := c.api.GETActivityCount(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountActivity, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountActivity, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalActivitiesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountActivity, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
+}
+
+func (c *ConnectedRootsServiceSDK) CountUserActivities(ctx context.Context, userID string) (*sdk_models.TotalActivitiesResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceCountUserActivity)
+	defer sp.End()
+
+	resp, err := c.api.GETUserActivityCount(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserActivity, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserActivity, resp.Error().(*APIError))
+	}
+
+	total, ok := resp.Result().(*sdk_models.TotalActivitiesResponse)
+	if !ok {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceCountUserActivity, errors.New(ErrMsgConnectedRootsTotalCountErr))
+	}
+
+	return total, nil
 }

@@ -45,3 +45,7 @@ func (ct *CropTypesResponse) ToCropTypeBody() *CropTypesBody {
 		UpdatedAt:      ct.UpdatedAt,
 	}
 }
+
+type TotalCropTypesResponse struct {
+	Total int64 `json:"total"`
+}

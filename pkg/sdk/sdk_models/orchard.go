@@ -54,3 +54,7 @@ func (or *OrchardsResponse) ToOrchardBody() *OrchardsBody {
 		UpdatedAt:  or.UpdatedAt,
 	}
 }
+
+type TotalOrchardsResponse struct {
+	Total int64 `json:"total"`
+}

@@ -22,3 +22,7 @@ type RolePaginationFilters struct {
 	pagination.PaginatorParams
 	RoleFilters
 }
+
+type TotalRoles struct {
+	Total int64 `json:"total"`
+}

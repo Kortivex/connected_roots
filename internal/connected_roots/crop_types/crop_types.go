@@ -19,6 +19,7 @@ const (
 	tracingCropTypeObtainFromID = "service.crop-types.obtain-from-id"
 	tracingCropTypeObtainAll    = "service.crop-types.obtain-all"
 	tracingCropTypeRemoveByID   = "service.crop-types.remove-by-id"
+	tracingCropTypeCountAll     = "service.crop-types.count-all"
 )
 
 type Service struct {
@@ -106,4 +107,21 @@ func (s *Service) Remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalCropTypes, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingCropTypeCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingCropTypeCountAll)
+
+	total, err := s.cropTypeRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingCropTypeCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalCropTypes{Total: total}, nil
 }

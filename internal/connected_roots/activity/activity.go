@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	tracingActivity          = "service.activity"
-	tracingActivitySave      = "service.activity.save"
-	tracingActivityUpdate    = "service.activity.update"
-	tracingActivityObtain    = "service.activity.obtain"
-	tracingActivityObtainAll = "service.activity.obtain-all"
-	tracingActivityRemove    = "service.activity.remove"
+	tracingActivity               = "service.activity"
+	tracingActivitySave           = "service.activity.save"
+	tracingActivityUpdate         = "service.activity.update"
+	tracingActivityObtain         = "service.activity.obtain"
+	tracingActivityObtainAll      = "service.activity.obtain-all"
+	tracingActivityRemove         = "service.activity.remove"
+	tracingActivityCountAll       = "service.activity.count-all"
+	tracingActivityCountAllByUser = "service.activity.count-all-by-user"
 )
 
 type Service struct {
@@ -106,4 +108,38 @@ func (s *Service) Remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalActivities, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingActivityCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingActivityCountAll)
+
+	total, err := s.activityRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingActivityCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalActivities{Total: total}, nil
+}
+
+func (s *Service) CountAllByUser(ctx context.Context, userID string) (*connected_roots.TotalActivities, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingActivityCountAllByUser)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingActivityCountAllByUser)
+
+	total, err := s.activityRep.CountAllByUser(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingActivityCountAllByUser, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalActivities{Total: total}, nil
 }

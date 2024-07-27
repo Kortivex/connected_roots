@@ -18,11 +18,13 @@ import (
 const (
 	tracingActivitiesHandlers = "http-handler.activity"
 
-	tracingPostActivitiesHandlers   = "http-handler.activity.post-activity"
-	tracingPutActivitiesHandlers    = "http-handler.activity.put-activity"
-	tracingGetActivitiesHandlers    = "http-handler.activity.get-activity"
-	tracingListActivitiesHandlers   = "http-handler.activity.list-activities"
-	tracingDeleteActivitiesHandlers = "http-handler.activity.delete-activity"
+	tracingPostActivitiesHandlers         = "http-handler.activity.post-activity"
+	tracingPutActivitiesHandlers          = "http-handler.activity.put-activity"
+	tracingGetActivitiesHandlers          = "http-handler.activity.get-activity"
+	tracingListActivitiesHandlers         = "http-handler.activity.list-activities"
+	tracingDeleteActivitiesHandlers       = "http-handler.activity.delete-activity"
+	tracingGetCountActivitiesHandlers     = "http-handler.activity.get-count-activities"
+	tracingGetCountUserActivitiesHandlers = "http-handler.activity.get-count-user-activities"
 
 	activityIDParam = "activity_id"
 	userIDParam     = "user_id"
@@ -252,4 +254,33 @@ func (h *ActivitiesHandlers) DeleteActivityHandler(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (h *ActivitiesHandlers) GetCountActivitiesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountActivitiesHandlers)
+	defer span.End()
+
+	total, err := h.activitySvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
+}
+
+func (h *ActivitiesHandlers) GetCountUserActivitiesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountUserActivitiesHandlers)
+	defer span.End()
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	total, err := h.activitySvc.CountAllByUser(ctx, userID)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

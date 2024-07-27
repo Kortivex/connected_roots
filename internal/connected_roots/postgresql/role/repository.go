@@ -20,6 +20,7 @@ const (
 	tracingRoleGetByID    = "repository-db.role.get-by-id"
 	tracingRoleListAllBy  = "repository-db.role.list-all-by"
 	tracingRoleDeleteByID = "repository-db.role.delete-by-id"
+	tracingRoleCount      = "repository-db.role.count"
 )
 
 type Repository struct {
@@ -214,4 +215,24 @@ func (r *Repository) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingRoleCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingRoleCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Roles{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingRoleCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }

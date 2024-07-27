@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	tracingOrchard           = "repository-db.orchard"
-	tracingOrchardCreate     = "repository-db.orchard.create"
-	tracingOrchardUpdate     = "repository-db.orchard.update"
-	tracingOrchardGetByID    = "repository-db.orchard.get-by-id"
-	tracingOrchardListAllBy  = "repository-db.orchard.list-all-by"
-	tracingOrchardDeleteByID = "repository-db.orchard.delete-by-id"
+	tracingOrchard               = "repository-db.orchard"
+	tracingOrchardCreate         = "repository-db.orchard.create"
+	tracingOrchardUpdate         = "repository-db.orchard.update"
+	tracingOrchardGetByID        = "repository-db.orchard.get-by-id"
+	tracingOrchardListAllBy      = "repository-db.orchard.list-all-by"
+	tracingOrchardDeleteByID     = "repository-db.orchard.delete-by-id"
+	tracingOrchardCount          = "repository-db.orchard.count"
+	tracingOrchardCountAllByUser = "repository-db.orchard.count-all-by-user"
 )
 
 type Repository struct {
@@ -215,4 +217,45 @@ func (r *Repository) DeleteByID(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingOrchardCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Orchards{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingOrchardCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
+}
+
+func (r *Repository) CountAllByUser(ctx context.Context, userID string) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingOrchardCountAllByUser)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingOrchardCountAllByUser)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Orchards{}).
+		Where("user_id = ?", userID).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingOrchardCountAllByUser, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }

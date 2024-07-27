@@ -33,3 +33,7 @@ func (ct *ActivitiesResponse) ToActivityBody() *ActivitiesBody {
 		UpdatedAt:   ct.UpdatedAt,
 	}
 }
+
+type TotalActivitiesResponse struct {
+	Total int64 `json:"total"`
+}

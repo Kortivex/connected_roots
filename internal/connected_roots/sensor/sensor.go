@@ -22,6 +22,8 @@ const (
 	tracingSensorSaveData          = "service.sensor.save-data"
 	tracingSensorObtainAllData     = "service.sensor.obtain-all-data"
 	tracingSensorObtainAllByUserID = "service.sensor.obtain-all-by-user-id"
+	tracingSensorCountAll          = "service.sensor.count-all"
+	tracingSensorCountAllByUser    = "service.sensor.count-all-by-user"
 )
 
 type Service struct {
@@ -150,4 +152,38 @@ func (s *Service) ObtainAllByUserID(ctx context.Context, userID string, filters 
 	}
 
 	return sensorsRes, nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalSensors, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSensorCountAll)
+
+	total, err := s.sensorRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalSensors{Total: total}, nil
+}
+
+func (s *Service) CountAllByUserID(ctx context.Context, userID string) (*connected_roots.TotalSensors, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorCountAllByUser)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSensorCountAllByUser)
+
+	total, err := s.sensorRep.CountAllByUser(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorCountAllByUser, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalSensors{Total: total}, nil
 }

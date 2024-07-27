@@ -18,13 +18,15 @@ import (
 const (
 	tracingOrchardsHandlers = "http-handler.orchard"
 
-	tracingPostOrchardsHandlers     = "http-handler.orchard.post-orchard"
-	tracingPutOrchardsHandlers      = "http-handler.orchard.put-orchard"
-	tracingGetOrchardsHandlers      = "http-handler.orchard.get-orchard"
-	tracingListOrchardsHandlers     = "http-handler.orchard.list-orchards"
-	tracingDeleteOrchardsHandlers   = "http-handler.orchard.delete-orchard"
-	tracingGetUserOrchardHandlers   = "http-handler.orchard.get-user-orchard"
-	tracingListUserOrchardsHandlers = "http-handler.orchard.list-user-orchards"
+	tracingPostOrchardsHandlers         = "http-handler.orchard.post-orchard"
+	tracingPutOrchardsHandlers          = "http-handler.orchard.put-orchard"
+	tracingGetOrchardsHandlers          = "http-handler.orchard.get-orchard"
+	tracingListOrchardsHandlers         = "http-handler.orchard.list-orchards"
+	tracingDeleteOrchardsHandlers       = "http-handler.orchard.delete-orchard"
+	tracingGetUserOrchardHandlers       = "http-handler.orchard.get-user-orchard"
+	tracingListUserOrchardsHandlers     = "http-handler.orchard.list-user-orchards"
+	tracingGetCountOrchardsHandlers     = "http-handler.orchard.get-count-orchards"
+	tracingGetCountUserOrchardsHandlers = "http-handler.orchard.get-count-user-orchards"
 
 	orchardIDParam = "orchard_id"
 	userIDParam    = "user_id"
@@ -230,4 +232,33 @@ func (h *OrchardsHandlers) ListUserOrchardsHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, orchardRes)
+}
+
+func (h *OrchardsHandlers) GetCountOrchardsHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountOrchardsHandlers)
+	defer span.End()
+
+	total, err := h.orchardSvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
+}
+
+func (h *OrchardsHandlers) GetCountUserOrchardsHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountUserOrchardsHandlers)
+	defer span.End()
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	total, err := h.orchardSvc.CountAllByUser(ctx, userID)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

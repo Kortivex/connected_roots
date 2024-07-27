@@ -157,6 +157,14 @@ const (
 	PagesAdminCropTypesDeleteWarningMessage       = "pages.admin.crop_types.delete_warning_message"
 	PagesAdminCropTypesDeleteButtonSubmitCropType = "pages.admin.crop_types.delete_button_submit_crop_type"
 
+	PagesAdminHomeTitle                    = "pages.admin.home.title"
+	PagesAdminHomeTotalActiveSessionsLabel = "pages.admin.home.home_total_active_sessions_label"
+	PagesAdminHomeTotalUsersLabel          = "pages.admin.home.home_total_users_label"
+	PagesAdminHomeTotalOrchardsLabel       = "pages.admin.home.home_total_orchards_label"
+	PagesAdminHomeTotalSensorsLabel        = "pages.admin.home.home_total_sensors_label"
+	PagesAdminHomeTotalCropsLabel          = "pages.admin.home.home_total_crops_label"
+	PagesAdminHomeTotalActivitiesLabel     = "pages.admin.home.home_total_activities_label"
+
 	PagesAdminOrchardsCreateTitle                  = "pages.admin.orchards.create_title"
 	PagesAdminOrchardsCreateNameLabel              = "pages.admin.orchards.create_name_label"
 	PagesAdminOrchardsCreateLocationLabel          = "pages.admin.orchards.create_location_label"

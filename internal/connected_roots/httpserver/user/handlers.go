@@ -25,6 +25,7 @@ const (
 	tracingListUsersHandlers     = "http-handler.user.list-users"
 	tracingDeleteUsersHandlers   = "http-handler.user.delete-user"
 	tracingPostUsersAuthHandlers = "http-handler.user.post-user-auth"
+	tracingGetCountUsersHandlers = "http-handler.user.get-count-users"
 
 	userIDParam = "user_id"
 )
@@ -254,4 +255,16 @@ func (h *UsersHandlers) PostUserAuthHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &connected_roots.UsersAuthentication{Valid: ok})
+}
+
+func (h *UsersHandlers) GetCountUsersHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountUsersHandlers)
+	defer span.End()
+
+	total, err := h.userSvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

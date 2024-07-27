@@ -30,3 +30,7 @@ func (rl *RolesResponse) ToRoleBody() *RolesBody {
 		UpdatedAt:   rl.UpdatedAt,
 	}
 }
+
+type TotalRolesResponse struct {
+	Total int64 `json:"total"`
+}

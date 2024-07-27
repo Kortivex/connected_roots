@@ -69,3 +69,7 @@ func (or *SensorsResponse) ToSensorBody() *SensorsBody {
 		UpdatedAt:       or.UpdatedAt,
 	}
 }
+
+type TotalSensorsResponse struct {
+	Total int64 `json:"total"`
+}

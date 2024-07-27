@@ -19,6 +19,7 @@ const (
 	tracingRoleObtain    = "service.role.obtain"
 	tracingRoleObtainAll = "service.role.obtain-all"
 	tracingRoleRemove    = "service.role.remove"
+	tracingRoleCountAll  = "service.role.count-all"
 )
 
 type Service struct {
@@ -106,4 +107,21 @@ func (s *Service) Remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalRoles, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingRoleCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingRoleCountAll)
+
+	total, err := s.roleRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingRoleCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalRoles{Total: total}, nil
 }

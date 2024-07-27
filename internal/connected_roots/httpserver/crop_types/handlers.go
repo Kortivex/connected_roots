@@ -17,11 +17,12 @@ import (
 const (
 	tracingCropTypesHandlers = "http-handler.crop-types"
 
-	tracingPostCropTypesHandlers   = "http-handler.crop-types.post-crop-type"
-	tracingPutCropTypesHandlers    = "http-handler.crop-types.put-crop-type"
-	tracingGetCropTypesHandlers    = "http-handler.crop-types.get-crop-type"
-	tracingListCropTypesHandlers   = "http-handler.crop-types.list-crop-types"
-	tracingDeleteCropTypesHandlers = "http-handler.crop-types.delete-crop-type"
+	tracingPostCropTypesHandlers     = "http-handler.crop-types.post-crop-type"
+	tracingPutCropTypesHandlers      = "http-handler.crop-types.put-crop-type"
+	tracingGetCropTypesHandlers      = "http-handler.crop-types.get-crop-type"
+	tracingListCropTypesHandlers     = "http-handler.crop-types.list-crop-types"
+	tracingDeleteCropTypesHandlers   = "http-handler.crop-types.delete-crop-type"
+	tracingGetCountCropTypesHandlers = "http-handler.crop-types.get-count-crop-types"
 
 	cropTypeIDParam = "crop_type_id"
 )
@@ -143,4 +144,16 @@ func (h *CropTypesHandlers) DeleteCropTypeHandler(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (h *CropTypesHandlers) GetCountCropTypesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountCropTypesHandlers)
+	defer span.End()
+
+	total, err := h.cropTypeSvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

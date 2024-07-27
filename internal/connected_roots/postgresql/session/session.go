@@ -1,11 +1,15 @@
 package session
 
-import "github.com/Kortivex/connected_roots/internal/connected_roots/postgresql"
+import (
+	"time"
+)
 
 type Sessions struct {
-	ID   string `gorm:"column:id;type:text;primaryKey;not null"`
-	Data string `gorm:"column:dat;type:text"`
-	postgresql.BaseModel
+	ID        string    `gorm:"column:id;type:text;primaryKey;not null"`
+	Data      string    `gorm:"column:dat;type:text"`
+	CreatedAt time.Time `gorm:"column:created_at;type:timestamp;autoCreateTime"`
+	UpdatedAt time.Time `gorm:"column:updated_at;type:timestamp;autoUpdateTime"`
+	ExpiredAt time.Time `gorm:"column:expired_at;type:timestamp;"`
 }
 
 // TableName returns the name of the table associated with the struct.

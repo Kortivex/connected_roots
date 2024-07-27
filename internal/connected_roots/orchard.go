@@ -32,3 +32,7 @@ type OrchardPaginationFilters struct {
 	pagination.PaginatorParams
 	OrchardFilters
 }
+
+type TotalOrchards struct {
+	Total int64 `json:"total"`
+}

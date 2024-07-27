@@ -24,3 +24,7 @@ type Cookie struct {
 	HTTPOnly bool          `json:"http_only"`
 	SameSite http.SameSite `json:"same_site"`
 }
+
+type TotalSessions struct {
+	Total int64 `json:"total"`
+}

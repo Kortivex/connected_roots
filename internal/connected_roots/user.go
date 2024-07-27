@@ -35,3 +35,7 @@ type UserPaginationFilters struct {
 	pagination.PaginatorParams
 	UserFilters
 }
+
+type TotalUsers struct {
+	Total int64 `json:"total"`
+}

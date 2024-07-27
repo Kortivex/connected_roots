@@ -17,11 +17,12 @@ import (
 const (
 	tracingRolesHandlers = "http-handler.role"
 
-	tracingPostRolesHandlers   = "http-handler.role.post-role"
-	tracingPutRolesHandlers    = "http-handler.role.put-role"
-	tracingGetRolesHandlers    = "http-handler.role.get-role"
-	tracingListRolesHandlers   = "http-handler.role.list-roles"
-	tracingDeleteRolesHandlers = "http-handler.role.delete-role"
+	tracingPostRolesHandlers     = "http-handler.role.post-role"
+	tracingPutRolesHandlers      = "http-handler.role.put-role"
+	tracingGetRolesHandlers      = "http-handler.role.get-role"
+	tracingListRolesHandlers     = "http-handler.role.list-roles"
+	tracingDeleteRolesHandlers   = "http-handler.role.delete-role"
+	tracingGetCountRolesHandlers = "http-handler.role.get-count-roles"
 
 	roleIDParam = "role_id"
 )
@@ -143,4 +144,16 @@ func (h *RolesHandlers) DeleteRolesHandler(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (h *RolesHandlers) GetCountRolesHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetCountRolesHandlers)
+	defer span.End()
+
+	total, err := h.roleSvc.CountAll(ctx)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, total)
 }

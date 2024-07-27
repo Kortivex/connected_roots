@@ -25,6 +25,7 @@ const (
 	tracingUserRemoveByID      = "service.user.remove-by-id"
 	tracingUserRemoveByEmail   = "service.user.remove-by-email"
 	tracingUserIsValidPassword = "service.user.is-valid-password"
+	tracingUserCountAll        = "service.user.count-all"
 )
 
 type Service struct {
@@ -177,4 +178,21 @@ func (s *Service) IsValidPassword(ctx context.Context, email, password string) (
 	log.Debug(fmt.Sprintf("password: %+v", password))
 
 	return hashing.PasswordHashingValidation(password, usr.Password), nil
+}
+
+func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalUsers, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingUserCountAll)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingUserCountAll)
+
+	total, err := s.userRep.Count(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingUserCountAll, err)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return &connected_roots.TotalUsers{Total: total}, nil
 }

@@ -23,6 +23,8 @@ const (
 	tracingSensorGetDataByID     = "repository-db.sensor.get-data-by-id"
 	tracingSensorListAllDataBy   = "repository-db.sensor.list-all-data-by"
 	tracingSensorListAllByUserID = "repository-db.sensor.list-all-user-id"
+	tracingSensorCount           = "repository-db.sensor.count"
+	tracingSensorCountAllByUser  = "repository-db.sensor.count-all-by-user"
 )
 
 type Repository struct {
@@ -378,12 +380,11 @@ func (r *Repository) ListAllByUserID(ctx context.Context, userID string, sensorF
 
 	var sensorsDB []*Sensors
 	query := r.db.WithContext(ctx).Model(&Sensors{})
+	query = query.
+		Joins("JOIN orchards ON orchards.id = sensors.orchard_id").
+		Where("orchards.user_id = ?", userID)
 	for _, p := range preloads {
-		if p == "Orchard" {
-			query = query.Preload(p, "user_id = ?", userID)
-		} else {
-			query = query.Preload(p)
-		}
+		query = query.Preload(p)
 	}
 	AddSensorFilters(query, &sensorFilters.SensorFilters)
 	query.Find(&sensorsDB)
@@ -413,4 +414,46 @@ func (r *Repository) ListAllByUserID(ctx context.Context, userID string, sensorF
 	log.Debug(fmt.Sprintf("sensors: %+v", sensorsDB))
 
 	return sensorsPaginated, nil
+}
+
+func (r *Repository) Count(ctx context.Context) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSensorCount)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSensorCount)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Sensors{}).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingSensorCount, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
+}
+
+func (r *Repository) CountAllByUser(ctx context.Context, userID string) (int64, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSensorCountAllByUser)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSensorCountAllByUser)
+
+	var total int64
+	result := r.db.WithContext(ctx).Model(&Sensors{}).
+		Joins("JOIN orchards ON orchards.id = sensors.orchard_id").
+		Where("orchards.user_id = ?", userID).
+		Count(&total)
+
+	if result.Error != nil {
+		return 0, fmt.Errorf("%s: %w", tracingSensorCountAllByUser, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("total: %+v", total))
+
+	return total, nil
 }
