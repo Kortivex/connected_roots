@@ -25,14 +25,16 @@ import (
 const (
 	tracingOrchardHandlers = "http-handler.orchard"
 
-	getCreateOrchardHandlerName  = "http-handler.orchard.get-create-orchard"
-	postCreateOrchardHandlerName = "http-handler.orchard.post-create-orchard"
-	getUpdateOrchardHandlerName  = "http-handler.orchard.get-update-orchard"
-	postUpdateOrchardHandlerName = "http-handler.orchard.post-update-orchard"
-	getViewOrchardHandlerName    = "http-handler.orchard.get-view-orchard"
-	getListOrchardHandlerName    = "http-handler.orchard.get-list-orchards"
-	getDeleteOrchardHandlerName  = "http-handler.orchard.get-delete-orchard"
-	postDeleteOrchardHandlerName = "http-handler.orchard.post-delete-orchard"
+	getCreateOrchardHandlerName   = "http-handler.orchard.get-create-orchard"
+	postCreateOrchardHandlerName  = "http-handler.orchard.post-create-orchard"
+	getUpdateOrchardHandlerName   = "http-handler.orchard.get-update-orchard"
+	postUpdateOrchardHandlerName  = "http-handler.orchard.post-update-orchard"
+	getViewOrchardHandlerName     = "http-handler.orchard.get-view-orchard"
+	getListOrchardHandlerName     = "http-handler.orchard.get-list-orchards"
+	getDeleteOrchardHandlerName   = "http-handler.orchard.get-delete-orchard"
+	postDeleteOrchardHandlerName  = "http-handler.orchard.post-delete-orchard"
+	getViewUserOrchardHandlerName = "http-handler.orchard.get-view-user-orchard"
+	getListUserOrchardHandlerName = "http-handler.orchard.get-list-user-orchards"
 
 	orchardIDParam = "orchard_id"
 )
@@ -493,4 +495,88 @@ func (h *Handlers) PostOrchardDeleteHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusFound, "/admin/orchards/list")
+}
+
+func (h *Handlers) GetUserOrchardViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewUserOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewUserOrchardHandlerName)
+
+	orchardId := c.Param(orchardIDParam)
+	if orchardId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isUser, err := h.sessionSvc.IsUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	orchard, err := h.sdk.ConnectedRootsService.SDK.ObtainUserOrchard(ctx, sess.UserID, orchardId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "user-orchards-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardViewPageI18N(c)), map[string]interface{}{
+			"orchard": orchard,
+		}))
+}
+
+func (h *Handlers) GetUserOrchardsListHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListUserOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(getListUserOrchardHandlerName)
+
+	isUser, err := h.sessionSvc.IsUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	nextCursor := ""
+	if c.QueryParam("next_cursor") != "" {
+		nextCursor = c.QueryParam("next_cursor")
+		log.Debug(fmt.Sprintf("next_cursor: %s", nextCursor))
+	}
+	prevCursor := ""
+	if c.QueryParam("previous_cursor") != "" {
+		prevCursor = c.QueryParam("previous_cursor")
+		log.Debug(fmt.Sprintf("previous_cursor: %s", prevCursor))
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	orchards, pagination, err := h.sdk.ConnectedRootsService.SDK.ObtainUserOrchards(ctx, sess.UserID, "20", nextCursor, prevCursor, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "user-orchards-list.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardListPageI18N(c)), map[string]interface{}{
+			"orchards":   orchards,
+			"pagination": pagination,
+		}))
 }

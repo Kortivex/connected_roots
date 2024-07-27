@@ -55,6 +55,13 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	userActivitiesGrp.GET("/view/:activity_id", activitiesHandler.GetActivityViewHandler, s.SessionMiddleware).Name = "get-view-activity"
 	userActivitiesGrp.GET("/delete/:activity_id", activitiesHandler.GetActivityDeleteHandler, s.SessionMiddleware).Name = "get-delete-activity"
 	userActivitiesGrp.POST("/delete/:activity_id", activitiesHandler.PostActivityDeleteHandler, s.SessionMiddleware).Name = "post-delete-activity"
+	// |
+	// |
+	// + --- Orchard endpoints:
+	userOrchardsHandler := orchard.NewOrchardsHandlers(ctx)
+	userOrchardsGrp := usersGrp.Group("/orchards")
+	userOrchardsGrp.GET("/list", userOrchardsHandler.GetUserOrchardsListHandler, s.SessionMiddleware).Name = "get-list-user-orchards"
+	userOrchardsGrp.GET("/view/:orchard_id", userOrchardsHandler.GetUserOrchardViewHandler, s.SessionMiddleware).Name = "get-view-user-orchard"
 
 	// Admin endpoints:
 	// |
