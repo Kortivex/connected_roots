@@ -23,12 +23,6 @@
                 <input class="form-control" id="name" name="name" type="text" placeholder="{{.update_name_label}}"
                        required="" value="{{ if .activity }}{{ .activity.Name }}{{ end }}">
             </div>
-            <div class="col-md-6">
-                <label class="form-label" for="description">{{.update_description_label}}</label>
-                <input class="form-control" id="description" name="description" type="text"
-                       placeholder="{{.update_location_label}}" required=""
-                       value="{{ if .activity }}{{ .activity.Description }}{{ end }}">
-            </div>
             {{ $activity := .activity }}
             <div class="col-md-6">
                 <label class="form-label" for="orchard-id">{{.update_orchard_label}}</label>
@@ -40,6 +34,12 @@
                         <option value="{{ $orchard.ID }}" {{ if and $activity (eq $activity.OrchardID $orchard.ID) }} selected {{ end }}>{{ $orchard.Name }}</option>
                     {{end}}
                 </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="description">{{.update_description_label}}</label>
+                <textarea class="form-control resize-none" id="description" name="description"
+                          placeholder="{{.update_description_label}}"
+                          rows="3">{{ if .activity }}{{ .activity.Description }}{{ end }}</textarea>
             </div>
             <div class="col-md-12">
                 <button class="btn btn-primary" type="submit">{{.update_button_submit_activity}}</button>

@@ -23,15 +23,15 @@
                            required="" value="{{.activity.Name}}" readonly>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label" for="location">{{.view_description_label}}</label>
-                    <input class="form-control" id="location" name="location" type="text"
-                           placeholder="{{.view_description_label}}" required="" value="{{.activity.Description}}" readonly>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="crop_type">{{.view_orchard_label}}</label>
-                    <input class="form-control" id="crop_type" name="crop_type" type="text"
+                    <label class="form-label" for="orchard">{{.view_orchard_label}}</label>
+                    <input class="form-control" id="orchard" name="orchard" type="text"
                            placeholder="{{.view_orchard_label}}" required="" value="{{.activity.Orchard.Name}}"
                            readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="description">{{.view_description_label}}</label>
+                    <textarea class="form-control resize-none" id="description" name="description"
+                              rows="3" readonly="">{{.activity.Description}}</textarea>
                 </div>
             </div>
         </div>

@@ -22,11 +22,6 @@
                        required="" value="">
             </div>
             <div class="col-md-6">
-                <label class="form-label" for="description">{{.create_description_label}}</label>
-                <input class="form-control" id="description" name="description" type="text"
-                       placeholder="{{.create_description_label}}" required="" value="">
-            </div>
-            <div class="col-md-6">
                 <label class="form-label" for="orchard-id">{{.create_orchard_label}}</label>
                 <select class="form-select" id="orchard-id" name="orchard-id" data-choices="data-choices"
                         data-options='{"allowHTML": true,"duplicateItemsAllowed": false,"removeItemButton":true,"placeholder":true}'
@@ -36,6 +31,11 @@
                         <option value="{{ $orchard.ID }}">{{ $orchard.Name }}</option>
                     {{end}}
                 </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="description">{{.create_description_label}}</label>
+                <textarea class="form-control resize-none" id="description" name="description"
+                          placeholder="{{.create_description_label}}" rows="3"></textarea>
             </div>
             <div class="col-md-12">
                 <button class="btn btn-primary" type="submit">{{.create_button_submit_activity}}</button>
