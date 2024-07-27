@@ -118,6 +118,18 @@ func toDomainSlice(sensors []*Sensors) []*connected_roots.Sensors {
 	return sensorsDomain
 }
 
+func toDomainUserSlice(sensors []*Sensors) []*connected_roots.Sensors {
+	sensorsDomain := []*connected_roots.Sensors{}
+	for _, sensor := range sensors {
+		if sensor.Orchard == nil {
+			continue
+		}
+		sensorDomain := toDomain(sensor)
+		sensorsDomain = append(sensorsDomain, sensorDomain)
+	}
+	return sensorsDomain
+}
+
 func toDB(sensor *connected_roots.Sensors, id string) *Sensors {
 	return &Sensors{
 		ID:              id,

@@ -70,6 +70,8 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// Sensors Data endpoints.
 	sensorsGrp.POST("/:sensor_id/data", sensorsHandler.PostSensorDataHandler).Name = "post-sensor-data"
 	sensorsGrp.GET("/:sensor_id/data", sensorsHandler.ListSensorsDataHandler).Name = "list-sensors-data"
+	// User-Sensors endpoints.
+	usersGrp.GET("/:user_id/sensors", sensorsHandler.ListUserSensorsHandler).Name = "get-user-sensors"
 
 	// Activities endpoints.
 	activitiesHandler := activity.NewActivitiesHandlers(ctx)

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/errors"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/sensor"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/user"
+	"github.com/Kortivex/connected_roots/pkg/utils"
 	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
@@ -24,8 +26,10 @@ const (
 	tracingDeleteSensorHandlers    = "http-handler.sensor.delete-sensor"
 	tracingPostSensorDataHandlers  = "http-handler.sensor.post-sensor-data"
 	tracingListSensorsDataHandlers = "http-handler.sensor.list-sensors-data"
+	tracingListUserSensorHandlers  = "http-handler.sensor.list-user-sensors"
 
 	sensorIDParam = "sensor_id"
+	userIDParam   = "user_id"
 )
 
 type SensorsHandlers struct {
@@ -34,6 +38,7 @@ type SensorsHandlers struct {
 	conf   *config.Config
 	// Services.
 	sensorSvc *sensor.Service
+	userSvc   *user.Service
 }
 
 func NewSensorsHandlers(appCtx *connected_roots.Context) *SensorsHandlers {
@@ -45,6 +50,7 @@ func NewSensorsHandlers(appCtx *connected_roots.Context) *SensorsHandlers {
 		logger:    log,
 		conf:      appCtx.Conf,
 		sensorSvc: sensor.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
+		userSvc:   user.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
 }
 
@@ -196,4 +202,44 @@ func (h *SensorsHandlers) ListSensorsDataHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, sensorsDataRes)
+}
+
+func (h *SensorsHandlers) ListUserSensorsHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingListUserSensorHandlers)
+	defer span.End()
+
+	userID := c.Param(userIDParam)
+	if userID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+	var userRes *connected_roots.Users
+	var err error
+
+	if utils.IsValidEmail(userID) {
+		userRes, err = h.userSvc.ObtainFromEmail(ctx, userID)
+		if err != nil {
+			return errors.NewErrorResponse(c, err)
+		}
+
+		return c.JSON(http.StatusOK, userRes)
+	}
+
+	userRes, err = h.userSvc.ObtainFromID(ctx, userID)
+	if err != nil {
+		return errors.NewErrorResponse(c, err)
+	}
+
+	filters := connected_roots.SensorPaginationFilters{}
+	if err = (&echo.DefaultBinder{}).BindQueryParams(c, &filters); err != nil {
+		err = fmt.Errorf("%s: %w", tracingListUserSensorHandlers, errors.ErrQueryParamInvalidValue)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	sensorsRes, err := h.sensorSvc.ObtainAllByUserID(ctx, userRes.ID, &filters)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingListUserSensorHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, sensorsRes)
 }

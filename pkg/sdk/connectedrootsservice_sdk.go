@@ -40,11 +40,12 @@ const (
 	tracingConnectedRootsServiceObtainUserOrchard  = "connected-roots.obtain-user-orchard"
 	tracingConnectedRootsServiceObtainUserOrchards = "connected-roots.obtain-user-orchards"
 
-	tracingConnectedRootsServiceSaveSensor    = "connected-roots.save-sensor"
-	tracingConnectedRootsServiceUpdateSensor  = "connected-roots.update-sensor"
-	tracingConnectedRootsServiceObtainSensor  = "connected-roots.obtain-sensor"
-	tracingConnectedRootsServiceObtainSensors = "connected-roots.obtain-sensors"
-	tracingConnectedRootsServiceDeleteSensor  = "connected-roots.delete-sensor"
+	tracingConnectedRootsServiceSaveSensor        = "connected-roots.save-sensor"
+	tracingConnectedRootsServiceUpdateSensor      = "connected-roots.update-sensor"
+	tracingConnectedRootsServiceObtainSensor      = "connected-roots.obtain-sensor"
+	tracingConnectedRootsServiceObtainSensors     = "connected-roots.obtain-sensors"
+	tracingConnectedRootsServiceDeleteSensor      = "connected-roots.delete-sensor"
+	tracingConnectedRootsServiceObtainUserSensors = "connected-roots.obtain-user-sensors"
 
 	tracingConnectedRootsServiceSaveActivity     = "connected-roots.save-activity"
 	tracingConnectedRootsServiceUpdateActivity   = "connected-roots.update-activity"
@@ -77,10 +78,11 @@ const (
 	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain user orchard failure"
 	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain user orchards failure"
 
-	ErrMsgConnectedRootsServiceSaveSensorErr    = "saving sensor failure"
-	ErrMsgConnectedRootsServiceUpdateSensorErr  = "updating sensor failure"
-	ErrMsgConnectedRootsServiceObtainSensorErr  = "obtain sensor failure"
-	ErrMsgConnectedRootsServiceObtainSensorsErr = "obtain sensors failure"
+	ErrMsgConnectedRootsServiceSaveSensorErr        = "saving sensor failure"
+	ErrMsgConnectedRootsServiceUpdateSensorErr      = "updating sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorErr      = "obtain sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorsErr     = "obtain sensors failure"
+	ErrMsgConnectedRootsServiceObtainUserSensorsErr = "obtain user sensors failure"
 
 	ErrMsgConnectedRootsServiceSaveActivityErr     = "saving activity failure"
 	ErrMsgConnectedRootsServiceUpdateActivityErr   = "updating activity failure"
@@ -139,6 +141,10 @@ type IConnectedRootsServiceSDK interface {
 	ObtainSensor(ctx context.Context, id string) (*sdk_models.SensorsResponse, error)
 	ObtainSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error)
 	DeleteSensor(ctx context.Context, id string) error
+
+	////////////// USERS - SENSORS //////////////
+
+	ObtainUserSensors(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error)
 
 	////////////// ACTIVITIES //////////////
 
@@ -768,6 +774,37 @@ func (c *ConnectedRootsServiceSDK) DeleteSensor(ctx context.Context, id string) 
 	}
 
 	return nil
+}
+
+////////////// USERS - SENSORS //////////////
+
+func (c *ConnectedRootsServiceSDK) ObtainUserSensors(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) ([]*sdk_models.SensorsResponse, *pagination.Paging, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainUserSensors)
+	defer sp.End()
+
+	resp, err := c.api.GETUserSensors(ctx, userID, limit, nexCursor, prevCursor, names, firmwareVersions, manufacturers, batteryLifes, statuses)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserSensors, err)
+	}
+	if resp.IsError() {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserSensors, resp.Error().(*APIError))
+	}
+
+	respSensors, ok := resp.Result().(*pagination.Pagination)
+	if !ok {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserSensors, errors.New(ErrMsgConnectedRootsServiceObtainUserSensorsErr))
+	}
+
+	sensors := []*sdk_models.SensorsResponse{}
+	sensorsByte, err := json.Marshal(respSensors.Data)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserSensors, err)
+	}
+	if err = json.Unmarshal(sensorsByte, &sensors); err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainUserSensors, err)
+	}
+
+	return sensors, &respSensors.Paging, nil
 }
 
 ////////////// ACTIVITIES //////////////

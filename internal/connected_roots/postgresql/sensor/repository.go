@@ -13,15 +13,16 @@ import (
 )
 
 const (
-	tracingSensor              = "repository-db.sensor"
-	tracingSensorCreate        = "repository-db.sensor.create"
-	tracingSensorUpdate        = "repository-db.sensor.update"
-	tracingSensorGetByID       = "repository-db.sensor.get-by-id"
-	tracingSensorListAllBy     = "repository-db.sensor.list-all-by"
-	tracingSensorDeleteByID    = "repository-db.sensor.delete-by-id"
-	tracingSensorCreateData    = "repository-db.sensor.create-data"
-	tracingSensorGetDataByID   = "repository-db.sensor.get-data-by-id"
-	tracingSensorListAllDataBy = "repository-db.sensor.list-all-data-by"
+	tracingSensor                = "repository-db.sensor"
+	tracingSensorCreate          = "repository-db.sensor.create"
+	tracingSensorUpdate          = "repository-db.sensor.update"
+	tracingSensorGetByID         = "repository-db.sensor.get-by-id"
+	tracingSensorListAllBy       = "repository-db.sensor.list-all-by"
+	tracingSensorDeleteByID      = "repository-db.sensor.delete-by-id"
+	tracingSensorCreateData      = "repository-db.sensor.create-data"
+	tracingSensorGetDataByID     = "repository-db.sensor.get-data-by-id"
+	tracingSensorListAllDataBy   = "repository-db.sensor.list-all-data-by"
+	tracingSensorListAllByUserID = "repository-db.sensor.list-all-user-id"
 )
 
 type Repository struct {
@@ -341,6 +342,75 @@ func (r *Repository) ListAllDataBy(ctx context.Context, sensorDataFilters *conne
 	}
 
 	log.Debug(fmt.Sprintf("sensors data: %+v", sensorsDataDB))
+
+	return sensorsPaginated, nil
+}
+
+func (r *Repository) ListAllByUserID(ctx context.Context, userID string, sensorFilters *connected_roots.SensorPaginationFilters, preloads ...string) (*pagination.Pagination, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSensorListAllByUserID)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSensorListAllByUserID)
+
+	log.Debug(fmt.Sprintf("filters: %+v", sensorFilters))
+
+	rulesBuilder := pagination.SortRulesBuilder{
+		Sorts:               sensorFilters.Sort,
+		ValidateFields:      TableSensorsFields,
+		DBStructAssociation: TableSensorsSortMap,
+		TableName:           TableSensorsName,
+	}
+
+	rules, err := rulesBuilder.ObtainRules()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorListAllByUserID, err)
+	}
+
+	if len(rules) == 0 {
+		rules = append(rules, DefaultSensorRule)
+	}
+
+	pg, err := pagination.CreatePaginator(&sensorFilters.PaginatorParams, rules)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorListAllByUserID, err)
+	}
+
+	var sensorsDB []*Sensors
+	query := r.db.WithContext(ctx).Model(&Sensors{})
+	for _, p := range preloads {
+		if p == "Orchard" {
+			query = query.Preload(p, "user_id = ?", userID)
+		} else {
+			query = query.Preload(p)
+		}
+	}
+	AddSensorFilters(query, &sensorFilters.SensorFilters)
+	query.Find(&sensorsDB)
+
+	result, cursor, err := pg.Paginate(query, &sensorsDB)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorListAllByUserID, err)
+	}
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorListAllByUserID, result.Error)
+	}
+
+	previousCursor, nextCursor, err := pagination.EncodeURLValues(cursor)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorListAllByUserID, err)
+	}
+
+	sensorsPaginated := &pagination.Pagination{
+		Data: toDomainUserSlice(sensorsDB),
+		Paging: pagination.Paging{
+			NextCursor:     nextCursor,
+			PreviousCursor: previousCursor,
+		},
+	}
+
+	log.Debug(fmt.Sprintf("sensors: %+v", sensorsDB))
 
 	return sensorsPaginated, nil
 }

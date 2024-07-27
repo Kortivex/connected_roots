@@ -40,11 +40,12 @@ const (
 	tracingConnectedRootsGetCropTypesAPI   = "connected-roots-service.http-client: get /crop-types"
 	tracingConnectedRootsDeleteCropTypeAPI = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
 
-	tracingConnectedRootsPostSensorAPI   = "connected-roots-service.http-client: post /sensors"
-	tracingConnectedRootsPutSensorAPI    = "connected-roots-service.http-client: put /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorAPI    = "connected-roots-service.http-client: get /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorsAPI   = "connected-roots-service.http-client: get /sensors"
-	tracingConnectedRootsDeleteSensorAPI = "connected-roots-service.http-client: delete /sensors/:sensor_id"
+	tracingConnectedRootsPostSensorAPI     = "connected-roots-service.http-client: post /sensors"
+	tracingConnectedRootsPutSensorAPI      = "connected-roots-service.http-client: put /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorAPI      = "connected-roots-service.http-client: get /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorsAPI     = "connected-roots-service.http-client: get /sensors"
+	tracingConnectedRootsDeleteSensorAPI   = "connected-roots-service.http-client: delete /sensors/:sensor_id"
+	tracingConnectedRootsGetUserSensorsAPI = "connected-roots-service.http-client: get /users/:user_id/sensors"
 
 	tracingConnectedRootsPostActivityAPI   = "connected-roots-service.http-client: post /users/:user_id/activities"
 	tracingConnectedRootsPutActivityAPI    = "connected-roots-service.http-client: put /users/:user_id/activities/:activity_id"
@@ -103,6 +104,10 @@ type IConnectedRootsServiceAPI interface {
 	GETSensor(ctx context.Context, id string) (*resty.Response, error)
 	GETSensors(ctx context.Context, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error)
 	DELETESensor(ctx context.Context, id string) (*resty.Response, error)
+
+	////////////// USERS - SENSORS //////////////
+
+	GETUserSensors(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error)
 
 	////////////// ACTIVITIES //////////////
 
@@ -910,6 +915,62 @@ func (c *ConnectedRootsServiceAPI) DELETESensor(ctx context.Context, id string) 
 		SetContext(ctx).
 		SetError(&APIError{}).
 		Delete(fmt.Sprintf("/sensors/%s", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+////////////// USERS - SENSORS //////////////
+
+func (c *ConnectedRootsServiceAPI) GETUserSensors(ctx context.Context, userID, limit, nexCursor, prevCursor string, names, firmwareVersions, manufacturers, batteryLifes, statuses []string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetUserSensorsAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetUserSensorsAPI)
+
+	log.Debug("request [GET] /users/:user_id/sensors")
+
+	request := c.Rest.Client.R()
+
+	if limit != "" {
+		request.SetQueryParam("limit", limit)
+	}
+
+	if nexCursor != "" {
+		request.SetQueryParam("next_cursor", nexCursor)
+	}
+
+	if prevCursor != "" {
+		request.SetQueryParam("previous_cursor", prevCursor)
+	}
+
+	for _, name := range names {
+		request.SetQueryParam("name[]", name)
+	}
+
+	for _, firmwareVersion := range firmwareVersions {
+		request.SetQueryParam("firmware_version[]", firmwareVersion)
+	}
+
+	for _, manufacturer := range manufacturers {
+		request.SetQueryParam("manufacturer[]", manufacturer)
+	}
+
+	for _, batteryLife := range batteryLifes {
+		request.SetQueryParam("battery_life[]", batteryLife)
+	}
+
+	for _, status := range statuses {
+		request.SetQueryParam("status[]", status)
+	}
+
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&pagination.Pagination{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/users/%s/sensors", userID))
 	if err != nil {
 		return nil, err
 	}

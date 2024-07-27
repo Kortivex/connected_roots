@@ -13,14 +13,15 @@ import (
 )
 
 const (
-	tracingSensor              = "service.sensor"
-	tracingSensorSave          = "service.sensor.save"
-	tracingSensorUpdate        = "service.sensor.update"
-	tracingSensorObtain        = "service.sensor.obtain"
-	tracingSensorObtainAll     = "service.sensor.obtain-all"
-	tracingSensorRemove        = "service.sensor.remove"
-	tracingSensorSaveData      = "service.sensor.save-data"
-	tracingSensorObtainAllData = "service.sensor.obtain-all-data"
+	tracingSensor                  = "service.sensor"
+	tracingSensorSave              = "service.sensor.save"
+	tracingSensorUpdate            = "service.sensor.update"
+	tracingSensorObtain            = "service.sensor.obtain"
+	tracingSensorObtainAll         = "service.sensor.obtain-all"
+	tracingSensorRemove            = "service.sensor.remove"
+	tracingSensorSaveData          = "service.sensor.save-data"
+	tracingSensorObtainAllData     = "service.sensor.obtain-all-data"
+	tracingSensorObtainAllByUserID = "service.sensor.obtain-all-by-user-id"
 )
 
 type Service struct {
@@ -137,4 +138,16 @@ func (s *Service) ObtainAllData(ctx context.Context, filters *connected_roots.Se
 	}
 
 	return sensorsDataRes, nil
+}
+
+func (s *Service) ObtainAllByUserID(ctx context.Context, userID string, filters *connected_roots.SensorPaginationFilters) (*pagination.Pagination, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorObtainAllByUserID)
+	defer span.End()
+
+	sensorsRes, err := s.sensorRep.ListAllByUserID(ctx, userID, filters, []string{"Orchard", "Orchard.User", "Orchard.CropType"}...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorObtainAllByUserID, err)
+	}
+
+	return sensorsRes, nil
 }

@@ -22,14 +22,15 @@ import (
 const (
 	tracingSensorHandlers = "http-handler.sensor"
 
-	getCreateSensorHandlerName  = "http-handler.orchard.get-create-sensor"
-	postCreateSensorHandlerName = "http-handler.orchard.post-create-sensor"
-	getUpdateSensorHandlerName  = "http-handler.orchard.get-update-sensor"
-	postUpdateSensorHandlerName = "http-handler.orchard.post-update-sensor"
-	getViewSensorHandlerName    = "http-handler.orchard.get-view-sensor"
-	getListSensorHandlerName    = "http-handler.orchard.get-list-sensors"
-	getDeleteSensorHandlerName  = "http-handler.orchard.get-delete-sensor"
-	postDeleteSensorHandlerName = "http-handler.orchard.post-delete-sensor"
+	getCreateSensorHandlerName   = "http-handler.orchard.get-create-sensor"
+	postCreateSensorHandlerName  = "http-handler.orchard.post-create-sensor"
+	getUpdateSensorHandlerName   = "http-handler.orchard.get-update-sensor"
+	postUpdateSensorHandlerName  = "http-handler.orchard.post-update-sensor"
+	getViewSensorHandlerName     = "http-handler.orchard.get-view-sensor"
+	getListSensorHandlerName     = "http-handler.orchard.get-list-sensors"
+	getDeleteSensorHandlerName   = "http-handler.orchard.get-delete-sensor"
+	postDeleteSensorHandlerName  = "http-handler.orchard.post-delete-sensor"
+	getListUserSensorHandlerName = "http-handler.orchard.get-list-user-sensors"
 
 	sensorIDParam = "sensor_id"
 )
@@ -406,4 +407,49 @@ func (h *Handlers) PostSensorDeleteHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusFound, "/admin/sensors/list")
+}
+
+func (h *Handlers) GetUserSensorsListHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListUserSensorHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	log := loggerNew.WithTag(getListUserSensorHandlerName)
+
+	isUser, err := h.sessionSvc.IsUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	nextCursor := ""
+	if c.QueryParam("next_cursor") != "" {
+		nextCursor = c.QueryParam("next_cursor")
+		log.Debug(fmt.Sprintf("next_cursor: %s", nextCursor))
+	}
+	prevCursor := ""
+	if c.QueryParam("previous_cursor") != "" {
+		prevCursor = c.QueryParam("previous_cursor")
+		log.Debug(fmt.Sprintf("previous_cursor: %s", prevCursor))
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sensors, pagination, err := h.sdk.ConnectedRootsService.SDK.ObtainUserSensors(ctx, sess.UserID, "20", nextCursor, prevCursor, nil, nil, nil, nil, nil)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "user-sensors-list.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonSensorListPageI18N(c)), map[string]interface{}{
+			"sensors":    sensors,
+			"pagination": pagination,
+		}))
 }
