@@ -1,0 +1,168 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <input hidden="hidden" id="sensor-id" value="{{.data.Sensor.ID}}">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-thermometer-half">
+                    <div class="card-header-icon">
+                        <i class="bi bi-thermometer-half card-icon icon-thermometer-half"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_internal_temperature_label}}</h5>
+                    <p class="card-text text-body-emphasis text-danger"
+                       id="temperature-in">{{.data.TemperatureIn | Round}} °C</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-droplet-half">
+                    <div class="card-header-icon">
+                        <i class="bi bi-droplet-half card-icon icon-droplet-half"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_internal_humidity_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="humidity-in">{{.data.HumidityIn | Round}} %</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-droplet">
+                    <div class="card-header-icon">
+                        <i class="bi bi-moisture card-icon icon-droplet"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_salt_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="salt">{{.data.Salt}} %</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-moisture">
+                    <div class="card-header-icon">
+                        <i class="bi bi-minecart-loaded card-icon icon-moisture"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_soil_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="soil">{{.data.Soil}} %</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-brightness-high">
+                    <div class="card-header-icon">
+                        <i class="bi bi-brightness-high-fill card-icon icon-brightness-high"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_light_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="light">{{.data.Light | Round}} lx</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-graph-up">
+                    <div class="card-header-icon">
+                        <i class="bi bi-graph-up card-icon icon-graph-up"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_altitude_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="altitude">{{.data.Altitude | Round}} m</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-speedometer2">
+                    <div class="card-header-icon">
+                        <i class="bi bi-speedometer2 card-icon icon-speedometer2"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_pressure_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="pressure">{{.data.Pressure | Round}} hPa</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-thermometer-half">
+                    <div class="card-header-icon">
+                        <i class="bi bi-thermometer-sun card-icon icon-thermometer-half"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_external_temperature_label}}</h5>
+                    <p class="card-text text-body-emphasis text-danger"
+                       id="temperature-out">{{.data.TemperatureOut | Round}} °C</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-droplet">
+                    <div class="card-header-icon">
+                        <i class="bi bi-droplet-half card-icon icon-droplet"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_external_humidity_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="humidity-out">{{.data.HumidityOut | Round}} %</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-battery">
+                    <div class="card-header-icon">
+                        <i class="bi bi-battery-half card-icon icon-battery"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_battery_level_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="battery">{{.data.Battery | Round}} %</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-battery-charging">
+                    <div class="card-header-icon">
+                        <i class="bi bi-battery-charging card-icon icon-battery-charging"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.view_voltage_label}}</h5>
+                    <p class="card-text text-body-emphasis" id="battery-level">{{.data.Voltage | Round}} mV</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

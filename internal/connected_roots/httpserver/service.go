@@ -72,23 +72,6 @@ func NewService(name string, ctx *connected_roots.Context) *Service {
 	return srv
 }
 
-// provide This function sets up an Echo server and registers the app's routes, preparing the app to listen for requests.
-func (s *Service) provide() {
-	// Set Config for echo.
-	s.setSetup()
-	// Set Middlewares for echo.
-	s.setMiddlewares()
-
-	s.logger.Debug("Config Loaded")
-
-	// Set all HTTP Routes.
-	s.registerRoutes(s.ctx)
-	s.logger.Debug("Routes Loaded")
-
-	s.logger.Debug("Starting http server")
-	go httpserver.Start(context.Background(), s.Echo, s.Params)
-}
-
 // setSetup apply the standard configuration to the "echo" server.
 func (s *Service) setSetup() {
 	s.Echo.Logger = echoframework.NewLogger(s.logger)
@@ -138,6 +121,15 @@ func (s *Service) setMiddlewares() {
 	if s.conf.App.LogLevel == debug {
 		pprof.Register(s.Echo)
 	}
+
+	s.Echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:                             []string{"*"},
+		AllowMethods:                             []string{http.MethodGet},
+		AllowHeaders:                             []string{echo.HeaderAccessControlAllowOrigin, echo.HeaderAuthorization},
+		AllowCredentials:                         true,
+		UnsafeWildcardOriginWithAllowCredentials: true,
+		ExposeHeaders:                            []string{echo.HeaderAuthorization},
+	}))
 }
 
 func (s *Service) errorHandler() func(err error, c echo.Context) {
@@ -165,6 +157,23 @@ func (s *Service) errorHandler() func(err error, c echo.Context) {
 			return
 		}
 	}
+}
+
+// provide This function sets up an Echo server and registers the app's routes, preparing the app to listen for requests.
+func (s *Service) provide() {
+	// Set Config for echo.
+	s.setSetup()
+	// Set Middlewares for echo.
+	s.setMiddlewares()
+
+	s.logger.Debug("Config Loaded")
+
+	// Set all HTTP Routes.
+	s.registerRoutes(s.ctx)
+	s.logger.Debug("Routes Loaded")
+
+	s.logger.Debug("Starting http server")
+	go httpserver.Start(context.Background(), s.Echo, s.Params)
 }
 
 // Serve method from interface suture.Service to handle Service cycle life.

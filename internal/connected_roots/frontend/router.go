@@ -36,7 +36,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	logoutHandler := logout.NewLogoutHandlers(ctx)
 	s.Echo.GET("/logout", logoutHandler.GetLogoutHandler, s.SessionMiddleware).Name = "get-logout"
 
-	// Users endpoints.
+	// USERS endpoints.
 	usersHandler := user.NewUsersHandlers(ctx)
 	usersGrp := s.Echo.Group("/users")
 	usersGrp.GET("/profile", usersHandler.GetUserProfileHandler, s.SessionMiddleware).Name = "get-user-profile"
@@ -68,8 +68,9 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	userSensorsHandler := sensor.NewSensorsHandlers(ctx)
 	userSensorsGrp := usersGrp.Group("/sensors")
 	userSensorsGrp.GET("/list", userSensorsHandler.GetUserSensorsListHandler, s.SessionMiddleware).Name = "get-list-user-sensors"
+	userSensorsGrp.GET("/view/:sensor_id/data", userSensorsHandler.GetUserSensorDataViewHandler, s.SessionMiddleware).Name = "get-view-user-sensor-data"
 
-	// Admin endpoints:
+	// ADMIN endpoints:
 	// |
 	// |
 	adminGrp := s.Echo.Group("/admin")

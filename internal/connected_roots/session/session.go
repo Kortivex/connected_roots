@@ -192,6 +192,15 @@ func (s *Service) IsAdminTechnicalUser(ctx context.Context, c echo.Context) (boo
 	return sn.RoleID == s.conf.Roles.Protected[0] || sn.RoleID == s.conf.Roles.Protected[1] || sn.RoleID == s.conf.Roles.Protected[2], nil
 }
 
+func (s *Service) IsTechnicalUser(ctx context.Context, c echo.Context) (bool, error) {
+	sn, err := s.Obtain(ctx, c)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", tracingSessionIsUser, err)
+	}
+
+	return sn.RoleID == s.conf.Roles.Protected[1] || sn.RoleID == s.conf.Roles.Protected[2], nil
+}
+
 func (s *Service) CountAll(ctx context.Context) (*connected_roots.TotalSessions, error) {
 	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSessionCountAll)
 	defer span.End()

@@ -73,3 +73,21 @@ func (or *SensorsResponse) ToSensorBody() *SensorsBody {
 type TotalSensorsResponse struct {
 	Total int64 `json:"total"`
 }
+
+type SensorsDataResponse struct {
+	ID             string           `json:"id"`
+	Voltage        float64          `json:"voltage"`
+	Battery        float64          `json:"battery"`
+	Soil           int              `json:"soil"`
+	Salt           int              `json:"salt"`
+	Light          float64          `json:"light"`
+	TemperatureIn  float64          `json:"temperature_in"`
+	TemperatureOut float64          `json:"temperature_out"`
+	HumidityIn     float64          `json:"humidity_in"`
+	HumidityOut    float64          `json:"humidity_out"`
+	Pressure       float64          `json:"pressure"`
+	Altitude       float64          `json:"altitude"`
+	SensorID       string           `json:"sensor_id"`
+	Sensor         *SensorsResponse `json:"sensor,omitempty"`
+	CreatedAt      time.Time        `json:"created_at"`
+}

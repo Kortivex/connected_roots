@@ -48,6 +48,7 @@ const (
 	tracingConnectedRootsPostSensorAPI         = "connected-roots-service.http-client: post /sensors"
 	tracingConnectedRootsPutSensorAPI          = "connected-roots-service.http-client: put /sensors/:sensor_id"
 	tracingConnectedRootsGetSensorAPI          = "connected-roots-service.http-client: get /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorLastDataAPI  = "connected-roots-service.http-client: get /sensors/:sensor_id/last-data"
 	tracingConnectedRootsGetSensorsAPI         = "connected-roots-service.http-client: get /sensors"
 	tracingConnectedRootsDeleteSensorAPI       = "connected-roots-service.http-client: delete /sensors/:sensor_id"
 	tracingConnectedRootsGetUserSensorsAPI     = "connected-roots-service.http-client: get /users/:user_id/sensors"
@@ -1081,6 +1082,27 @@ func (c *ConnectedRootsServiceAPI) GETUserSensorCount(ctx context.Context, userI
 		SetResult(&sdk_models.TotalSensorsResponse{}).
 		SetError(&APIError{}).
 		Get(fmt.Sprintf("/users/%s/sensors/count", userID))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETSensorLastData(ctx context.Context, id string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetSensorLastDataAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetSensorLastDataAPI)
+
+	log.Debug("request [GET] /sensors/:sensor_id/last-data")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult(&sdk_models.SensorsDataResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/sensors/%s/last-data", id))
 	if err != nil {
 		return nil, err
 	}

@@ -295,6 +295,7 @@ const (
 	PagesAdminSensorsListOrchardIDLabel       = "pages.admin.sensors.list_orchard_id_label"
 	PagesAdminSensorsListActionsLabel         = "pages.admin.sensors.list_actions_label"
 	PagesAdminSensorsListActionsViewLabel     = "pages.admin.sensors.list_actions_view_label"
+	PagesAdminSensorsListUserActionsViewLabel = "pages.admin.sensors.list_actions_user_view_label"
 	PagesAdminSensorsListActionsEditLabel     = "pages.admin.sensors.list_actions_edit_label"
 	PagesAdminSensorsListActionsRemoveLabel   = "pages.admin.sensors.list_actions_remove_label"
 	PagesAdminSensorsListNextLabel            = "pages.admin.sensors.list_next_label"
@@ -391,6 +392,18 @@ const (
 	PagesUserActivitiesDeleteWarningTitle         = "pages.user.activities.delete_warning_title"
 	PagesUserActivitiesDeleteWarningMessage       = "pages.user.activities.delete_warning_message"
 	PagesUserActivitiesDeleteButtonSubmitActivity = "pages.user.activities.delete_button_submit_activity"
+
+	PagesUserSensorsViewInternalTemperatureLabel = "pages.user.sensors.view_internal_temperature_label"
+	PagesUserSensorsViewInternalHumidityLabel    = "pages.user.sensors.view_internal_humidity_label"
+	PagesUserSensorsViewExternalTemperatureLabel = "pages.user.sensors.view_external_temperature_label"
+	PagesUserSensorsViewExternalHumidityLabel    = "pages.user.sensors.view_external_humidity_label"
+	PagesUserSensorsViewSoilLabel                = "pages.user.sensors.view_soil_label"
+	PagesUserSensorsViewSaltLabel                = "pages.user.sensors.view_salt_label"
+	PagesUserSensorsViewLightLabel               = "pages.user.sensors.view_light_label"
+	PagesUserSensorsViewAltitudeLabel            = "pages.user.sensors.view_altitude_label"
+	PagesUserSensorsViewPressureLabel            = "pages.user.sensors.view_pressure_label"
+	PagesUserSensorsViewBatteryLevelLabel        = "pages.user.sensors.view_battery_level_label"
+	PagesUserSensorsViewVoltageLabel             = "pages.user.sensors.view_voltage_label"
 
 	PagesCommonSiteTitle = "pages.common.site_title"
 

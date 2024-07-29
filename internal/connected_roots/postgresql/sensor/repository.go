@@ -13,18 +13,19 @@ import (
 )
 
 const (
-	tracingSensor                = "repository-db.sensor"
-	tracingSensorCreate          = "repository-db.sensor.create"
-	tracingSensorUpdate          = "repository-db.sensor.update"
-	tracingSensorGetByID         = "repository-db.sensor.get-by-id"
-	tracingSensorListAllBy       = "repository-db.sensor.list-all-by"
-	tracingSensorDeleteByID      = "repository-db.sensor.delete-by-id"
-	tracingSensorCreateData      = "repository-db.sensor.create-data"
-	tracingSensorGetDataByID     = "repository-db.sensor.get-data-by-id"
-	tracingSensorListAllDataBy   = "repository-db.sensor.list-all-data-by"
-	tracingSensorListAllByUserID = "repository-db.sensor.list-all-user-id"
-	tracingSensorCount           = "repository-db.sensor.count"
-	tracingSensorCountAllByUser  = "repository-db.sensor.count-all-by-user"
+	tracingSensor                  = "repository-db.sensor"
+	tracingSensorCreate            = "repository-db.sensor.create"
+	tracingSensorUpdate            = "repository-db.sensor.update"
+	tracingSensorGetByID           = "repository-db.sensor.get-by-id"
+	tracingSensorListAllBy         = "repository-db.sensor.list-all-by"
+	tracingSensorDeleteByID        = "repository-db.sensor.delete-by-id"
+	tracingSensorCreateData        = "repository-db.sensor.create-data"
+	tracingSensorGetDataByID       = "repository-db.sensor.get-data-by-id"
+	tracingSensorGetLatestDataByID = "repository-db.sensor.get-latest-data-by-id"
+	tracingSensorListAllDataBy     = "repository-db.sensor.list-all-data-by"
+	tracingSensorListAllByUserID   = "repository-db.sensor.list-all-user-id"
+	tracingSensorCount             = "repository-db.sensor.count"
+	tracingSensorCountAllByUser    = "repository-db.sensor.count-all-by-user"
 )
 
 type Repository struct {
@@ -276,6 +277,34 @@ func (r *Repository) GetDataByID(ctx context.Context, id string) (*connected_roo
 
 	if result.Error == nil && result.RowsAffected == 0 {
 		return nil, fmt.Errorf("%s: %w", tracingSensorGetByID, gorm.ErrRecordNotFound)
+	}
+
+	log.Debug(fmt.Sprintf("sensor data: %+v", sensorDataDB))
+
+	return toDomainData(sensorDataDB), nil
+}
+
+func (r *Repository) GetLatestDataByID(ctx context.Context, id string) (*connected_roots.SensorsData, error) {
+	_, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSensorGetLatestDataByID)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSensorGetLatestDataByID)
+
+	log.Debug(fmt.Sprintf("sensor id: %+v", id))
+
+	sensorDataDB := &SensorsData{}
+	result := r.db.WithContext(ctx).Model(&SensorsData{}).
+		Preload("Sensor").
+		Where("sensor_id = ?", id).
+		Last(&sensorDataDB)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorGetLatestDataByID, result.Error)
+	}
+
+	if result.Error == nil && result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s: %w", tracingSensorGetLatestDataByID, gorm.ErrRecordNotFound)
 	}
 
 	log.Debug(fmt.Sprintf("sensor data: %+v", sensorDataDB))

@@ -24,6 +24,7 @@ const (
 	tracingGetSensorHandlers           = "http-handler.sensor.get-sensor"
 	tracingListSensorHandlers          = "http-handler.sensor.list-sensors"
 	tracingDeleteSensorHandlers        = "http-handler.sensor.delete-sensor"
+	tracingGetSensorLastDataHandlers   = "http-handler.sensor.get-sensor-last-data"
 	tracingPostSensorDataHandlers      = "http-handler.sensor.post-sensor-data"
 	tracingListSensorsDataHandlers     = "http-handler.sensor.list-sensors-data"
 	tracingListUserSensorHandlers      = "http-handler.sensor.list-user-sensors"
@@ -185,6 +186,24 @@ func (h *SensorsHandlers) PostSensorDataHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, sensorDataRes)
+}
+
+func (h *SensorsHandlers) GetSensorLastDataHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetSensorLastDataHandlers)
+	defer span.End()
+
+	sensorID := c.Param(sensorIDParam)
+	if sensorID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	sensorDataRes, err := h.sensorSvc.ObtainLatestData(ctx, sensorID)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingGetSensorLastDataHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, sensorDataRes)
 }
 
 func (h *SensorsHandlers) ListSensorsDataHandler(c echo.Context) error {

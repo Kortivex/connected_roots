@@ -531,7 +531,7 @@ func (h *Handlers) GetUserOrchardViewHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "user-orchards-view.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardViewPageI18N(c)), map[string]interface{}{
+			CommonOrchardUserViewPageI18N(c)), map[string]interface{}{
 			"orchard": orchard,
 		}))
 }
@@ -575,7 +575,7 @@ func (h *Handlers) GetUserOrchardsListHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "user-orchards-list.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonOrchardListPageI18N(c)), map[string]interface{}{
+			CommonOrchardUserListPageI18N(c)), map[string]interface{}{
 			"orchards":   orchards,
 			"pagination": pagination,
 		}))

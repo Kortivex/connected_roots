@@ -22,15 +22,16 @@ import (
 const (
 	tracingSensorHandlers = "http-handler.sensor"
 
-	getCreateSensorHandlerName   = "http-handler.orchard.get-create-sensor"
-	postCreateSensorHandlerName  = "http-handler.orchard.post-create-sensor"
-	getUpdateSensorHandlerName   = "http-handler.orchard.get-update-sensor"
-	postUpdateSensorHandlerName  = "http-handler.orchard.post-update-sensor"
-	getViewSensorHandlerName     = "http-handler.orchard.get-view-sensor"
-	getListSensorHandlerName     = "http-handler.orchard.get-list-sensors"
-	getDeleteSensorHandlerName   = "http-handler.orchard.get-delete-sensor"
-	postDeleteSensorHandlerName  = "http-handler.orchard.post-delete-sensor"
-	getListUserSensorHandlerName = "http-handler.orchard.get-list-user-sensors"
+	getCreateSensorHandlerName       = "http-handler.orchard.get-create-sensor"
+	postCreateSensorHandlerName      = "http-handler.orchard.post-create-sensor"
+	getUpdateSensorHandlerName       = "http-handler.orchard.get-update-sensor"
+	postUpdateSensorHandlerName      = "http-handler.orchard.post-update-sensor"
+	getViewSensorHandlerName         = "http-handler.orchard.get-view-sensor"
+	getListSensorHandlerName         = "http-handler.orchard.get-list-sensors"
+	getDeleteSensorHandlerName       = "http-handler.orchard.get-delete-sensor"
+	postDeleteSensorHandlerName      = "http-handler.orchard.post-delete-sensor"
+	getListUserSensorHandlerName     = "http-handler.orchard.get-list-user-sensors"
+	getViewUserSensorDataHandlerName = "http-handler.orchard.get-view-user-sensor-data"
 
 	sensorIDParam = "sensor_id"
 )
@@ -448,8 +449,47 @@ func (h *Handlers) GetUserSensorsListHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "user-sensors-list.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonSensorListPageI18N(c)), map[string]interface{}{
+			CommonSensorUserListPageI18N(c)), map[string]interface{}{
 			"sensors":    sensors,
 			"pagination": pagination,
+		}))
+}
+
+func (h *Handlers) GetUserSensorDataViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewUserSensorDataHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewUserSensorDataHandlerName)
+
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isUser, err := h.sessionSvc.IsUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	sensorData, err := h.sdk.ConnectedRootsService.SDK.ObtainSensorLastData(ctx, sensorId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "user-sensors-data-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonSensorDataViewPageI18N(c)), map[string]interface{}{
+			"data": sensorData,
 		}))
 }

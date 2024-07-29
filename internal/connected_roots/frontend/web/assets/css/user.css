@@ -1,2 +1,98 @@
 /* prettier-ignore */
+.card-icon {
+    font-size: 2.7rem;
+}
+
+.card-text {
+    font-size: 1.25rem;
+}
+
+.card-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 10px;
+}
+
+.bg-battery {
+    background-color: #E8F5E9;
+}
+
+.bg-battery-charging {
+    background-color: #FFF8E1;
+}
+
+.bg-droplet {
+    background-color: #E3F2FD;
+}
+
+.bg-moisture {
+    background-color: #EFEBE9;
+}
+
+.bg-brightness-high {
+    background-color: #FCFAF1;
+}
+
+.bg-thermometer-half {
+    background-color: #FFEBEE;
+}
+
+.bg-graph-up {
+    background-color: #F3E5F5;
+}
+
+.bg-speedometer2 {
+    background-color: #E8EAF6;
+}
+
+.bg-droplet-half {
+    background-color: #E0F7FA;
+}
+
+.bg-toggles2 {
+    background-color: #ECEFF1;
+}
+
+.icon-battery {
+    color: #4CAF50;
+}
+
+.icon-battery-charging {
+    color: #FFC107;
+}
+
+.icon-droplet {
+    color: #2196F3;
+}
+
+.icon-moisture {
+    color: #795548;
+}
+
+.icon-brightness-high {
+    color: #FFEB3B;
+}
+
+.icon-thermometer-half {
+    color: #F44336;
+}
+
+.icon-graph-up {
+    color: #9C27B0;
+}
+
+.icon-speedometer2 {
+    color: #3F51B5;
+}
+
+.icon-droplet-half {
+    color: #00BCD4;
+}
+
+.icon-toggles2 {
+    color: #607D8B;
+}
+
 /*# sourceMappingURL=user.css.map */

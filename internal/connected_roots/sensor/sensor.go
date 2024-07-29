@@ -20,6 +20,7 @@ const (
 	tracingSensorObtainAll         = "service.sensor.obtain-all"
 	tracingSensorRemove            = "service.sensor.remove"
 	tracingSensorSaveData          = "service.sensor.save-data"
+	tracingSensorObtainLatestData  = "service.sensor.obtain-latest-data"
 	tracingSensorObtainAllData     = "service.sensor.obtain-all-data"
 	tracingSensorObtainAllByUserID = "service.sensor.obtain-all-by-user-id"
 	tracingSensorCountAll          = "service.sensor.count-all"
@@ -125,6 +126,18 @@ func (s *Service) SaveData(ctx context.Context, sensorData *connected_roots.Sens
 	sensorDataRes, err = s.sensorRep.GetDataByID(ctx, sensorDataRes.ID)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", tracingSensorSaveData, err)
+	}
+
+	return sensorDataRes, nil
+}
+
+func (s *Service) ObtainLatestData(ctx context.Context, id string) (*connected_roots.SensorsData, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorObtainLatestData)
+	defer span.End()
+
+	sensorDataRes, err := s.sensorRep.GetLatestDataByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorObtainLatestData, err)
 	}
 
 	return sensorDataRes, nil

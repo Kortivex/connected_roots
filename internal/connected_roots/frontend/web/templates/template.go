@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,6 +29,7 @@ func ParseTemplates(path string) (*template.Template, error) {
 	t.Funcs(template.FuncMap{
 		"ToUpper": strings.ToUpper,
 		"ToLower": strings.ToLower,
+		"Round":   Round,
 	})
 	err := filepath.Walk(path, func(path string, _ os.FileInfo, err error) error {
 		if strings.Contains(path, ".gohtml") {
@@ -43,4 +45,8 @@ func ParseTemplates(path string) (*template.Template, error) {
 	}
 
 	return t, nil
+}
+
+func Round(value float64) float64 {
+	return math.Round(value*100) / 100
 }
