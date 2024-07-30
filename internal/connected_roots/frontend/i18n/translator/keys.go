@@ -295,6 +295,7 @@ const (
 	PagesAdminSensorsListOrchardIDLabel       = "pages.admin.sensors.list_orchard_id_label"
 	PagesAdminSensorsListActionsLabel         = "pages.admin.sensors.list_actions_label"
 	PagesAdminSensorsListActionsViewLabel     = "pages.admin.sensors.list_actions_view_label"
+	PagesAdminSensorsListActionsViewDataLabel = "pages.admin.sensors.list_actions_view_data_label"
 	PagesAdminSensorsListUserActionsViewLabel = "pages.admin.sensors.list_actions_user_view_label"
 	PagesAdminSensorsListActionsEditLabel     = "pages.admin.sensors.list_actions_edit_label"
 	PagesAdminSensorsListActionsRemoveLabel   = "pages.admin.sensors.list_actions_remove_label"

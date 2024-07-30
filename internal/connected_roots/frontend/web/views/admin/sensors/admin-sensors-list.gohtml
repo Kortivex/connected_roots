@@ -51,6 +51,7 @@
                 </thead>
                 <tbody class="list">
                 {{$view_label := .list_actions_view_label}}
+                {{$view_data_label := .list_actions_view_data_label}}
                 {{$edit_label := .list_actions_edit_label}}
                 {{$remove_label := .list_actions_remove_label}}
                 {{range $sensor :=.sensors}}
@@ -73,6 +74,8 @@
                                     <span class="fas fa-ellipsis-h fs-10"></span>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end py-2" style="">
+                                    <a class="dropdown-item"
+                                       href="/admin/sensors/view/{{$sensor.ID}}/data">{{$view_data_label}}</a>
                                     <a class="dropdown-item"
                                        href="/admin/sensors/view/{{$sensor.ID}}">{{$view_label}}</a>
                                     <a class="dropdown-item"

@@ -78,6 +78,7 @@ func CommonSensorListPageI18N(c echo.Context) map[string]interface{} {
 		"list_orchard_id_version_label": translator.T(c, translator.PagesAdminSensorsListOrchardIDLabel),
 		"list_actions_label":            translator.T(c, translator.PagesAdminSensorsListActionsLabel),
 		"list_actions_view_label":       translator.T(c, translator.PagesAdminSensorsListActionsViewLabel),
+		"list_actions_view_data_label":  translator.T(c, translator.PagesAdminSensorsListActionsViewDataLabel),
 		"list_actions_edit_label":       translator.T(c, translator.PagesAdminSensorsListActionsEditLabel),
 		"list_actions_remove_label":     translator.T(c, translator.PagesAdminSensorsListActionsRemoveLabel),
 		"list_next_label":               translator.T(c, translator.PagesAdminSensorsListNextLabel),
@@ -123,6 +124,25 @@ func CommonSensorUserListPageI18N(c echo.Context) map[string]interface{} {
 }
 
 func CommonSensorDataViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                      translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                           translator.T(c, translator.PagesAdminSensorsViewTitle),
+		"active":                          "sensors-management",
+		"view_internal_temperature_label": translator.T(c, translator.PagesUserSensorsViewInternalTemperatureLabel),
+		"view_internal_humidity_label":    translator.T(c, translator.PagesUserSensorsViewInternalHumidityLabel),
+		"view_external_temperature_label": translator.T(c, translator.PagesUserSensorsViewExternalTemperatureLabel),
+		"view_external_humidity_label":    translator.T(c, translator.PagesUserSensorsViewExternalHumidityLabel),
+		"view_soil_label":                 translator.T(c, translator.PagesUserSensorsViewSoilLabel),
+		"view_salt_label":                 translator.T(c, translator.PagesUserSensorsViewSaltLabel),
+		"view_light_label":                translator.T(c, translator.PagesUserSensorsViewLightLabel),
+		"view_altitude_label":             translator.T(c, translator.PagesUserSensorsViewAltitudeLabel),
+		"view_pressure_label":             translator.T(c, translator.PagesUserSensorsViewPressureLabel),
+		"view_battery_level_label":        translator.T(c, translator.PagesUserSensorsViewBatteryLevelLabel),
+		"view_voltage_label":              translator.T(c, translator.PagesUserSensorsViewVoltageLabel),
+	}
+}
+
+func CommonUserSensorDataViewPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
 		"site_title":                      translator.T(c, translator.PagesCommonSiteTitle),
 		"title":                           translator.T(c, translator.PagesAdminSensorsViewTitle),

@@ -16,6 +16,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -27,6 +28,7 @@ const (
 	getUpdateSensorHandlerName       = "http-handler.orchard.get-update-sensor"
 	postUpdateSensorHandlerName      = "http-handler.orchard.post-update-sensor"
 	getViewSensorHandlerName         = "http-handler.orchard.get-view-sensor"
+	getViewSensorDataHandlerName     = "http-handler.orchard.get-view-sensor-data"
 	getListSensorHandlerName         = "http-handler.orchard.get-list-sensors"
 	getDeleteSensorHandlerName       = "http-handler.orchard.get-delete-sensor"
 	postDeleteSensorHandlerName      = "http-handler.orchard.post-delete-sensor"
@@ -278,6 +280,48 @@ func (h *Handlers) GetSensorViewHandler(c echo.Context) error {
 		}))
 }
 
+func (h *Handlers) GetSensorDataViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewUserSensorDataHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getViewUserSensorDataHandlerName)
+
+	sensorId := c.Param(sensorIDParam)
+	if sensorId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdminTech, err := h.sessionSvc.IsAdminTechnical(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdminTech {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	sensorData, err := h.sdk.ConnectedRootsService.SDK.ObtainSensorLastData(ctx, sensorId)
+	if err != nil {
+		if !strings.Contains(err.Error(), gorm.ErrRecordNotFound.Error()) {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+		sensorData = &sdk_models.SensorsDataResponse{}
+	}
+
+	return c.Render(http.StatusOK, "admin-sensors-data-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonSensorDataViewPageI18N(c)), map[string]interface{}{
+			"data": sensorData,
+		}))
+}
+
 func (h *Handlers) GetSensorsListHandler(c echo.Context) error {
 	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getListSensorHandlerName)
 	defer span.End()
@@ -483,13 +527,16 @@ func (h *Handlers) GetUserSensorDataViewHandler(c echo.Context) error {
 
 	sensorData, err := h.sdk.ConnectedRootsService.SDK.ObtainSensorLastData(ctx, sensorId)
 	if err != nil {
-		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		if !strings.Contains(err.Error(), gorm.ErrRecordNotFound.Error()) {
+			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+		}
+		sensorData = &sdk_models.SensorsDataResponse{}
 	}
 
 	return c.Render(http.StatusOK, "user-sensors-data-view.gohtml",
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
-			CommonSensorDataViewPageI18N(c)), map[string]interface{}{
+			CommonUserSensorDataViewPageI18N(c)), map[string]interface{}{
 			"data": sensorData,
 		}))
 }

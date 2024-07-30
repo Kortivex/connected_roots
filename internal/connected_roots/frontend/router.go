@@ -138,6 +138,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminSensorsGrp.GET("/view/:sensor_id", sensorsHandler.GetSensorViewHandler, s.SessionMiddleware).Name = "get-view-sensor"
 	adminSensorsGrp.GET("/delete/:sensor_id", sensorsHandler.GetSensorDeleteHandler, s.SessionMiddleware).Name = "get-delete-sensor"
 	adminSensorsGrp.POST("/delete/:sensor_id", sensorsHandler.PostSensorDeleteHandler, s.SessionMiddleware).Name = "post-delete-sensor"
+	adminSensorsGrp.GET("/view/:sensor_id/data", sensorsHandler.GetSensorDataViewHandler, s.SessionMiddleware).Name = "get-view-sensor-data"
 
 	// Health endpoints.
 	healthGrp := s.Echo.Group("/health")

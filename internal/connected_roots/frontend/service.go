@@ -144,6 +144,8 @@ func (s *Service) setSetup() {
 	s.Echo.Static("/admin/sensors/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/sensors/edit/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/sensors/view/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/view/:sensor_id/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/sensors/view/:sensor_id/data/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/sensors/delete/assets", s.conf.Frontend.Assets)
 	s.Echo.Renderer = &templates.TemplateRenderer{
 		Templates: template.Must(templates.ParseTemplates(s.conf.Frontend.Templates)),
