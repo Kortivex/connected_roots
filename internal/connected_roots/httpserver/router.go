@@ -80,6 +80,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	// User-Sensors endpoints.
 	usersGrp.GET("/:user_id/sensors", sensorsHandler.ListUserSensorsHandler).Name = "get-user-sensors"
 	usersGrp.GET("/:user_id/sensors/count", sensorsHandler.GetCountUserSensorsHandler).Name = "get-user-count-sensors"
+	orchardsGrp.GET("/:orchard_id/sensors/average", sensorsHandler.GetSensorWeekdayAverageDataHandler).Name = "get-user-sensor-weekday-average-data"
 
 	// Activities endpoints.
 	activitiesHandler := activity.NewActivitiesHandlers(ctx)

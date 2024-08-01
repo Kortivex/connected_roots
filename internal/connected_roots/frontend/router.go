@@ -112,6 +112,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	adminOrchardsGrp.GET("/view/:orchard_id", orchardsHandler.GetOrchardViewHandler, s.SessionMiddleware).Name = "get-view-orchard"
 	adminOrchardsGrp.GET("/delete/:orchard_id", orchardsHandler.GetOrchardDeleteHandler, s.SessionMiddleware).Name = "get-delete-orchard"
 	adminOrchardsGrp.POST("/delete/:orchard_id", orchardsHandler.PostOrchardDeleteHandler, s.SessionMiddleware).Name = "post-delete-orchard"
+	adminOrchardsGrp.GET("/report/:orchard_id", orchardsHandler.GetOrchardReportHandler, s.SessionMiddleware).Name = "get-report-orchard"
 	// |
 	// |
 	// + --- CropTypes endpoints:

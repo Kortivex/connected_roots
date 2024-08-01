@@ -65,24 +65,55 @@ func CommonOrchardViewPageI18N(c echo.Context) map[string]interface{} {
 	}
 }
 
+func CommonOrchardViewReportPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title": translator.T(c, translator.PagesCommonSiteTitle),
+		"title":      translator.T(c, translator.PagesOrchardsViewReportTitle),
+		"active":     "orchards-management",
+		"days_of_week": []string{
+			translator.T(c, translator.PagesOrchardsMonday),
+			translator.T(c, translator.PagesOrchardsTuesday),
+			translator.T(c, translator.PagesOrchardsWednesday),
+			translator.T(c, translator.PagesOrchardsThursday),
+			translator.T(c, translator.PagesOrchardsFriday),
+			translator.T(c, translator.PagesOrchardsSaturday),
+			translator.T(c, translator.PagesOrchardsSunday),
+		},
+		"chart_titles": []string{
+			translator.T(c, translator.PagesOrchardTemperature),
+			translator.T(c, translator.PagesOrchardHumidity),
+			translator.T(c, translator.PagesOrchardSoil),
+			translator.T(c, translator.PagesOrchardSalt),
+			translator.T(c, translator.PagesOrchardLight),
+			translator.T(c, translator.PagesOrchardAltitude),
+			translator.T(c, translator.PagesOrchardPressure),
+		},
+		"chart_legend": []string{
+			translator.T(c, translator.PagesOrchardInternal),
+			translator.T(c, translator.PagesOrchardExternal),
+		},
+	}
+}
+
 func CommonOrchardListPageI18N(c echo.Context) map[string]interface{} {
 	return map[string]interface{}{
-		"site_title":                 translator.T(c, translator.PagesCommonSiteTitle),
-		"title":                      translator.T(c, translator.PagesAdminOrchardsListTitle),
-		"active":                     "orchards-management",
-		"breadcrumb_orchards":        translator.T(c, translator.BreadcrumbOrchards),
-		"breadcrumb_list_orchards":   translator.T(c, translator.BreadcrumbListOrchards),
-		"list_button_create_orchard": translator.T(c, translator.PagesAdminOrchardsListButtonCreateOrchard),
-		"list_name_label":            translator.T(c, translator.PagesAdminOrchardsListNameLabel),
-		"list_location_label":        translator.T(c, translator.PagesAdminOrchardsListLocationLabel),
-		"list_user_label":            translator.T(c, translator.PagesAdminOrchardsListUserLabel),
-		"list_crop_type_label":       translator.T(c, translator.PagesAdminOrchardsListCropTypeLabel),
-		"list_actions_label":         translator.T(c, translator.PagesAdminOrchardsListActionsLabel),
-		"list_actions_view_label":    translator.T(c, translator.PagesAdminOrchardsListActionsViewLabel),
-		"list_actions_edit_label":    translator.T(c, translator.PagesAdminOrchardsListActionsEditLabel),
-		"list_actions_remove_label":  translator.T(c, translator.PagesAdminOrchardsListActionsRemoveLabel),
-		"list_next_label":            translator.T(c, translator.PagesAdminOrchardsListNextLabel),
-		"list_previous_label":        translator.T(c, translator.PagesAdminOrchardsListPreviousLabel),
+		"site_title":                     translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                          translator.T(c, translator.PagesAdminOrchardsListTitle),
+		"active":                         "orchards-management",
+		"breadcrumb_orchards":            translator.T(c, translator.BreadcrumbOrchards),
+		"breadcrumb_list_orchards":       translator.T(c, translator.BreadcrumbListOrchards),
+		"list_button_create_orchard":     translator.T(c, translator.PagesAdminOrchardsListButtonCreateOrchard),
+		"list_name_label":                translator.T(c, translator.PagesAdminOrchardsListNameLabel),
+		"list_location_label":            translator.T(c, translator.PagesAdminOrchardsListLocationLabel),
+		"list_user_label":                translator.T(c, translator.PagesAdminOrchardsListUserLabel),
+		"list_crop_type_label":           translator.T(c, translator.PagesAdminOrchardsListCropTypeLabel),
+		"list_actions_label":             translator.T(c, translator.PagesAdminOrchardsListActionsLabel),
+		"list_actions_view_label":        translator.T(c, translator.PagesAdminOrchardsListActionsViewLabel),
+		"list_actions_view_report_label": translator.T(c, translator.PagesAdminOrchardsListActionsViewReportLabel),
+		"list_actions_edit_label":        translator.T(c, translator.PagesAdminOrchardsListActionsEditLabel),
+		"list_actions_remove_label":      translator.T(c, translator.PagesAdminOrchardsListActionsRemoveLabel),
+		"list_next_label":                translator.T(c, translator.PagesAdminOrchardsListNextLabel),
+		"list_previous_label":            translator.T(c, translator.PagesAdminOrchardsListPreviousLabel),
 	}
 }
 

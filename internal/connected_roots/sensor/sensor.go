@@ -13,18 +13,19 @@ import (
 )
 
 const (
-	tracingSensor                  = "service.sensor"
-	tracingSensorSave              = "service.sensor.save"
-	tracingSensorUpdate            = "service.sensor.update"
-	tracingSensorObtain            = "service.sensor.obtain"
-	tracingSensorObtainAll         = "service.sensor.obtain-all"
-	tracingSensorRemove            = "service.sensor.remove"
-	tracingSensorSaveData          = "service.sensor.save-data"
-	tracingSensorObtainLatestData  = "service.sensor.obtain-latest-data"
-	tracingSensorObtainAllData     = "service.sensor.obtain-all-data"
-	tracingSensorObtainAllByUserID = "service.sensor.obtain-all-by-user-id"
-	tracingSensorCountAll          = "service.sensor.count-all"
-	tracingSensorCountAllByUser    = "service.sensor.count-all-by-user"
+	tracingSensor                     = "service.sensor"
+	tracingSensorSave                 = "service.sensor.save"
+	tracingSensorUpdate               = "service.sensor.update"
+	tracingSensorObtain               = "service.sensor.obtain"
+	tracingSensorObtainAll            = "service.sensor.obtain-all"
+	tracingSensorRemove               = "service.sensor.remove"
+	tracingSensorSaveData             = "service.sensor.save-data"
+	tracingSensorObtainLatestData     = "service.sensor.obtain-latest-data"
+	tracingSensorObtainAllData        = "service.sensor.obtain-all-data"
+	tracingSensorObtainAllByUserID    = "service.sensor.obtain-all-by-user-id"
+	tracingSensorCountAll             = "service.sensor.count-all"
+	tracingSensorCountAllByUser       = "service.sensor.count-all-by-user"
+	tracingSensorObtainWeekdayAverage = "service.sensor.obtain-weekday-average"
 )
 
 type Service struct {
@@ -199,4 +200,21 @@ func (s *Service) CountAllByUserID(ctx context.Context, userID string) (*connect
 	log.Debug(fmt.Sprintf("total: %+v", total))
 
 	return &connected_roots.TotalSensors{Total: total}, nil
+}
+
+func (s *Service) ObtainWeekdayAverage(ctx context.Context, orchardID string) ([]*connected_roots.SensorsDataWeekdayAverage, error) {
+	ctx, span := otel.Tracer(s.conf.App.Name).Start(ctx, tracingSensorObtainWeekdayAverage)
+	defer span.End()
+
+	loggerNew := s.logger.New()
+	log := loggerNew.WithTag(tracingSensorObtainWeekdayAverage)
+
+	result, err := s.sensorRep.GetWeekdayAverage(ctx, orchardID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorObtainWeekdayAverage, err)
+	}
+
+	log.Debug(fmt.Sprintf("result: %+v", result))
+
+	return result, nil
 }

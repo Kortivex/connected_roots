@@ -82,3 +82,18 @@ type SensorDataPaginationFilters struct {
 type TotalSensors struct {
 	Total int64 `json:"total"`
 }
+
+type SensorsDataWeekdayAverage struct {
+	Weekday           int     `json:"weekday"`
+	AvgVoltage        float64 `json:"avg_voltage"`
+	AvgBattery        float64 `json:"avg_battery"`
+	AvgSoil           float64 `json:"avg_soil"`
+	AvgSalt           float64 `json:"avg_salt"`
+	AvgLight          float64 `json:"avg_light"`
+	AvgTemperatureIn  float64 `json:"avg_temperature_in"`
+	AvgTemperatureOut float64 `json:"avg_temperature_out"`
+	AvgHumidityIn     float64 `json:"avg_humidity_in"`
+	AvgHumidityOut    float64 `json:"avg_humidity_out"`
+	AvgPressure       float64 `json:"avg_pressure"`
+	AvgAltitude       float64 `json:"avg_altitude"`
+}

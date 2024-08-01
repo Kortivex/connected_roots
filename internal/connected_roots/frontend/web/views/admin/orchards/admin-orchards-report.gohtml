@@ -1,0 +1,49 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4 col-sm-6">
+                <div class="temperature-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="humidity-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="salinity-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="soil-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="light-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="altitude-chart" style="min-height:300px"></div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="pressure-chart" style="min-height:300px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+<script type="application/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        genCharts({{.days_of_week}}, {{.chart_titles}}, {{ .chart_legend }}, {{ .sensor_data }});
+    });
+</script>
+</body>
+
+{{template "footer"}}

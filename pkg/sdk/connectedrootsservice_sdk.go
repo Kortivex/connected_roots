@@ -45,15 +45,16 @@ const (
 	tracingConnectedRootsServiceObtainUserOrchard  = "connected-roots.obtain-user-orchard"
 	tracingConnectedRootsServiceObtainUserOrchards = "connected-roots.obtain-user-orchards"
 
-	tracingConnectedRootsServiceSaveSensor           = "connected-roots.save-sensor"
-	tracingConnectedRootsServiceUpdateSensor         = "connected-roots.update-sensor"
-	tracingConnectedRootsServiceObtainSensor         = "connected-roots.obtain-sensor"
-	tracingConnectedRootsServiceObtainSensorLastData = "connected-roots.obtain-sensor-last-data"
-	tracingConnectedRootsServiceObtainSensors        = "connected-roots.obtain-sensors"
-	tracingConnectedRootsServiceDeleteSensor         = "connected-roots.delete-sensor"
-	tracingConnectedRootsServiceObtainUserSensors    = "connected-roots.obtain-user-sensors"
-	tracingConnectedRootsServiceCountSensors         = "connected-roots.count-sensors"
-	tracingConnectedRootsServiceCountUserSensors     = "connected-roots.count-user-sensors"
+	tracingConnectedRootsServiceSaveSensor            = "connected-roots.save-sensor"
+	tracingConnectedRootsServiceUpdateSensor          = "connected-roots.update-sensor"
+	tracingConnectedRootsServiceObtainSensor          = "connected-roots.obtain-sensor"
+	tracingConnectedRootsServiceObtainSensorLastData  = "connected-roots.obtain-sensor-last-data"
+	tracingConnectedRootsServiceObtainWeekDataAverage = "connected-roots.obtain-week-data-average"
+	tracingConnectedRootsServiceObtainSensors         = "connected-roots.obtain-sensors"
+	tracingConnectedRootsServiceDeleteSensor          = "connected-roots.delete-sensor"
+	tracingConnectedRootsServiceObtainUserSensors     = "connected-roots.obtain-user-sensors"
+	tracingConnectedRootsServiceCountSensors          = "connected-roots.count-sensors"
+	tracingConnectedRootsServiceCountUserSensors      = "connected-roots.count-user-sensors"
 
 	tracingConnectedRootsServiceSaveActivity      = "connected-roots.save-activity"
 	tracingConnectedRootsServiceUpdateActivity    = "connected-roots.update-activity"
@@ -88,12 +89,13 @@ const (
 	ErrMsgConnectedRootsServiceObtainUserOrchardErr  = "obtain user orchard failure"
 	ErrMsgConnectedRootsServiceObtainUserOrchardsErr = "obtain user orchards failure"
 
-	ErrMsgConnectedRootsServiceSaveSensorErr           = "saving sensor failure"
-	ErrMsgConnectedRootsServiceUpdateSensorErr         = "updating sensor failure"
-	ErrMsgConnectedRootsServiceObtainSensorErr         = "obtain sensor failure"
-	ErrMsgConnectedRootsServiceObtainSensorLastDataErr = "obtain sensor last data failure"
-	ErrMsgConnectedRootsServiceObtainSensorsErr        = "obtain sensors failure"
-	ErrMsgConnectedRootsServiceObtainUserSensorsErr    = "obtain user sensors failure"
+	ErrMsgConnectedRootsServiceSaveSensorErr              = "saving sensor failure"
+	ErrMsgConnectedRootsServiceUpdateSensorErr            = "updating sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorErr            = "obtain sensor failure"
+	ErrMsgConnectedRootsServiceObtainSensorLastDataErr    = "obtain sensor last data failure"
+	ErrMsgConnectedRootsServiceObtainSensorAverageDataErr = "obtain sensor average data failure"
+	ErrMsgConnectedRootsServiceObtainSensorsErr           = "obtain sensors failure"
+	ErrMsgConnectedRootsServiceObtainUserSensorsErr       = "obtain user sensors failure"
 
 	ErrMsgConnectedRootsServiceSaveActivityErr     = "saving activity failure"
 	ErrMsgConnectedRootsServiceUpdateActivityErr   = "updating activity failure"
@@ -161,6 +163,7 @@ type IConnectedRootsServiceSDK interface {
 	DeleteSensor(ctx context.Context, id string) error
 	CountSensors(ctx context.Context) (*sdk_models.TotalSensorsResponse, error)
 	CountUserSensors(ctx context.Context, userID string) (*sdk_models.TotalSensorsResponse, error)
+	ObtainSensorWeekDataAverage(ctx context.Context, orchardID string) ([]*sdk_models.SensorsDataWeekdayAverageResponse, error)
 
 	////////////// USERS - SENSORS //////////////
 
@@ -956,6 +959,26 @@ func (c *ConnectedRootsServiceSDK) ObtainSensorLastData(ctx context.Context, id 
 	}
 
 	return respSensorData, nil
+}
+
+func (c *ConnectedRootsServiceSDK) ObtainSensorWeekDataAverage(ctx context.Context, orchardID string) ([]*sdk_models.SensorsDataWeekdayAverageResponse, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsServiceObtainWeekDataAverage)
+	defer sp.End()
+
+	resp, err := c.api.GETSensorWeekDataAverage(ctx, orchardID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainWeekDataAverage, err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainWeekDataAverage, resp.Error().(*APIError))
+	}
+
+	var respSensorDataAverage []*sdk_models.SensorsDataWeekdayAverageResponse
+	if err = json.Unmarshal(resp.Body(), &respSensorDataAverage); err != nil {
+		return nil, fmt.Errorf("%s: %w", tracingConnectedRootsServiceObtainWeekDataAverage, errors.New(ErrMsgConnectedRootsServiceObtainSensorAverageDataErr))
+	}
+
+	return respSensorDataAverage, nil
 }
 
 ////////////// USERS - SENSORS //////////////

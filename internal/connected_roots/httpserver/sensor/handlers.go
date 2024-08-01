@@ -19,20 +19,22 @@ import (
 const (
 	tracingSensorHandlers = "http-handler.sensor"
 
-	tracingPostSensorHandlers          = "http-handler.sensor.post-sensor"
-	tracingPutSensorHandlers           = "http-handler.sensor.put-sensor"
-	tracingGetSensorHandlers           = "http-handler.sensor.get-sensor"
-	tracingListSensorHandlers          = "http-handler.sensor.list-sensors"
-	tracingDeleteSensorHandlers        = "http-handler.sensor.delete-sensor"
-	tracingGetSensorLastDataHandlers   = "http-handler.sensor.get-sensor-last-data"
-	tracingPostSensorDataHandlers      = "http-handler.sensor.post-sensor-data"
-	tracingListSensorsDataHandlers     = "http-handler.sensor.list-sensors-data"
-	tracingListUserSensorHandlers      = "http-handler.sensor.list-user-sensors"
-	tracingGetCountSensorsHandlers     = "http-handler.sensor.get-count-sensors"
-	tracingGetCountUserSensorsHandlers = "http-handler.sensor.get-count-user-sensors"
+	tracingPostSensorHandlers                  = "http-handler.sensor.post-sensor"
+	tracingPutSensorHandlers                   = "http-handler.sensor.put-sensor"
+	tracingGetSensorHandlers                   = "http-handler.sensor.get-sensor"
+	tracingListSensorHandlers                  = "http-handler.sensor.list-sensors"
+	tracingDeleteSensorHandlers                = "http-handler.sensor.delete-sensor"
+	tracingGetSensorLastDataHandlers           = "http-handler.sensor.get-sensor-last-data"
+	tracingPostSensorDataHandlers              = "http-handler.sensor.post-sensor-data"
+	tracingListSensorsDataHandlers             = "http-handler.sensor.list-sensors-data"
+	tracingListUserSensorHandlers              = "http-handler.sensor.list-user-sensors"
+	tracingGetCountSensorsHandlers             = "http-handler.sensor.get-count-sensors"
+	tracingGetCountUserSensorsHandlers         = "http-handler.sensor.get-count-user-sensors"
+	tracingGetSensorWeekdayAverageDataHandlers = "http-handler.sensor.get-sensor-weekday-average-data"
 
-	sensorIDParam = "sensor_id"
-	userIDParam   = "user_id"
+	orchardIDParam = "orchard_id"
+	sensorIDParam  = "sensor_id"
+	userIDParam    = "user_id"
 )
 
 type SensorsHandlers struct {
@@ -292,4 +294,22 @@ func (h *SensorsHandlers) GetCountUserSensorsHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, total)
+}
+
+func (h *SensorsHandlers) GetSensorWeekdayAverageDataHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), tracingGetSensorWeekdayAverageDataHandlers)
+	defer span.End()
+
+	orchardID := c.Param(orchardIDParam)
+	if orchardID == "" {
+		return errors.NewErrorResponse(c, errors.ErrPathParamInvalidValue)
+	}
+
+	sensorDataRes, err := h.sensorSvc.ObtainWeekdayAverage(ctx, orchardID)
+	if err != nil {
+		err = fmt.Errorf("%s: %w", tracingGetSensorWeekdayAverageDataHandlers, err)
+		return errors.NewErrorResponse(c, err)
+	}
+
+	return c.JSON(http.StatusOK, sensorDataRes)
 }

@@ -134,6 +134,7 @@ func (s *Service) setSetup() {
 	s.Echo.Static("/admin/orchards/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/orchards/edit/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/orchards/view/assets", s.conf.Frontend.Assets)
+	s.Echo.Static("/admin/orchards/report/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/orchards/view/images", "images")
 	s.Echo.Static("/admin/orchards/delete/assets", s.conf.Frontend.Assets)
 	s.Echo.Static("/admin/crop-types/assets", s.conf.Frontend.Assets)

@@ -10,6 +10,7 @@ import (
 	"github.com/Kortivex/connected_roots/pkg/ulid"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
+	"time"
 )
 
 const (
@@ -26,6 +27,7 @@ const (
 	tracingSensorListAllByUserID   = "repository-db.sensor.list-all-user-id"
 	tracingSensorCount             = "repository-db.sensor.count"
 	tracingSensorCountAllByUser    = "repository-db.sensor.count-all-by-user"
+	tracingSensorGetWeekdayAverage = "repository-db.sensor.get-weekday-average"
 )
 
 type Repository struct {
@@ -485,4 +487,45 @@ func (r *Repository) CountAllByUser(ctx context.Context, userID string) (int64, 
 	log.Debug(fmt.Sprintf("total: %+v", total))
 
 	return total, nil
+}
+
+func (r *Repository) GetWeekdayAverage(ctx context.Context, orchardID string) ([]*connected_roots.SensorsDataWeekdayAverage, error) {
+	ctx, span := otel.Tracer(r.conf.App.Name).Start(ctx, tracingSensorGetWeekdayAverage)
+	defer span.End()
+
+	loggerNew := r.logger.New()
+	log := loggerNew.WithTag(tracingSensorGetWeekdayAverage)
+
+	var results []*SensorsDataWeekdayAverage
+	endDate := time.Now()
+	startDate := endDate.AddDate(0, 0, -7)
+
+	result := r.db.WithContext(ctx).Model(&SensorsDataWeekdayAverage{}).
+		Joins("JOIN sensors ON sensor_data.sensor_id = sensors.id").
+		Joins("JOIN orchards ON sensors.orchard_id = orchards.id").
+		Select("EXTRACT(DOW FROM sensor_data.created_at) as weekday, "+
+			"ROUND(AVG(sensor_data.voltage)::numeric, 2) as avg_voltage, "+
+			"ROUND(AVG(sensor_data.battery)::numeric, 2) as avg_battery, "+
+			"ROUND(AVG(sensor_data.soil)::numeric, 2) as avg_soil, "+
+			"ROUND(AVG(sensor_data.salt)::numeric, 2) as avg_salt, "+
+			"ROUND(AVG(sensor_data.light)::numeric, 2) as avg_light, "+
+			"ROUND(AVG(sensor_data.temperature_in)::numeric, 2) as avg_temperature_in, "+
+			"ROUND(AVG(sensor_data.temperature_out)::numeric, 2) as avg_temperature_out, "+
+			"ROUND(AVG(sensor_data.humidity_in)::numeric, 2) as avg_humidity_in, "+
+			"ROUND(AVG(sensor_data.humidity_out)::numeric, 2) as avg_humidity_out, "+
+			"ROUND(AVG(sensor_data.pressure)::numeric, 2) as avg_pressure, "+
+			"ROUND(AVG(sensor_data.altitude)::numeric, 2) as avg_altitude").
+		Where("sensor_data.created_at BETWEEN ? AND ?", startDate, endDate).
+		Where("orchards.id = ?", orchardID).
+		Group("weekday").
+		Order("weekday").
+		Find(&results)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("%s: %w", tracingSensorGetWeekdayAverage, result.Error)
+	}
+
+	log.Debug(fmt.Sprintf("result: %+v", result))
+
+	return toDomainDataWeekAverageSlice(results), nil
 }

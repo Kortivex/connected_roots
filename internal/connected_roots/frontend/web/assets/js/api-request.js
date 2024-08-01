@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const sensorID = document.getElementById('sensor-id').value
+    let sensorID = document.getElementById('sensor-id')
     if (sensorID) {
+        sensorID = sensorID.value;
         console.info('Starting to fetch sensor (', sensorID, ') data periodically...');
         startFetchingData(sensorID, 6000);
     }
@@ -16,11 +17,11 @@ const httpClient = axios.create({
 })
 
 function startFetchingData(sensorID, interval) {
-    fetchData(sensorID);
-    setInterval(() => fetchData(sensorID), interval);
+    fetchSensorData(sensorID);
+    setInterval(() => fetchSensorData(sensorID), interval);
 }
 
-async function fetchData(sensorID) {
+async function fetchSensorData(sensorID) {
     try {
         let response = await httpClient.get('/sensors/' + sensorID + '/last-data');
         let data = response.data;

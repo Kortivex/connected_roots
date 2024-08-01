@@ -45,15 +45,16 @@ const (
 	tracingConnectedRootsDeleteCropTypeAPI   = "connected-roots-service.http-client: delete /crop-types/:crop_type_id"
 	tracingConnectedRootsGetCropTypeCountAPI = "connected-roots-service.http-client: get /crop-types/count"
 
-	tracingConnectedRootsPostSensorAPI         = "connected-roots-service.http-client: post /sensors"
-	tracingConnectedRootsPutSensorAPI          = "connected-roots-service.http-client: put /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorAPI          = "connected-roots-service.http-client: get /sensors/:sensor_id"
-	tracingConnectedRootsGetSensorLastDataAPI  = "connected-roots-service.http-client: get /sensors/:sensor_id/last-data"
-	tracingConnectedRootsGetSensorsAPI         = "connected-roots-service.http-client: get /sensors"
-	tracingConnectedRootsDeleteSensorAPI       = "connected-roots-service.http-client: delete /sensors/:sensor_id"
-	tracingConnectedRootsGetUserSensorsAPI     = "connected-roots-service.http-client: get /users/:user_id/sensors"
-	tracingConnectedRootsGetSensorCountAPI     = "connected-roots-service.http-client: get /sensors/count"
-	tracingConnectedRootsGetUserSensorCountAPI = "connected-roots-service.http-client: get /users/:user_id/sensors/count"
+	tracingConnectedRootsPostSensorAPI               = "connected-roots-service.http-client: post /sensors"
+	tracingConnectedRootsPutSensorAPI                = "connected-roots-service.http-client: put /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorAPI                = "connected-roots-service.http-client: get /sensors/:sensor_id"
+	tracingConnectedRootsGetSensorLastDataAPI        = "connected-roots-service.http-client: get /sensors/:sensor_id/last-data"
+	tracingConnectedRootsGetSensorWeekDataAverageAPI = "connected-roots-service.http-client: get /orchards/:orchard_id/sensors/average"
+	tracingConnectedRootsGetSensorsAPI               = "connected-roots-service.http-client: get /sensors"
+	tracingConnectedRootsDeleteSensorAPI             = "connected-roots-service.http-client: delete /sensors/:sensor_id"
+	tracingConnectedRootsGetUserSensorsAPI           = "connected-roots-service.http-client: get /users/:user_id/sensors"
+	tracingConnectedRootsGetSensorCountAPI           = "connected-roots-service.http-client: get /sensors/count"
+	tracingConnectedRootsGetUserSensorCountAPI       = "connected-roots-service.http-client: get /users/:user_id/sensors/count"
 
 	tracingConnectedRootsPostActivityAPI         = "connected-roots-service.http-client: post /users/:user_id/activities"
 	tracingConnectedRootsPutActivityAPI          = "connected-roots-service.http-client: put /users/:user_id/activities/:activity_id"
@@ -1103,6 +1104,27 @@ func (c *ConnectedRootsServiceAPI) GETSensorLastData(ctx context.Context, id str
 		SetResult(&sdk_models.SensorsDataResponse{}).
 		SetError(&APIError{}).
 		Get(fmt.Sprintf("/sensors/%s/last-data", id))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *ConnectedRootsServiceAPI) GETSensorWeekDataAverage(ctx context.Context, orchardID string) (*resty.Response, error) {
+	ctx, sp := otel.Tracer("connected_roots").Start(ctx, tracingConnectedRootsGetSensorWeekDataAverageAPI)
+	defer sp.End()
+
+	loggerEmpty := c.logger.New()
+	log := loggerEmpty.WithTag(tracingConnectedRootsGetSensorWeekDataAverageAPI)
+
+	log.Debug("request [GET] /orchards/:orchard_id/sensors/average")
+
+	request := c.Rest.Client.R()
+	response, err := request.
+		SetContext(ctx).
+		SetResult([]*sdk_models.SensorsDataWeekdayAverageResponse{}).
+		SetError(&APIError{}).
+		Get(fmt.Sprintf("/orchards/%s/sensors/average", orchardID))
 	if err != nil {
 		return nil, err
 	}

@@ -197,3 +197,29 @@ func toDBData(sensorData *connected_roots.SensorsData, id string) *SensorsData {
 		SensorID:       sensorData.SensorID,
 	}
 }
+
+func toDomainDataWeekAverage(data *SensorsDataWeekdayAverage) *connected_roots.SensorsDataWeekdayAverage {
+	return &connected_roots.SensorsDataWeekdayAverage{
+		Weekday:           data.Weekday,
+		AvgVoltage:        data.AvgVoltage,
+		AvgBattery:        data.AvgBattery,
+		AvgSoil:           data.AvgSoil,
+		AvgSalt:           data.AvgSalt,
+		AvgLight:          data.AvgLight,
+		AvgTemperatureIn:  data.AvgTemperatureIn,
+		AvgTemperatureOut: data.AvgTemperatureOut,
+		AvgHumidityIn:     data.AvgHumidityIn,
+		AvgHumidityOut:    data.AvgHumidityOut,
+		AvgPressure:       data.AvgPressure,
+		AvgAltitude:       data.AvgAltitude,
+	}
+}
+
+func toDomainDataWeekAverageSlice(data []*SensorsDataWeekdayAverage) []*connected_roots.SensorsDataWeekdayAverage {
+	dataDomain := []*connected_roots.SensorsDataWeekdayAverage{}
+	for _, d := range data {
+		sensorDataDomain := toDomainDataWeekAverage(d)
+		dataDomain = append(dataDomain, sensorDataDomain)
+	}
+	return dataDomain
+}

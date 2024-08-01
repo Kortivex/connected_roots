@@ -33,6 +33,7 @@ const (
 	getListOrchardHandlerName     = "http-handler.orchard.get-list-orchards"
 	getDeleteOrchardHandlerName   = "http-handler.orchard.get-delete-orchard"
 	postDeleteOrchardHandlerName  = "http-handler.orchard.post-delete-orchard"
+	getReportOrchardHandlerName   = "http-handler.orchard.get-report-orchard"
 	getViewUserOrchardHandlerName = "http-handler.orchard.get-view-user-orchard"
 	getListUserOrchardHandlerName = "http-handler.orchard.get-list-user-orchards"
 
@@ -495,6 +496,45 @@ func (h *Handlers) PostOrchardDeleteHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusFound, "/admin/orchards/list")
+}
+
+func (h *Handlers) GetOrchardReportHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getReportOrchardHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getReportOrchardHandlerName)
+
+	orchardId := c.Param(orchardIDParam)
+	if orchardId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isAdminTechUser, err := h.sessionSvc.IsAdminTechnicalUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isAdminTechUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	sensorDataAvg, err := h.sdk.ConnectedRootsService.SDK.ObtainSensorWeekDataAverage(ctx, orchardId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "admin-orchards-report.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonOrchardViewReportPageI18N(c)), map[string]interface{}{
+			"sensor_data": sensorDataAvg,
+		}))
 }
 
 func (h *Handlers) GetUserOrchardViewHandler(c echo.Context) error {

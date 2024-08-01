@@ -52,3 +52,22 @@ type SensorsData struct {
 func (sd *SensorsData) TableName() string {
 	return "sensor_data"
 }
+
+type SensorsDataWeekdayAverage struct {
+	Weekday           int     `gorm:"column:weekday"`
+	AvgVoltage        float64 `gorm:"column:avg_voltage"`
+	AvgBattery        float64 `gorm:"column:avg_battery"`
+	AvgSoil           float64 `gorm:"column:avg_soil"`
+	AvgSalt           float64 `gorm:"column:avg_salt"`
+	AvgLight          float64 `gorm:"column:avg_light"`
+	AvgTemperatureIn  float64 `gorm:"column:avg_temperature_in"`
+	AvgTemperatureOut float64 `gorm:"column:avg_temperature_out"`
+	AvgHumidityIn     float64 `gorm:"column:avg_humidity_in"`
+	AvgHumidityOut    float64 `gorm:"column:avg_humidity_out"`
+	AvgPressure       float64 `gorm:"column:avg_pressure"`
+	AvgAltitude       float64 `gorm:"column:avg_altitude"`
+}
+
+func (sd *SensorsDataWeekdayAverage) TableName() string {
+	return "sensor_data"
+}
