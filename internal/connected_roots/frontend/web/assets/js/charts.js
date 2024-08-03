@@ -160,7 +160,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_temperature_out
                     ]
                 },
-            ]
+            ],
+            color: ['#F44336', '#f88980'] ,
         }));
 
         createChart('.humidity-chart', () => ({
@@ -250,7 +251,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_humidity_out
                     ]
                 },
-            ]
+            ],
+            color: ['#00BCD4', '#89beca'],
         }));
 
         createChart('.salinity-chart', () => ({
@@ -322,7 +324,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_salt
                     ]
                 }
-            ]
+            ],
+            color: ['#2196F3'],
         }));
 
         createChart('.soil-chart', () => ({
@@ -394,7 +397,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_soil
                     ]
                 }
-            ]
+            ],
+            color: ['#795548'],
         }));
 
         createChart('.light-chart', () => ({
@@ -466,7 +470,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_light
                     ]
                 }
-            ]
+            ],
+            color: ['#f5e87a'],
         }));
 
         createChart('.altitude-chart', () => ({
@@ -538,7 +543,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_altitude
                     ]
                 }
-            ]
+            ],
+            color: ['#9C27B0'],
         }));
 
         createChart('.pressure-chart', () => ({
@@ -610,7 +616,8 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
                         weekSunday.avg_pressure
                     ]
                 }
-            ]
+            ],
+            color: ['#3F51B5'],
         }));
 
         window.addEventListener('resize', () => {
