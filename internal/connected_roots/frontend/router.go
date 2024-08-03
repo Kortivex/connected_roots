@@ -65,6 +65,12 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	userOrchardsGrp.GET("/report/:orchard_id", userOrchardsHandler.GetUserOrchardReportHandler, s.SessionMiddleware).Name = "get-report-orchard"
 	// |
 	// |
+	// + --- Crop-Types endpoints:
+	userCropTypesHandler := crop_types.NewCropTypesHandlers(ctx)
+	userCropTypesGrp := usersGrp.Group("/crop-types")
+	userCropTypesGrp.GET("/view/:crop_type_id", userCropTypesHandler.GetUserCropTypeViewHandler, s.SessionMiddleware).Name = "get-user-view-crop-type"
+	// |
+	// |
 	// + --- Sensor endpoints:
 	userSensorsHandler := sensor.NewSensorsHandlers(ctx)
 	userSensorsGrp := usersGrp.Group("/sensors")

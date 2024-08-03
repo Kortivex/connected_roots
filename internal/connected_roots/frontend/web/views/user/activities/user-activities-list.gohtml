@@ -86,11 +86,11 @@
             <p class="mb-0 fs-9"></p>
             <div class="d-flex">
                 <a class="btn btn-sm btn-primary px-4 ms-2 {{if eq .pagination.PreviousCursor ""}}disabled{{end}}"
-                   href="/user/activities/list?previous_cursor={{ .pagination.PreviousCursor }}">
+                   href="/users/activities/list?previous_cursor={{ .pagination.PreviousCursor }}">
                     <span>{{.list_previous_label}}</span>
                 </a>
                 <a class="btn btn-sm btn-primary px-4 ms-2 {{if eq .pagination.NextCursor ""}}disabled{{end}}"
-                   href="/user/activities/list?next_cursor={{ .pagination.NextCursor }}">
+                   href="/users/activities/list?next_cursor={{ .pagination.NextCursor }}">
                     <span>{{.list_next_label}}</span>
                 </a>
             </div>

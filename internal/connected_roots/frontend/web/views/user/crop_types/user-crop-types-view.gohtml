@@ -1,0 +1,78 @@
+{{ template "header" . }}
+</head>
+<body>
+{{ template "notification" . }}
+<!-- ===============================================-->
+<!--    Main Content-->
+<!-- ===============================================-->
+{{ template "navbar_header" . }}
+{{ template "topbar" . }}
+<div class="content">
+    <nav class="mb-3" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a>{{.breadcrumb_crop_types}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{.breadcrumb_view_crop_types}}</li>
+        </ol>
+    </nav>
+    <div class="row g-3">
+        <div class="col-12 col-xl-6 order-xl-1 mb-4 mb-xl-0">
+            <div class="card text-black overflow-hidden">
+                <img class="card-img-top" src="{{.crop_type.ImageURL}}" alt="{{.crop_type.Name}}"/>
+                <div class="card-body">
+                    <h5 class="card-title">{{.crop_type.Name}}</h5>
+                    <p class="card-text">{{.crop_type.Description}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-xl-6 order-xl-2">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="name">{{.view_name_label}}</label>
+                    <input class="form-control" id="name" name="name" type="text" placeholder="{{.view_name_label}}"
+                           required="" value="{{.crop_type.Name}}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="scientific-name">{{.view_scientific_name_label}}</label>
+                    <input class="form-control" id="scientific-name" name="scientific-name" type="text"
+                           placeholder="{{.view_scientific_name_label}}" required=""
+                           value="{{.crop_type.ScientificName}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="life-cycle">{{.view_life_cycle_label}}</label>
+                    <input class="form-control" id="life-cycle" name="life-cycle" type="text"
+                           placeholder="{{.view_life_cycle_label}}" required="" value="{{.crop_type.LifeCycle}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="planting-season">{{.view_planting_season_label}}</label>
+                    <input class="form-control" id="planting-season" name="planting-season" type="text"
+                           placeholder="{{.view_planting_season_label}}" required=""
+                           value="{{.crop_type.PlantingSeason}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="harvest-season">{{.view_harvest_season_label}}</label>
+                    <input class="form-control" id="harvest-season" name="harvest-season" type="text"
+                           placeholder="{{.view_harvest_season_label}}" required="" value="{{.crop_type.HarvestSeason}}"
+                           readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="irrigation">{{.view_irrigation_label}}</label>
+                    <input class="form-control" id="irrigation" name="irrigation" type="text"
+                           placeholder="{{.view_irrigation_label}}" required="" value="{{.crop_type.Irrigation}}"
+                           readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "navbar_footer" . }}
+<!-- ===============================================-->
+<!--    End of Main Content-->
+<!-- ===============================================-->
+{{template "async_js"}}
+
+</body>
+
+{{template "footer"}}

@@ -60,9 +60,10 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="crop_type">{{.view_crop_type_label}}</label>
-                    <input class="form-control" id="crop_type" name="crop_type" type="text"
-                           placeholder="{{.view_crop_type_label}}" required="" value="{{.orchard.CropType.Name}}"
-                           readonly>
+                    <div class="form-control" id="crop_type">
+                        <a class="contains-anchor"
+                           href="/users/crop-types/view/{{.orchard.CropType.ID}}">{{.orchard.CropType.Name}}</a>
+                    </div>
                 </div>
             </div>
         </div>

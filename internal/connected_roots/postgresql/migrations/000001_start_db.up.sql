@@ -111,19 +111,6 @@ CREATE TABLE agricultural_activities
     "deleted_at"  timestamp with time zone
 );
 
-CREATE TABLE reports
-(
-    "id"           varchar(26) primary key,
-    "name"         varchar(100),
-    "description"  text,
-    "content"      text,
-    "generated_by" varchar(26),
-    "generated_at" timestamp with time zone,
-    "created_at"   timestamp with time zone,
-    "updated_at"   timestamp with time zone,
-    "deleted_at"   timestamp with time zone
-);
-
 CREATE TABLE sessions
 (
     "id"         text not null primary key,
@@ -149,6 +136,3 @@ ALTER TABLE sensor_data
 
 ALTER TABLE agricultural_activities
     ADD FOREIGN KEY ("orchard_id") REFERENCES orchards ("id");
-
-ALTER TABLE reports
-    ADD FOREIGN KEY ("generated_by") REFERENCES users ("id");

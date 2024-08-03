@@ -90,3 +90,19 @@ func CommonCropTypeDeletePageI18N(c echo.Context) map[string]interface{} {
 		"delete_button_submit_crop_type": translator.T(c, translator.PagesAdminCropTypesDeleteButtonSubmitCropType),
 	}
 }
+
+func CommonUserCropTypeViewPageI18N(c echo.Context) map[string]interface{} {
+	return map[string]interface{}{
+		"site_title":                 translator.T(c, translator.PagesCommonSiteTitle),
+		"title":                      translator.T(c, translator.PagesAdminCropTypesViewTitle),
+		"active":                     "user-orchards-list",
+		"breadcrumb_crop_types":      translator.T(c, translator.BreadcrumbCropTypes),
+		"breadcrumb_view_crop_types": translator.T(c, translator.BreadcrumbViewCropTypes),
+		"view_name_label":            translator.T(c, translator.PagesAdminCropTypesViewNameLabel),
+		"view_scientific_name_label": translator.T(c, translator.PagesAdminCropTypesViewScientificNameLabel),
+		"view_life_cycle_label":      translator.T(c, translator.PagesAdminCropTypesViewLifeCycleLabel),
+		"view_planting_season_label": translator.T(c, translator.PagesAdminCropTypesViewPlantingSeasonLabel),
+		"view_harvest_season_label":  translator.T(c, translator.PagesAdminCropTypesViewHarvestSeasonLabel),
+		"view_irrigation_label":      translator.T(c, translator.PagesAdminCropTypesViewIrrigationLabel),
+	}
+}

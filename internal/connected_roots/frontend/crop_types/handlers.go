@@ -24,14 +24,15 @@ import (
 const (
 	tracingCropTypesHandlers = "http-handler.crop-types"
 
-	getCreateCropTypeHandlerName  = "http-handler.crop-types.get-create-crop-type"
-	postCreateCropTypeHandlerName = "http-handler.crop-types.post-create-crop-type"
-	getUpdateCropTypeHandlerName  = "http-handler.crop-types.get-update-crop-type"
-	postUpdateCropTypeHandlerName = "http-handler.crop-types.post-update-crop-type"
-	getViewCropTypeHandlerName    = "http-handler.crop-types.get-view-crop-type"
-	getListCropTypeHandlerName    = "http-handler.crop-types.get-list-crop-types"
-	getDeleteCropTypeHandlerName  = "http-handler.crop-types.get-delete-crop-type"
-	postDeleteCropTypeHandlerName = "http-handler.crop-types.post-delete-crop-type"
+	getCreateCropTypeHandlerName   = "http-handler.crop-types.get-create-crop-type"
+	postCreateCropTypeHandlerName  = "http-handler.crop-types.post-create-crop-type"
+	getUpdateCropTypeHandlerName   = "http-handler.crop-types.get-update-crop-type"
+	postUpdateCropTypeHandlerName  = "http-handler.crop-types.post-update-crop-type"
+	getViewCropTypeHandlerName     = "http-handler.crop-types.get-view-crop-type"
+	getListCropTypeHandlerName     = "http-handler.crop-types.get-list-crop-types"
+	getDeleteCropTypeHandlerName   = "http-handler.crop-types.get-delete-crop-type"
+	postDeleteCropTypeHandlerName  = "http-handler.crop-types.post-delete-crop-type"
+	getUserViewCropTypeHandlerName = "http-handler.crop-types.get-user-view-crop-type"
 
 	cropTypeIDParam = "crop_type_id"
 )
@@ -452,4 +453,43 @@ func (h *Handlers) PostCropTypeDeleteHandler(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusFound, "/admin/crop-types/list")
+}
+
+func (h *Handlers) GetUserCropTypeViewHandler(c echo.Context) error {
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getUserViewCropTypeHandlerName)
+	defer span.End()
+
+	loggerNew := h.logger.New()
+	_ = loggerNew.WithTag(getUserViewCropTypeHandlerName)
+
+	cropTypeId := c.Param(cropTypeIDParam)
+	if cropTypeId == "" {
+		err := ferrors.ErrPathParamInvalidValue
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	sess, err := h.sessionSvc.Obtain(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	isUser, err := h.sessionSvc.IsUser(ctx, c)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+	if !isUser {
+		return commons.NewErrorS(http.StatusUnauthorized, "forbidden", nil, ferrors.ErrUnauthorized)
+	}
+
+	cropType, err := h.sdk.ConnectedRootsService.SDK.ObtainCropType(ctx, cropTypeId)
+	if err != nil {
+		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+	}
+
+	return c.Render(http.StatusOK, "user-crop-types-view.gohtml",
+		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
+			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
+			CommonUserCropTypeViewPageI18N(c)), map[string]interface{}{
+			"crop_type": cropType,
+		}))
 }
