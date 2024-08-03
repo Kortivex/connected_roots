@@ -34,6 +34,7 @@
                 </thead>
                 <tbody class="list">
                 {{$view_label := .list_actions_view_label}}
+                {{$view_report_label := .list_actions_view_report_label}}
                 {{$edit_label := .list_actions_edit_label}}
                 {{$remove_label := .list_actions_remove_label}}
                 {{range $orchard :=.orchards}}
@@ -51,6 +52,8 @@
                                 <div class="dropdown-menu dropdown-menu-end py-2" style="">
                                     <a class="dropdown-item"
                                        href="/users/orchards/view/{{$orchard.ID}}">{{$view_label}}</a>
+                                    <a class="dropdown-item"
+                                       href="/users/orchards/report/{{$orchard.ID}}">{{$view_report_label}}</a>
                                 </div>
                             </div>
                         </td>

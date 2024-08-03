@@ -62,6 +62,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	userOrchardsGrp := usersGrp.Group("/orchards")
 	userOrchardsGrp.GET("/list", userOrchardsHandler.GetUserOrchardsListHandler, s.SessionMiddleware).Name = "get-list-user-orchards"
 	userOrchardsGrp.GET("/view/:orchard_id", userOrchardsHandler.GetUserOrchardViewHandler, s.SessionMiddleware).Name = "get-view-user-orchard"
+	userOrchardsGrp.GET("/report/:orchard_id", userOrchardsHandler.GetUserOrchardReportHandler, s.SessionMiddleware).Name = "get-report-orchard"
 	// |
 	// |
 	// + --- Sensor endpoints:

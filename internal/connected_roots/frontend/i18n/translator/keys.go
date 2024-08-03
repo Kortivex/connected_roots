@@ -475,4 +475,6 @@ const (
 	PagesOrchardPressure         = "pages.orchards.pressure"
 	PagesOrchardInternal         = "pages.orchards.internal"
 	PagesOrchardExternal         = "pages.orchards.external"
+	PagesOrchardToolboxViewData  = "pages.orchards.view_data"
+	PagesOrchardToolboxDownload  = "pages.orchards.download"
 )

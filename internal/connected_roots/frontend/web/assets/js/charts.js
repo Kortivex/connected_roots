@@ -1,4 +1,4 @@
-function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
+function genCharts(daysOfWeek, chartTitles, chartLegend, toolbox, sensorData) {
     'use strict';
 
     const weekSunday = sensorData[0];
@@ -95,8 +95,15 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
             },
             toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -176,10 +183,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartLegend[0], chartLegend[1]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -259,10 +273,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartTitles[3]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -324,10 +345,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartTitles[2]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -389,10 +417,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartTitles[4]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -454,10 +489,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartTitles[5]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -519,10 +561,17 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
                 data: [chartTitles[6]],
                 top: '9%'
             },
-            toolbox: {
+                        toolbox: {
                 feature: {
-                    saveAsImage: {}
-                }
+                    saveAsImage: {
+                        title: toolbox[1],
+                    },
+                    dataView: {
+                        title: toolbox[0],
+                        readOnly: true,
+                        lang: [toolbox[0], 'X']
+                    },
+                },
             },
             grid: {
                 left: '5%',
@@ -576,4 +625,28 @@ function genCharts(daysOfWeek, chartTitles, chartLegend, sensorData) {
     } else {
         initCharts();
     }
+}
+
+function processSensorData(sensorData) {
+    const weekData = new Array(7).fill(null).map(() => ({
+        weekday: 0,
+        avg_voltage: 0,
+        avg_battery: 0,
+        avg_soil: 0,
+        avg_salt: 0,
+        avg_light: 0,
+        avg_temperature_in: 0,
+        avg_temperature_out: 0,
+        avg_humidity_in: 0,
+        avg_humidity_out: 0,
+        avg_pressure: 0,
+        avg_altitude: 0
+    }));
+
+    sensorData.forEach(day => {
+        const index = day.weekday % 7;
+        weekData[index] = day;
+    });
+
+    return weekData;
 }
