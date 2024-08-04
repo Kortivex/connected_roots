@@ -22,6 +22,7 @@ services:
       - FRONTEND_TEMPLATES=/data/web/views
       - FRONTEND_ASSETS=/data/web/assets
       - FRONTEND_I18N_PATH=/data/web/i18n
+      - FRONTEND_COOKIE_DOMAIN=localhost
       - DB_POSTGRES_DSN=postgres://connected_roots_role:Password1@postgres:5432/connected_roots?sslmode=disable&search_path=sc_connected_roots&connect_timeout=4
       - THIRD_SDK_VERBOSE=true
       - THIRD_SDK_CONNECTEDROOTSSERVICE_HOST=http://localhost:47400

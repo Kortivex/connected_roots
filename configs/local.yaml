@@ -25,6 +25,7 @@ frontend:
   assets: "internal/connected_roots/frontend/web/assets"
   cookie:
     name: "session"
+    domain: "localhost"
     maxage: 86400
     key: "ZSPeYlcMLYEW1G3fWmRedM6QkSC2N8Vz6rU5GT3uDWQitRfGn9HHXstVsenPwL2Y"
     table: "sessions"

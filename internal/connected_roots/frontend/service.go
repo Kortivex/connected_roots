@@ -201,6 +201,7 @@ func (s *Service) setSessionCookie() *gormstore.Store {
 		[]byte(s.conf.Cookie.Key),
 	)
 
+	store.SessionOpts.Domain = s.conf.Cookie.Domain
 	store.SessionOpts.Secure = true
 	store.SessionOpts.HttpOnly = true
 	store.SessionOpts.SameSite = http.SameSiteStrictMode

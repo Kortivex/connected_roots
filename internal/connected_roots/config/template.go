@@ -40,6 +40,7 @@ type Frontend struct {
 	Assets    string `koanf:"assets"`
 	Cookie    struct {
 		Name   string `koanf:"name"`
+		Domain string `koanf:"domain"`
 		MaxAge int    `koanf:"maxage"`
 		Key    string `koanf:"key"`
 		Table  string `koanf:"table"`
