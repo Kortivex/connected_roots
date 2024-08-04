@@ -19,6 +19,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -260,7 +261,9 @@ func (h *Handlers) PostCropTypeUpdateHandler(c echo.Context) error {
 		}
 
 		if err = uploads.DeleteUploadedImage(oldPathImage); err != nil {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+			if !strings.Contains(err.Error(), "cannot find the file specified") {
+				return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+			}
 		}
 	}
 
