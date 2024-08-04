@@ -202,9 +202,9 @@ func (s *Service) setSessionCookie() *gormstore.Store {
 	)
 
 	store.SessionOpts.Domain = s.conf.Cookie.Domain
-	store.SessionOpts.Secure = true
-	store.SessionOpts.HttpOnly = true
-	store.SessionOpts.SameSite = http.SameSiteStrictMode
+	store.SessionOpts.Secure = false
+	store.SessionOpts.HttpOnly = false
+	store.SessionOpts.SameSite = http.SameSiteLaxMode
 	store.SessionOpts.MaxAge = s.conf.Cookie.MaxAge
 
 	quit := make(chan struct{})
