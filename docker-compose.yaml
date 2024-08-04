@@ -30,6 +30,7 @@ services:
       - MONITORING_OBSERVABILITY_OTEL_EXPORTEROTLENDPOINT=http://tempo:4318
     volumes:
       - ./configs/:/data/configs/
+      - images-volume:/src/app/images
 
   postgres:
     image: postgres:16.3
@@ -114,4 +115,6 @@ networks:
 
 volumes:
   postgres-data:
+    driver: local
+  images-volume:
     driver: local
