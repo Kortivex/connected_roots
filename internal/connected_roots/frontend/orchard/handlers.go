@@ -20,6 +20,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -311,7 +312,9 @@ func (h *Handlers) PostOrchardUpdateHandler(c echo.Context) error {
 		}
 
 		if err = uploads.DeleteUploadedImage(oldPathImage); err != nil {
-			return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+			if !strings.Contains(err.Error(), "cannot find the file specified") {
+				return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
+			}
 		}
 	}
 
