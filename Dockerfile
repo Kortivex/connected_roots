@@ -9,9 +9,6 @@ ENV GOOS=linux
 
 RUN go build -a -installsuffix cgo -o /bin/app cmd/connected_roots/main.go
 
-FROM gcr.io/distroless/base-debian12:latest
-COPY --from=builder /bin/app /bin/app
-
 # Copy config.
 COPY configs/local.yaml /data/config/local.yaml
 # Copy assets.

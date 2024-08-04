@@ -1,9 +1,10 @@
 version: "3.9"
 services:
   connected_roots:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+    image: fuegolop/cinesaragon-backend:latest
     container_name: connected_roots
     hostname: connected_roots
     init: true
