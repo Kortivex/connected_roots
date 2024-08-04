@@ -58,6 +58,10 @@ func (h *Handlers) GetHomeHandler(c echo.Context) error {
 		return commons.NewErrorS(http.StatusInternalServerError, err.Error(), nil, err)
 	}
 
+	if sess.ID == "" {
+		return c.Redirect(http.StatusFound, "/login")
+	}
+
 	isAdminTech, _ := h.sessionSvc.IsAdminTechnical(ctx, c)
 	if isAdminTech {
 		totalSessions, err := h.sessionSvc.CountAll(ctx)
