@@ -281,11 +281,11 @@ func (h *Handlers) GetSensorViewHandler(c echo.Context) error {
 }
 
 func (h *Handlers) GetSensorDataViewHandler(c echo.Context) error {
-	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewUserSensorDataHandlerName)
+	ctx, span := otel.Tracer(h.conf.App.Name).Start(c.Request().Context(), getViewSensorDataHandlerName)
 	defer span.End()
 
 	loggerNew := h.logger.New()
-	_ = loggerNew.WithTag(getViewUserSensorDataHandlerName)
+	_ = loggerNew.WithTag(getViewSensorDataHandlerName)
 
 	sensorId := c.Param(sensorIDParam)
 	if sensorId == "" {
@@ -318,7 +318,9 @@ func (h *Handlers) GetSensorDataViewHandler(c echo.Context) error {
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonSensorDataViewPageI18N(c)), map[string]interface{}{
-			"data": sensorData,
+			"data":     sensorData,
+			"api_host": h.conf.Thirds.SDK.ConnectedRootsService.Host,
+			"api_key":  h.conf.Thirds.SDK.ConnectedRootsService.APIKey,
 		}))
 }
 
@@ -537,6 +539,8 @@ func (h *Handlers) GetUserSensorDataViewHandler(c echo.Context) error {
 		translator.AddDataKeys(translator.AddDataKeys(translator.AddDataKeys(bars.CommonNavBarI18N(ctx, c, h.sessionSvc),
 			bars.CommonTopBarI18N(c, sess.Name, sess.Surname)),
 			CommonUserSensorDataViewPageI18N(c)), map[string]interface{}{
-			"data": sensorData,
+			"data":     sensorData,
+			"api_host": h.conf.Thirds.SDK.ConnectedRootsService.Host,
+			"api_key":  h.conf.Thirds.SDK.ConnectedRootsService.APIKey,
 		}))
 }

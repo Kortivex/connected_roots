@@ -162,7 +162,17 @@
 <!--    End of Main Content-->
 <!-- ===============================================-->
 {{template "async_js"}}
-
+<script type="application/javascript">
+    const httpClient = generateHttpClient({{ .api_host }}, {{ .api_key }});
+    document.addEventListener("DOMContentLoaded", function () {
+        let sensorID = document.getElementById('sensor-id')
+        if (sensorID) {
+            sensorID = sensorID.value;
+            console.info('Starting to fetch sensor (', sensorID, ') data periodically...');
+            startFetchingData(httpClient, sensorID, 6000);
+        }
+    });
+</script>
 </body>
 
 {{template "footer"}}
