@@ -24,9 +24,9 @@ services:
       - FRONTEND_I18N_PATH=/data/web/i18n
       - FRONTEND_COOKIE_DOMAIN=localhost
       - DB_POSTGRES_DSN=postgres://connected_roots_role:Password1@postgres:5432/connected_roots?sslmode=disable&search_path=sc_connected_roots&connect_timeout=4
-      - THIRD_SDK_VERBOSE=true
-      - THIRD_SDK_CONNECTEDROOTSSERVICE_HOST=http://localhost:47400
-      - THIRD_SDK_CONNECTEDROOTSSERVICE_API=4cae8c84-dd29-42f3-8d58-ed371f1bc8ef
+      - THIRDS_SDK_VERBOSE=true
+      - THIRDS_SDK_CONNECTEDROOTSSERVICE_HOST=http://localhost:47400
+      - THIRDS_SDK_CONNECTEDROOTSSERVICE_API=4cae8c84-dd29-42f3-8d58-ed371f1bc8ef
       - MONITORING_OBSERVABILITY_OTEL_SDKDISABLED=false
       - MONITORING_OBSERVABILITY_OTEL_EXPORTEROTLENDPOINT=http://tempo:4318
     volumes:
