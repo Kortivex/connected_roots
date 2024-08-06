@@ -2,7 +2,7 @@ package httpserver
 
 import (
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/activity"
-	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_types"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_type"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/sensor"
@@ -55,7 +55,7 @@ func (s *Service) registerRoutes(ctx *connected_roots.Context) {
 	usersGrp.GET("/:user_id/orchards/count", orchardsHandler.GetCountUserOrchardsHandler).Name = "get-user-count-orchards"
 
 	// Crop Types endpoints.
-	cropTypesHandler := crop_types.NewCropTypesHandlers(ctx)
+	cropTypesHandler := crop_type.NewCropTypesHandlers(ctx)
 	cropTypesGrp := s.Echo.Group("/crop-types")
 	cropTypesGrp.POST("", cropTypesHandler.PostCropTypeHandler).Name = "post-crop-type"
 	cropTypesGrp.PUT("/:crop_type_id", cropTypesHandler.PutCropTypeHandler).Name = "put-crop-type"

@@ -1,8 +1,8 @@
-package crop_types
+package crop_type
 
 import (
 	"fmt"
-	"github.com/Kortivex/connected_roots/internal/connected_roots/crop_types"
+	"github.com/Kortivex/connected_roots/internal/connected_roots/crop_type"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/errors"
 	"net/http"
 
@@ -32,7 +32,7 @@ type CropTypesHandlers struct {
 	logger *logger.Logger
 	conf   *config.Config
 	// Services.
-	cropTypeSvc *crop_types.Service
+	cropTypeSvc *crop_type.Service
 }
 
 func NewCropTypesHandlers(appCtx *connected_roots.Context) *CropTypesHandlers {
@@ -43,7 +43,7 @@ func NewCropTypesHandlers(appCtx *connected_roots.Context) *CropTypesHandlers {
 		gorm:        appCtx.Gorm,
 		logger:      log,
 		conf:        appCtx.Conf,
-		cropTypeSvc: crop_types.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
+		cropTypeSvc: crop_type.New(appCtx.Conf, appCtx.Gorm, appCtx.Logger),
 	}
 }
 

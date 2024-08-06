@@ -1,4 +1,4 @@
-package crop_types
+package crop_type
 
 import (
 	"context"
