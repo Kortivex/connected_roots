@@ -1,0 +1,484 @@
+@startuml
+!define VERTICAL_LAYOUT
+!define HIGHLIGHT_COLOR Aquamarine
+
+namespace activity {
+    class Activities << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Description string
+        + OrchardID string
+        + Orchard *orchard.Orchards
+        + TableName() string
+    }
+    class ActivitiesHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostActivityHandler(c echo.Context) error
+        + PutActivityHandler(c echo.Context) error
+        + GetActivityHandler(c echo.Context) error
+        + ListActivitiesHandler(c echo.Context) error
+        + DeleteActivityHandler(c echo.Context) error
+        + GetCountActivitiesHandler(c echo.Context) error
+        + GetCountUserActivitiesHandler(c echo.Context) error
+    }
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, activity *connected_roots.Activities) (*connected_roots.Activities, error)
+        + Update(ctx context.Context, activity *connected_roots.Activities) (*connected_roots.Activities, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.Activities, error)
+        + ListAllBy(ctx context.Context, activityFilters *connected_roots.ActivityPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + Count(ctx context.Context) (int64, error)
+        + CountAllByUser(ctx context.Context, userID string) (int64, error)
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, activity *connected_roots.Activities) (*connected_roots.Activities, error)
+        + Update(ctx context.Context, activity *connected_roots.Activities) (*connected_roots.Activities, error)
+        + Obtain(ctx context.Context, id string) (*connected_roots.Activities, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.ActivityPaginationFilters) (*pagination.Pagination, error)
+        + Remove(ctx context.Context, id string) error
+        + CountAll(ctx context.Context) (*connected_roots.TotalActivities, error)
+        + CountAllByUser(ctx context.Context, userID string) (*connected_roots.TotalActivities, error)
+    }
+}
+"postgresql.BaseModel" *-- "extends" "activity.Activities"
+"activity.Activities" o-- "orchard.Orchards"
+
+namespace connected_roots {
+    class Activities << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Description string
+        + OrchardID string
+        + Orchard *Orchards
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+    class Cookie << (S,HIGHLIGHT_COLOR) >> {
+        + Path string
+        + Domain string
+        + MaxAge int
+        + Secure bool
+        + HTTPOnly bool
+        + SameSite http.SameSite
+    }
+    class CropTypes << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + ScientificName string
+        + LifeCycle string
+        + PlantingSeason string
+        + HarvestSeason string
+        + Irrigation string
+        + ImageURL string
+        + Description string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+    class Orchards << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Location string
+        + Size float64
+        + Soil string
+        + Fertilizer string
+        + Composting string
+        + ImageURL string
+        + UserID string
+        + User *Users
+        + CropTypeID string
+        + CropType *CropTypes
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+    class Roles << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Description string
+        + Protected bool
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+    class Sensors << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Location string
+        + ModelNumber string
+        + Manufacturer string
+        + CalibrationDate time.Time
+        + BatteryLife float64
+        + SSID string
+        + Channel string
+        + DNS string
+        + IP string
+        + Subnet string
+        + MAC string
+        + Status int
+        + FirmwareVersion float64
+        + OrchardID string
+        + Orchard *Orchards
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+    class SensorsData << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Voltage float64
+        + Battery float64
+        + Soil int
+        + Salt int
+        + Light float64
+        + TemperatureIn float64
+        + TemperatureOut float64
+        + HumidityIn float64
+        + HumidityOut float64
+        + Pressure float64
+        + Altitude float64
+        + SensorID string
+        + Sensor *Sensors
+        + CreatedAt time.Time
+    }
+    class SensorsDataWeekdayAverage << (S,HIGHLIGHT_COLOR) >> {
+        + Weekday int
+        + AvgVoltage float64
+        + AvgBattery float64
+        + AvgSoil float64
+        + AvgSalt float64
+        + AvgLight float64
+        + AvgTemperatureIn float64
+        + AvgTemperatureOut float64
+        + AvgHumidityIn float64
+        + AvgHumidityOut float64
+        + AvgPressure float64
+        + AvgAltitude float64
+    }
+    class Session << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Email string
+        + UserID string
+        + Name string
+        + Surname string
+        + Language string
+        + Role string
+        + RoleID string
+        + Cookie *Cookie
+    }
+    class Users << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Surname string
+        + Email string
+        + Password string
+        + Telephone string
+        + Language string
+        + RoleID string
+        + Role *Roles
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+    }
+}
+
+"connected_roots.Activities" o-- "connected_roots.Orchards"
+"connected_roots.Orchards" o-- "connected_roots.CropTypes"
+"connected_roots.Orchards" o-- "connected_roots.Users"
+"connected_roots.Sensors" o-- "connected_roots.Orchards"
+"connected_roots.SensorsData" o-- "connected_roots.Sensors"
+"connected_roots.Session" o-- "connected_roots.Cookie"
+"connected_roots.Users" o-- "connected_roots.Roles"
+
+namespace crop_type {
+    class CropTypes << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + ScientificName string
+        + LifeCycle string
+        + PlantingSeason string
+        + HarvestSeason string
+        + Irrigation string
+        + ImageURL string
+        + Description string
+        + TableName() string
+    }
+    class CropTypesHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostCropTypeHandler(c echo.Context) error
+        + PutCropTypeHandler(c echo.Context) error
+        + GetCropTypeHandler(c echo.Context) error
+        + ListCropTypesHandler(c echo.Context) error
+        + DeleteCropTypeHandler(c echo.Context) error
+        + GetCountCropTypesHandler(c echo.Context) error
+    }
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, cropType *connected_roots.CropTypes) (*connected_roots.CropTypes, error)
+        + Update(ctx context.Context, cropType *connected_roots.CropTypes) (*connected_roots.CropTypes, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.CropTypes, error)
+        + ListAllBy(ctx context.Context, cropTypeFilters *connected_roots.CropTypePaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + Count(ctx context.Context) (int64, error)
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, cropType *connected_roots.CropTypes) (*connected_roots.CropTypes, error)
+        + Update(ctx context.Context, cropType *connected_roots.CropTypes) (*connected_roots.CropTypes, error)
+        + Obtain(ctx context.Context, id string) (*connected_roots.CropTypes, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.CropTypePaginationFilters) (*pagination.Pagination, error)
+        + Remove(ctx context.Context, id string) error
+        + CountAll(ctx context.Context) (*connected_roots.TotalCropTypes, error)
+    }
+}
+"postgresql.BaseModel" *-- "extends" "crop_type.CropTypes"
+
+namespace httpserver {
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Echo *echo.Echo
+        + Params httpserver.Params
+        + Serve(ctx context.Context) error
+    }
+}
+"service.Service" *-- "extends" "httpserver.Service"
+
+namespace orchard {
+    class Orchards << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Location string
+        + Size float64
+        + Soil string
+        + Fertilizer string
+        + Composting string
+        + ImageURL string
+        + UserID string
+        + User *user.Users
+        + CropTypeID string
+        + CropType *crop_type.CropTypes
+        + TableName() string
+    }
+    class OrchardsHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostOrchardHandler(c echo.Context) error
+        + PutOrchardHandler(c echo.Context) error
+        + GetOrchardHandler(c echo.Context) error
+        + ListOrchardsHandler(c echo.Context) error
+        + DeleteOrchardHandler(c echo.Context) error
+        + GetUserOrchardHandler(c echo.Context) error
+        + ListUserOrchardsHandler(c echo.Context) error
+        + GetCountOrchardsHandler(c echo.Context) error
+        + GetCountUserOrchardsHandler(c echo.Context) error
+    }
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error)
+        + Update(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.Orchards, error)
+        + ListAllBy(ctx context.Context, orchardFilters *connected_roots.OrchardPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + Count(ctx context.Context) (int64, error)
+        + CountAllByUser(ctx context.Context, userID string) (int64, error)
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error)
+        + Update(ctx context.Context, orchard *connected_roots.Orchards) (*connected_roots.Orchards, error)
+        + Obtain(ctx context.Context, id string) (*connected_roots.Orchards, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.OrchardPaginationFilters) (*pagination.Pagination, error)
+        + Remove(ctx context.Context, id string) error
+        + CountAll(ctx context.Context) (*connected_roots.TotalOrchards, error)
+        + CountAllByUser(ctx context.Context, userID string) (*connected_roots.TotalOrchards, error)
+    }
+}
+"postgresql.BaseModel" *-- "extends" "orchard.Orchards"
+"orchard.Orchards" o-- "crop_type.CropTypes"
+"orchard.Orchards" o-- "user.Users"
+
+namespace postgresql {
+    class BaseModel << (S,HIGHLIGHT_COLOR) >> {
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + DeletedAt gorm.DeletedAt
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Gorm *gorm.DB
+        + DB *sql.DB
+        + Serve(ctx context.Context) error
+    }
+}
+"service.Service" *-- "extends" "postgresql.Service"
+
+namespace role {
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error)
+        + Update(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.Roles, error)
+        + ListAllBy(ctx context.Context, rolesFilters *connected_roots.RolePaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + Count(ctx context.Context) (int64, error)
+    }
+    class Roles << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Description string
+        + Protected bool
+        + TableName() string
+    }
+    class RolesHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostRolesHandler(c echo.Context) error
+        + PutRolesHandler(c echo.Context) error
+        + GetRolesHandler(c echo.Context) error
+        + ListRolesHandler(c echo.Context) error
+        + DeleteRolesHandler(c echo.Context) error
+        + GetCountRolesHandler(c echo.Context) error
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error)
+        + Update(ctx context.Context, role *connected_roots.Roles) (*connected_roots.Roles, error)
+        + Obtain(ctx context.Context, id string) (*connected_roots.Roles, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.RolePaginationFilters) (*pagination.Pagination, error)
+        + Remove(ctx context.Context, id string) error
+        + CountAll(ctx context.Context) (*connected_roots.TotalRoles, error)
+    }
+}
+"postgresql.BaseModel" *-- "extends" "role.Roles"
+
+namespace sensor {
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, sensor *connected_roots.Sensors) (*connected_roots.Sensors, error)
+        + Update(ctx context.Context, sensor *connected_roots.Sensors) (*connected_roots.Sensors, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.Sensors, error)
+        + ListAllBy(ctx context.Context, sensorFilters *connected_roots.SensorPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + CreateData(ctx context.Context, sensorData *connected_roots.SensorsData) (*connected_roots.SensorsData, error)
+        + GetDataByID(ctx context.Context, id string) (*connected_roots.SensorsData, error)
+        + GetLatestDataByID(ctx context.Context, id string) (*connected_roots.SensorsData, error)
+        + ListAllDataBy(ctx context.Context, sensorDataFilters *connected_roots.SensorDataPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + ListAllByUserID(ctx context.Context, userID string, sensorFilters *connected_roots.SensorPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + Count(ctx context.Context) (int64, error)
+        + CountAllByUser(ctx context.Context, userID string) (int64, error)
+        + GetWeekdayAverage(ctx context.Context, orchardID string) ([]*connected_roots.SensorsDataWeekdayAverage, error)
+    }
+    class Sensors << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Location string
+        + ModelNumber string
+        + Manufacturer string
+        + CalibrationDate time.Time
+        + BatteryLife float64
+        + SSID string
+        + Channel string
+        + DNS string
+        + IP string
+        + Subnet string
+        + MAC string
+        + Status int
+        + FirmwareVersion float64
+        + OrchardID string
+        + Orchard *orchard.Orchards
+        + TableName() string
+    }
+    class SensorsData << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Voltage float64
+        + Battery float64
+        + Soil int
+        + Salt int
+        + Light float64
+        + TemperatureIn float64
+        + TemperatureOut float64
+        + HumidityIn float64
+        + HumidityOut float64
+        + Pressure float64
+        + Altitude float64
+        + SensorID string
+        + Sensor *Sensors
+        + TableName() string
+    }
+    class SensorsDataWeekdayAverage << (S,HIGHLIGHT_COLOR) >> {
+        + Weekday int
+        + AvgVoltage float64
+        + AvgBattery float64
+        + AvgSoil float64
+        + AvgSalt float64
+        + AvgLight float64
+        + AvgTemperatureIn float64
+        + AvgTemperatureOut float64
+        + AvgHumidityIn float64
+        + AvgHumidityOut float64
+        + AvgPressure float64
+        + AvgAltitude float64
+        + TableName() string
+    }
+    class SensorsHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostSensorHandler(c echo.Context) error
+        + PutSensorHandler(c echo.Context) error
+        + GetSensorHandler(c echo.Context) error
+        + ListSensorsHandler(c echo.Context) error
+        + DeleteSensorHandler(c echo.Context) error
+        + PostSensorDataHandler(c echo.Context) error
+        + GetSensorLastDataHandler(c echo.Context) error
+        + ListSensorsDataHandler(c echo.Context) error
+        + ListUserSensorsHandler(c echo.Context) error
+        + GetCountSensorsHandler(c echo.Context) error
+        + GetCountUserSensorsHandler(c echo.Context) error
+        + GetSensorWeekdayAverageDataHandler(c echo.Context) error
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, sensor *connected_roots.Sensors) (*connected_roots.Sensors, error)
+        + Update(ctx context.Context, sensor *connected_roots.Sensors) (*connected_roots.Sensors, error)
+        + Obtain(ctx context.Context, id string) (*connected_roots.Sensors, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.SensorPaginationFilters) (*pagination.Pagination, error)
+        + Remove(ctx context.Context, id string) error
+        + SaveData(ctx context.Context, sensorData *connected_roots.SensorsData) (*connected_roots.SensorsData, error)
+        + ObtainLatestData(ctx context.Context, id string) (*connected_roots.SensorsData, error)
+        + ObtainAllData(ctx context.Context, filters *connected_roots.SensorDataPaginationFilters) (*pagination.Pagination, error)
+        + ObtainAllByUserID(ctx context.Context, userID string, filters *connected_roots.SensorPaginationFilters) (*pagination.Pagination, error)
+        + CountAll(ctx context.Context) (*connected_roots.TotalSensors, error)
+        + CountAllByUserID(ctx context.Context, userID string) (*connected_roots.TotalSensors, error)
+        + ObtainWeekdayAverage(ctx context.Context, orchardID string) ([]*connected_roots.SensorsDataWeekdayAverage, error)
+    }
+}
+"postgresql.BaseModel" *-- "extends" "sensor.Sensors"
+"postgresql.BaseModel" *-- "extends" "sensor.SensorsData"
+"sensor.Sensors" o-- "orchard.Orchards"
+"sensor.SensorsData" o-- "sensor.Sensors"
+
+namespace user {
+    class Repository << (S,HIGHLIGHT_COLOR) >> {
+        + Create(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error)
+        + UpdateAll(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error)
+        + GetByID(ctx context.Context, id string) (*connected_roots.Users, error)
+        + GetBy(ctx context.Context, args ...string) (*connected_roots.Users, error)
+        + ListAllBy(ctx context.Context, rolesFilters *connected_roots.UserPaginationFilters, preloads ...string) (*pagination.Pagination, error)
+        + DeleteByID(ctx context.Context, id string) error
+        + DeleteByEmail(ctx context.Context, email string) error
+        + Count(ctx context.Context) (int64, error)
+    }
+    class Service << (S,HIGHLIGHT_COLOR) >> {
+        + Save(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error)
+        + Update(ctx context.Context, user *connected_roots.Users) (*connected_roots.Users, error)
+        + ObtainFromID(ctx context.Context, email string) (*connected_roots.Users, error)
+        + ObtainFromEmail(ctx context.Context, email string) (*connected_roots.Users, error)
+        + ObtainAll(ctx context.Context, filters *connected_roots.UserPaginationFilters) (*pagination.Pagination, error)
+        + RemoveByID(ctx context.Context, id string) error
+        + RemoveByEmail(ctx context.Context, email string) error
+        + IsValidPassword(ctx context.Context, email string, password string) (bool, error)
+        + CountAll(ctx context.Context) (*connected_roots.TotalUsers, error)
+    }
+    class Users << (S,HIGHLIGHT_COLOR) >> {
+        + ID string
+        + Name string
+        + Surname string
+        + Email string
+        + Password string
+        + Telephone string
+        + Language string
+        + RoleID string
+        + Role *role.Roles
+        + TableName() string
+    }
+    class UsersHandlers << (S,HIGHLIGHT_COLOR) >> {
+        + PostUserHandler(c echo.Context) error
+        + PutUserHandler(c echo.Context) error
+        + PatchUserPartiallyHandler(c echo.Context) error
+        + GetUserHandler(c echo.Context) error
+        + ListUsersHandler(c echo.Context) error
+        + DeleteUserHandler(c echo.Context) error
+        + PostUserAuthHandler(c echo.Context) error
+        + GetCountUsersHandler(c echo.Context) error
+    }
+}
+"postgresql.BaseModel" *-- "extends" "user.Users"
+"user.Users" o-- "role.Roles"
+
+@enduml
