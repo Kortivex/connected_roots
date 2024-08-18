@@ -3,6 +3,7 @@ package crop_type
 import (
 	"context"
 	"fmt"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/crop_type"

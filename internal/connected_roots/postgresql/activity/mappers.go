@@ -1,12 +1,13 @@
 package activity
 
 import (
+	"time"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/crop_type"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/role"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/postgresql/user"
-	"time"
 )
 
 func toDomain(activity *Activities) *connected_roots.Activities {

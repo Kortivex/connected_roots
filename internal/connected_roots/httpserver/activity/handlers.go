@@ -2,6 +2,8 @@ package activity
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/activity"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/config"
@@ -12,7 +14,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.opentelemetry.io/otel"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 const (
