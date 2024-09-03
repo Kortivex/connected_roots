@@ -202,6 +202,12 @@ func (s *Service) Serve(ctx context.Context) error {
 
 	useStopChan := false
 
+	client := resty.New().R().EnableTrace()
+	client.SetAuthScheme("Bearer")
+	client.SetAuthToken(s.conf.API.APIKey)
+	hostPort := net.JoinHostPort(s.conf.API.Host, strconv.Itoa(s.conf.API.Port))
+	url := fmt.Sprintf("%s://%s/health/alive", "http", hostPort)
+
 	for {
 		select {
 		case val := <-s.Status:
@@ -210,11 +216,7 @@ func (s *Service) Serve(ctx context.Context) error {
 				// Start Service
 				s.provide()
 			case service.Heartbeat:
-				client := resty.New().R().EnableTrace()
-				client.SetAuthScheme("Bearer")
-				client.SetAuthToken(s.conf.API.APIKey)
-				hostPort := net.JoinHostPort(s.conf.API.Host, strconv.Itoa(s.conf.API.Port))
-				url := fmt.Sprintf("%s://%s/health/alive", "http", hostPort)
+
 				go func() {
 					ticker := time.NewTicker(time.Duration(s.conf.API.Health.Frequency) * time.Second)
 					for range ticker.C {

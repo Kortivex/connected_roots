@@ -1,12 +1,13 @@
 package httpserver
 
 import (
+	"net/http"
+
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/activity"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/crop_type"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/orchard"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/role"
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/sensor"
-	"net/http"
 
 	"github.com/Kortivex/connected_roots/internal/connected_roots/httpserver/user"
 
